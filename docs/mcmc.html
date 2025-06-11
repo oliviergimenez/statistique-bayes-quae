@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapitre 2 Les méthodes MCMC | Statistique bayésienne avec R</title>
+<meta name="author" content="Olivier Gimenez">
+<meta name="description" content="2.1 Introduction Dans ce chapitre, nous passons dans les coulisses de la statistique bayésienne en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et...">
+<meta name="generator" content="bookdown 0.43 with bs4_book()">
+<meta property="og:title" content="Chapitre 2 Les méthodes MCMC | Statistique bayésienne avec R">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/mcmc.html">
+<meta property="og:description" content="2.1 Introduction Dans ce chapitre, nous passons dans les coulisses de la statistique bayésienne en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapitre 2 Les méthodes MCMC | Statistique bayésienne avec R">
+<meta name="twitter:description" content="2.1 Introduction Dans ce chapitre, nous passons dans les coulisses de la statistique bayésienne en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Roboto-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Langue française --><script src="assets/lang-fr.js"></script><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-MTKSQWQE5K"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MTKSQWQE5K');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+          margin-bottom: 0em;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Statistique bayésienne avec R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Introduction</a></li>
+<li><a class="" href="principes.html"><span class="header-section-number">1</span> L’approche bayésienne</a></li>
+<li><a class="active" href="mcmc.html"><span class="header-section-number">2</span> Les méthodes MCMC</a></li>
+<li><a class="" href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></li>
+<li><a class="" href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></li>
+<li><a class="" href="lms.html"><span class="header-section-number">5</span> La régression</a></li>
+<li><a class="" href="glms.html"><span class="header-section-number">6</span> Modèles linéaires généralisés, et généralisés mixtes</a></li>
+<li><a class="" href="conclusions.html">Conclusions</a></li>
+<li><a class="" href="r%C3%A9f%C3%A9rences.html">Références</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="mcmc" class="section level1" number="2">
+<h1>
+<span class="header-section-number">Chapitre 2</span> Les méthodes MCMC<a class="anchor" aria-label="anchor" href="#mcmc"><i class="fas fa-link"></i></a>
+</h1>
+<div id="introduction-2" class="section level2" number="2.1">
+<h2>
+<span class="header-section-number">2.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction-2"><i class="fas fa-link"></i></a>
+</h2>
+<p>Dans ce chapitre, nous passons dans les coulisses de la statistique bayésienne en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et pourquoi ces techniques de simulation sont devenues essentielles pour mettre en œuvre l’inférence bayésienne en pratique. Et comme rien ne vaut la pratique, nous mettrons un peu la main à la pâte en codant nous-mêmes, à travers notre exemple fil rouge sur l’estimation d’une probabilité de survie.</p>
+</div>
+<div id="application-du-théorème-de-bayes" class="section level2" number="2.2">
+<h2>
+<span class="header-section-number">2.2</span> Application du théorème de Bayes<a class="anchor" aria-label="anchor" href="#application-du-th%C3%A9or%C3%A8me-de-bayes"><i class="fas fa-link"></i></a>
+</h2>
+<p>Revenons à notre exemple fil rouge sur les ragondins, je redonne les données :</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">19</span> <span class="co"># nombre d'individus ayant survécu à l'hiver</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">57</span> <span class="co"># nombre d'individus suivis au début de l'hiver</span></span></code></pre></div>
+<p>Appliquons le théorème de Bayes de manière plus directe que dans le Chapitre <a href="principes.html#principes">1</a>, dans lequel on a mis de côté le dénominateur <span class="math inline">\(\Pr(\text{données})\)</span>. Voyons s’il est possible de faire avec. Comme on l’a vu, ce dénominateur est donné par <span class="math inline">\(\displaystyle \Pr(\text{y}) = \int{\Pr(\text{données} \mid \theta) \Pr(\theta) \, d\theta}\)</span>. On va donc devoir calculer cette intégrale. Commençons par écrire une fonction <code>R</code> qui calcule le produit de la vraisemblance par le prior, c’est-à-dire le numérateur dans le théorème de Bayes <span class="math inline">\(\Pr(\text{données} \mid \theta) \times \Pr(\theta)\)</span> :</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">num</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">theta</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">n</span>, <span class="va">theta</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">dbeta</a></span><span class="op">(</span><span class="va">theta</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Nous pouvons maintenant écrire la fonction qui calcule le dénominateur, et pour ce faire, nous allons utiliser la fonction <code>integrate</code> de <code>R</code> qui permet de calculer l’intégrale d’une fonction d’une variable. La fonction <code>integrate</code> met en oeuvre des techniques de quadrature pour diviser en petits carrés l’aire sous la courbe délimitée par la fonction à intégrer, et les compter.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">den</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/integrate.html">integrate</a></span><span class="op">(</span><span class="va">num</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">value</span></span></code></pre></div>
+<p>Nous obtenons alors une approximation numérique de la distribution a posteriori de la survie hivernale comme dans la Figure <a href="mcmc.html#fig:posterior-numerique-plot">2.1</a> :</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Crée une grille de valeurs possibles pour la probabilité de survie (entre 0 et 1)</span></span>
+<span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.01</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calcule les valeurs de la densité a posteriori sur la grille</span></span>
+<span><span class="co"># num(grid) est la vraisemblance * prior, et den est la constante de normalisation</span></span>
+<span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  survival <span class="op">=</span> <span class="va">grid</span>, </span>
+<span>  ratio <span class="op">=</span> <span class="fu">num</span><span class="op">(</span><span class="va">grid</span><span class="op">)</span> <span class="op">/</span> <span class="va">den</span>  <span class="co"># densité a posteriori normalisée</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Trace la courbe de la densité a posteriori</span></span>
+<span><span class="va">posterior</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">survival</span>, y <span class="op">=</span> <span class="va">ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Probabilité de survie"</span>, y <span class="op">=</span> <span class="st">"Densité"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:posterior-numerique-plot"></span>
+<img src="02-methodesmcmc_files/figure-html/posterior-numerique-plot-1.png" alt="Approximation numérique de la distribution a posteriori de la survie hivernale." width="90%"><p class="caption">
+Figure 2.1: Approximation numérique de la distribution a posteriori de la survie hivernale.
+</p>
+</div>
+<p>Quelle est la qualité de cette approximation numérique ? Idéalement, on voudrait comparer l’approximation à la véritable distribution postérieure. Ca tombe bien, on l’a obtenue dans le Chapitre <a href="principes.html#principes">1</a>, il s’agit d’une distribution bêta de paramètres 20 et 39. On peut se rendre compte dans la Figure <a href="mcmc.html#fig:posterior-comparaison">2.2</a> que les deux courbes se superposent parfaitement.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:posterior-comparaison"></span>
+<img src="02-methodesmcmc_files/figure-html/posterior-comparaison-1.png" alt="Comparaison entre la postérieure exacte (pointillée) et l’approximation numérique (ligne continue)." width="90%"><p class="caption">
+Figure 2.2: Comparaison entre la postérieure exacte (pointillée) et l’approximation numérique (ligne continue).
+</p>
+</div>
+<p>La distribution postérieure exacte (ligne pointillée couleur saumon) et l’approximation numérique (ligne continue couleur crème) de la survie hivernale ne peuvent être distinguées, ce qui suggère que l’approximation numérique est plus que satisfaisante.</p>
+<p>Dans notre exemple, nous avons un seul paramètre à estimer : la survie hivernale. Cela signifie qu’il s’agit d’une intégrale unidimensionnelle au dénominateur, ce qui est assez facile avec les techniques de quadrature et la fonction <code>R</code> <code><a href="https://rdrr.io/r/stats/integrate.html">integrate()</a></code>.</p>
+<p>Mais que se passe-t-il si nous avons plusieurs paramètres ? Par exemple, imaginez que vous vouliez ajuster un modèle de régression avec une probabilité de survie qui dépend d’une variable explicative, par exemple le poids des ragondins. L’effet de cette variable est capturé par le paramètre de régression <span class="math inline">\(\beta_0\)</span> (l’ordonnée à l’origine), <span class="math inline">\(\beta_1\)</span> la pente associée, et on a aussi l’erreur résiduelle avec l’écart-type <span class="math inline">\(\sigma\)</span> (voir Chapitre <a href="glms.html#glms">6</a>). Le théorème de Bayes donne alors la distribution postérieure jointe de ces paramètres :</p>
+<p><span class="math display">\[ \displaystyle \Pr(\beta_0, \beta_1, \sigma \mid \text{y}) = \frac{ \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \times \Pr(\beta_0, \beta_1, \sigma)}{\displaystyle \iiint \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \Pr(\beta_0, \beta_1, \sigma) \, d\beta_0 \, d\beta_1 \, d\sigma} \]</span></p>
+<p>Il y a deux défis numériques majeurs :</p>
+<ul>
+<li>Souhaite-t-on vraiment calculer une intégrale triple ? Non, car les méthodes classiques ne vont pas beaucoup plus loin que deux dimensions.</li>
+<li>On s’intéresse souvent aux distributions marginales des paramètres (par ex. celle de <span class="math inline">\(\beta_1\)</span> correspondant à l’effet de la température sur la survie), obtenues en intégrant la postérieure jointe sur les autres paramètres (ici une intégrale double par rapport à <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\sigma\)</span>) — ce qui devient vite incalculable quand leur nombre augmente.</li>
+</ul>
+<p>Dans la section suivante, nous introduisons des méthodes de simulation puissantes pour surmonter ces limitations.</p>
+</div>
+<div id="les-méthodes-de-monte-carlo-par-chaînes-de-markov-mcmc" class="section level2" number="2.3">
+<h2>
+<span class="header-section-number">2.3</span> Les méthodes de Monte Carlo par chaînes de Markov (MCMC)<a class="anchor" aria-label="anchor" href="#les-m%C3%A9thodes-de-monte-carlo-par-cha%C3%AEnes-de-markov-mcmc"><i class="fas fa-link"></i></a>
+</h2>
+<p>En bref, l’idée des méthodes de Monte Carlo par chaînes de Markov (MCMC) est d’utiliser des simulations pour approximer les distributions a posteriori avec une certaine précision, en tirant un grand nombre d’échantillons. Cela évite le calcul explicite des intégrales multidimensionnelles auxquelles on a à faire lorsqu’on applique le théorème de Bayes.</p>
+<p>Ces algorithmes de simulation se composent de deux parties : chaînes de Markov et Monte Carlo. Essayons de comprendre ces deux termes.</p>
+<p>Que signifie Monte Carlo ? L’intégration Monte Carlo est une technique de simulation utilisée pour calculer des intégrales de fonctions quelconques <span class="math inline">\(f\)</span> d’une variable aléatoire <span class="math inline">\(X\)</span> suivant une distribution <span class="math inline">\(\Pr(X)\)</span>, comme <span class="math inline">\(\displaystyle \int f(X) \Pr(X) dX\)</span>. On tire des valeurs <span class="math inline">\(X_1, \ldots, X_k\)</span> dans <span class="math inline">\(\Pr(X)\)</span>, on applique la fonction <span class="math inline">\(f\)</span> à ces valeurs, puis on calcule la moyenne de ces nouvelles valeurs : <span class="math inline">\(\displaystyle{\frac{1}{k}}\sum_{i=1}^k{f(X_i)}\)</span> pour approximer l’intégrale.</p>
+<p>Comment utilise-t-on l’intégration Monte Carlo dans un contexte bayésien ? La distribution a posteriori contient toute l’information nécessaire sur le paramètre à estimer. Mais lorsqu’il y a plusieurs paramètres, on souhaite souvent résumer cette information en calculant des résumés numériques. Le résumé le plus simple est la moyenne de la distribution a posteriori, soit <span class="math inline">\(E(\theta) = \int \theta \Pr(\theta \mid \text{données}) \, d\theta\)</span>, où <span class="math inline">\(X\)</span> est ici <span class="math inline">\(\theta\)</span> et <span class="math inline">\(f\)</span> est l’identité. Cette moyenne a posteriori peut être estimée par intégration Monte Carlo ; par exemple, pour la survie des ragondins :</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># tirage de 1000 valeurs depuis la postérieure bêta(20,39)</span></span>
+<span><span class="va">sample_from_posterior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">20</span>, <span class="fl">39</span><span class="op">)</span> </span>
+<span><span class="co"># calcul de la moyenne par intégration Monte Carlo</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sample_from_posterior</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; [1] 0.3399338</span></span></code></pre></div>
+<p>On peut vérifier que la moyenne obtenue est proche de l’espérance théorique d’une distribution bêta :</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fl">20</span><span class="op">/</span><span class="op">(</span><span class="fl">20</span><span class="op">+</span><span class="fl">39</span><span class="op">)</span> <span class="co"># espérance de la loi bêta(20,39)</span></span>
+<span><span class="co">#&gt; [1] 0.3389831</span></span></code></pre></div>
+<p>Un autre résumé numérique utile est l’intervalle de crédibilité à l’intérieur duquel se trouve le paramètre avec une certaine probabilité, généralement 0.95, soit un intervalle de crédibilité à 95%. Déterminer les bornes d’un tel intervalle nécessite le calcul de quantiles, ce qui implique aussi des intégrales, donc un recours à l’intégration Monte Carlo. Un intervalle de crédibilité à 95% pour la survie hivernale peut être obtenu avec :</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">sample_from_posterior</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">/</span><span class="fl">100</span>, <span class="fl">97.5</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      2.5%     97.5% </span></span>
+<span><span class="co">#&gt; 0.2314888 0.4681960</span></span></code></pre></div>
+<p>En passant, il y a une différence entre l’intervalle de crédibilité en statistique bayésienne et l’intervalle de confiance de la statistique fréquentiste. Un intervalle de confiance à 95% signifie que si l’on répétait l’expérience un très grand nombre de fois, environ 95% des intervalles construits de cette manière contiendraient la vraie valeur du paramètre. Mais on ne peut pas dire que la probabilité que le paramètre soit dans un intervalle donné est de 95%. Un intervalle de crédibilité à 95%, en revanche, signifie qu’il y a 95% de probabilité que le paramètre se trouve dans cet intervalle.</p>
+<p>Maintenant, qu’est-ce qu’une chaîne de Markov ? Une chaîne de Markov est une séquence aléatoire de nombres, dans laquelle chaque nombre dépend uniquement du nombre précédent. Un exemple est la météo dans ma ville, Montpellier, dans le sud de la France, où une journée ensoleillée est très probablement suivie d’une autre journée ensoleillée, disons avec une probabilité de 0.8, et une journée pluvieuse est rarement suivie d’une autre journée pluvieuse, disons avec une probabilité de 0.1. La dynamique de cette chaîne de Markov est capturée par la matrice de transition :</p>
+<p><span class="math display">\[
+\begin{array}{c|cc}
+&amp; \text{ensoleillé demain} &amp; \text{pluvieux demain} \\\\ \hline
+\text{ensoleillé aujourd'hui} &amp; 0.8 &amp; 0.2 \\\\
+\text{pluvieux aujourd'hui}   &amp; 0.9 &amp; 0.1
+\end{array}
+\]</span></p>
+<p>Les lignes indiquent la météo aujourd’hui, et les colonnes celle de demain. Les cellules donnent la probabilité d’avoir une journée ensoleillée ou pluvieuse demain, selon le temps qu’il fait aujourd’hui (des probabilités conditionnelles, voir Chapitre <a href="principes.html#principes">1</a>).</p>
+<p>Sous certaines conditions, une chaîne de Markov converge vers une distribution stationnaire unique. Dans notre exemple météorologique, lançons la chaîne pour 20 étapes :</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">temps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># matrice de transition</span></span>
+<span><span class="va">etapes</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">etapes</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">temps</span> <span class="op">&lt;-</span> <span class="va">temps</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">temps</span> <span class="co"># multiplication matricielle</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">temps</span>, <span class="fl">2</span><span class="op">)</span> <span class="co"># produit matriciel après 20 étapes</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,] 0.82 0.18</span></span>
+<span><span class="co">#&gt; [2,] 0.82 0.18</span></span></code></pre></div>
+<p>Chaque ligne de la matrice converge vers la même distribution <span class="math inline">\((0.82, 0.18)\)</span> au fur et à mesure que le nombre d’étapes augmente. La convergence se produit quel que soit l’état de départ : on a alors une probabilité de 0.82 d’avoir du soleil et de 0.18 d’avoir de la pluie.</p>
+<p>Revenons aux méthodes MCMC. L’idée centrale est que l’on peut construire une chaîne de Markov dont la distribution stationnaire est justement la distribution a posteriori de nos paramètres.</p>
+<p>En combinant Monte Carlo et chaînes de Markov, les méthodes MCMC nous permettent de générer un échantillon de valeurs dont la distribution converge vers la distribution a posteriori (chaîne de Markov), et d’utiliser cet échantillon pour calculer des résumés numériques a posteriori (Monte Carlo), comme la moyenne ou les intervalles de crédibilité.</p>
+<p>Il existe plusieurs manières de construire des chaînes de Markov pour l’inférence bayésienne. Vous avez peut-être entendu parler de l’algorithme de Metropolis-Hastings ou de l’échantillonneur de Gibbs. Vous pouvez consulter <a href="https://chi-feng.github.io/mcmc-demo/" class="uri">https://chi-feng.github.io/mcmc-demo/</a> pour une galerie interactive d’algorithmes MCMC. Ici, j’illustre l’algorithme de Metropolis et sa mise en œuvre pratique. Pour cela je m’inspire de l’excellent livre de Jim <span class="citation">Albert (<a href="r%C3%A9f%C3%A9rences.html#ref-albert2009">2009</a>)</span>. Il n’est pas question d’être capable d’écrire un tel algorithme par soi-même, seulement d’en saisir les grandes lignes, et surtout la notion de simulations.</p>
+<p>Revenons à notre exemple d’estimation de la survie. Nous allons illustrer l’échantillonnage depuis la distribution a posteriori de la survie. Commençons par écrire les fonctions pour la vraisemblance, le prior et la postérieure. On se place sur l’échelle log pour manipuler des sommes et des soustractions plutôt que des produits et des ratios qui rendent les calculs numériques instables :</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 19 animaux retrouvés vivants sur 57 capturés, marqués et relâchés</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">19</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">57</span></span>
+<span></span>
+<span><span class="co"># log-vraisemblance binomiale Bin(n = 57,p)</span></span>
+<span><span class="va">loglikelihood</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">p</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, size <span class="op">=</span> <span class="va">n</span>, prob <span class="op">=</span> <span class="va">p</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># densité du prior uniforme</span></span>
+<span><span class="va">logprior</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">dunif</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">p</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">1</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># densité a posteriori (échelle logarithmique)</span></span>
+<span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">p</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu">loglikelihood</span><span class="op">(</span><span class="va">x</span>, <span class="va">p</span><span class="op">)</span> <span class="op">+</span> <span class="fu">logprior</span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>L’algorithme de Metropolis fonctionne comme suit :</p>
+<ol style="list-style-type: decimal">
+<li><p>On choisit une valeur initiale pour le paramètre à estimer. C’est notre valeur de départ, ou point initial de la chaîne de Markov.</p></li>
+<li><p>Pour décider de l’étape suivante, on propose de s’éloigner de la valeur courante du paramètre — c’est la valeur candidate. On ajoute à la valeur courante une valeur tirée d’une loi normale avec une certaine variance — c’est la loi de proposition. L’algorithme de Metropolis est un cas particulier de celui de Metropolis-Hastings avec des propositions symétriques.</p></li>
+<li><p>On calcule le rapport des vraisemblances entre la position candidate et la position courante : <span class="math inline">\(R = \displaystyle \frac{\Pr(\text{valeur candidate}|\text{données})}{\Pr(\text{valeur courante}|\text{données})}\)</span>. Pour calculer le numérateur et le dénominateur, il suffit d’appliquer le théorème de Bayes, et c’est là que la magie des méthodes MCMC opère car, comme la quantité <span class="math inline">\(\Pr(\text{données})\)</span> apparaît au numérateur et au dénominateur, elle s’annule et plus besoin de la calculer ! On a remplacé le calcul d’une intégrale par des simulations.</p></li>
+<li><p>Si la densité postérieure en la position candidate est plus grande qu’en la position courante, autrement dit si la valeur candidate est plus plausible, on l’accepte sans hésiter. Sinon, on l’accepte avec probabilité <span class="math inline">\(R\)</span>, et on la rejette avec probabilité <span class="math inline">\(1 - R\)</span>. Par exemple, si la valeur candidate est dix fois moins plausible, on l’accepte avec probabilité 0.1. On utilise un générateur uniforme entre 0 et 1 (appelons-le <span class="math inline">\(X\)</span>), et si <span class="math inline">\(X &lt; R\)</span>, on accepte la valeur candidate, sinon on reste à la valeur courante. En pratique, on vise un taux d’acceptation entre 0.2 et 0.4 qu’on peut ajuster en calibrant la variance de la proposition.</p></li>
+<li><p>On répète les étapes 2 à 4 un certain nombre de fois — ce sont les itérations.</p></li>
+</ol>
+<p>Assez de théorie, passons à l’implémentation. On commence par initialiser :</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">steps</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="co"># nombre d'étapes ou itérations de la chaîne</span></span>
+<span><span class="va">theta.post</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">steps</span><span class="op">)</span> <span class="co"># vecteur pour stocker les valeurs simulées</span></span>
+<span><span class="va">accept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">steps</span><span class="op">)</span> <span class="co"># vecteur pour enregistrer les acceptations/rejets</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">666</span><span class="op">)</span> <span class="co"># pour reproductibilité</span></span></code></pre></div>
+<p>Pourquoi faut-il initialiser ? Avant de lancer la chaîne de Markov, on prépare les objets dans lesquels seront stockées les valeurs simulées de notre paramètre (ici, la probabilité de survie), ainsi que l’information sur l’acceptation ou non de chaque proposition. Et <code>set.seed(666)</code>, à quoi ça sert ? Cette commande fixe la graine du générateur de nombres aléatoires. Elle permet de garantir que les simulations soient reproductibles : en relançant le code, vous obtiendrez exactement les mêmes valeurs simulées que les miennes.</p>
+<p>On choisit une valeur de départ :</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">inits</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="co"># valeur de départ choisie pour theta</span></span>
+<span><span class="va">theta.post</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">inits</span> <span class="co"># on enregistre cette valeur comme première position de la chaîne</span></span>
+<span><span class="va">accept</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># la valeur initiale est acceptée par défaut</span></span></code></pre></div>
+<p>Pourquoi une valeur de départ ? Une chaîne de Markov doit bien commencer quelque part : ici, on choisit arbitrairement 0.5 comme valeur initiale de la probabilité de survie. On place cette valeur dans le premier élément du vecteur <code>theta.post</code>, et on indique dans <code>accept[1] &lt;- 1</code> que cette première valeur est acceptée par construction, puisque c’est notre point de départ.</p>
+<p>Puis, on écrit une fonction pour proposer une valeur candidate à partir de la valeur courante. Pour garantir que la nouvelle valeur proposée reste comprise entre 0 et 1 (puisqu’il s’agit ici d’une probabilité), on effectue les calculs sur l’échelle logit :</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">move</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">away</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">{</span> </span>
+<span>  <span class="va">logitx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">x</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="co"># transformation logit : transforme x de (0,1) vers (-∞,+∞)</span></span>
+<span>  <span class="va">logit_candidate</span> <span class="op">&lt;-</span> <span class="va">logitx</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">away</span><span class="op">)</span> <span class="co"># on ajoute un bruit normal centré, de variance contrôlée par away</span></span>
+<span>  <span class="va">candidate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">logit_candidate</span><span class="op">)</span> <span class="co"># transformation réciproque (logit^-1) : retourne une valeur entre 0 et 1</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">candidate</span><span class="op">)</span> <span class="co"># retourne la valeur proposée</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Cette fonction introduit une proposition aléatoire autour de la valeur courante. On travaille sur l’échelle logit pour s’assurer que la proposition finale (candidate) reste toujours dans l’intervalle (0,1) (voir aussi le Chapitre <a href="glms.html#glms">6</a>). Le paramètre <code>away</code> contrôle la dispersion des propositions : plus il est grand, plus la chaîne pourra faire de grands sauts ; plus il est petit, plus les propositions seront proches de la valeur actuelle.</p>
+<p>Ensuite, on applique les étapes 2 à 4 de l’algorithme dans une boucle (c’est l’étape 5, répétition des itérations) :</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">t</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="va">steps</span><span class="op">)</span><span class="op">{</span> <span class="co"># pour chaque itération, à partir de la 2e</span></span>
+<span></span>
+<span>  <span class="co"># Étape 2 : proposer une nouvelle valeur pour theta</span></span>
+<span>  <span class="va">theta_star</span> <span class="op">&lt;-</span> <span class="fu">move</span><span class="op">(</span><span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>  <span class="co"># valeur candidate tirée à partir de la valeur précédente</span></span>
+<span>  </span>
+<span>  <span class="co"># Étape 3 : calculer le rapport des densités postérieures (échelle log)</span></span>
+<span>  <span class="va">pstar</span> <span class="op">&lt;-</span> <span class="fu">posterior</span><span class="op">(</span><span class="va">y</span>, p <span class="op">=</span> <span class="va">theta_star</span><span class="op">)</span> <span class="co"># densité a posteriori à la valeur candidate</span></span>
+<span>  <span class="va">pprev</span> <span class="op">&lt;-</span> <span class="fu">posterior</span><span class="op">(</span><span class="va">y</span>, p <span class="op">=</span> <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="co"># densité a posteriori à la valeur courante</span></span>
+<span>  <span class="va">logR</span> <span class="op">&lt;-</span> <span class="va">pstar</span> <span class="op">-</span> <span class="va">pprev</span> <span class="co"># différence sur l’échelle log</span></span>
+<span>  <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logR</span><span class="op">)</span> <span class="co"># on revient à l’échelle naturelle (rapport des densités)</span></span>
+<span></span>
+<span>  <span class="co"># Étape 4 : décider si on accepte ou rejette la proposition</span></span>
+<span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="co"># tirage aléatoire entre 0 et 1 : la "roulette" d’acceptation</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">X</span> <span class="op">&lt;</span> <span class="va">R</span><span class="op">)</span><span class="op">{</span> <span class="co"># si la proposition est plus plausible (ou pas trop pire)</span></span>
+<span>    <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">theta_star</span> <span class="co"># on accepte et on stocke la valeur candidate</span></span>
+<span>    <span class="va">accept</span><span class="op">[</span><span class="va">t</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># on note que la proposition a été acceptée</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span> <span class="co"># sinon on reste sur la valeur précédente</span></span>
+<span>    <span class="va">accept</span><span class="op">[</span><span class="va">t</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># on note le refus</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Cette boucle construit itérativement la chaîne de Markov. La probabilité d’accepter une valeur moins plausible est proportionnelle à son rapport de vraisemblance. Le vecteur <code>accept</code> permet ensuite de diagnostiquer la fréquence d’acceptation, utile pour calibrer la chaîne.</p>
+<p>Jetons un coup d’oeil aux premières et dernières valeurs simulées :</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">theta.post</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.5000000 0.5000000 0.3021903 0.3021903 0.1853669 0.1853669</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">theta.post</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.4076667 0.4076667 0.4076667 0.4076667 0.2914464 0.2914464</span></span></code></pre></div>
+On peut maintenant visualiser l’évolution des valeurs de la chaîne grâce à un “trace plot” ou graphique de la trace (on va garder l’expression anglaise), c’est-à-dire une courbe qui montre les valeurs simulées de <span class="math inline">\(\theta\)</span> au fil des itérations, c’est la Figure <a href="mcmc.html#fig:traceplot">2.3</a> :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:traceplot"></span>
+<img src="02-methodesmcmc_files/figure-html/traceplot-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations." width="90%"><p class="caption">
+Figure 2.3: Trace plot des valeurs simulées de la probabilité de survie <span class="math inline">\(\theta\)</span> au fil des itérations.
+</p>
+</div>
+<p>Que nous apprend ce trace plot ? L’axe horizontal représente les itérations (ou temps dans la chaîne de Markov). L’axe vertical montre les valeurs simulées de la probabilité de survie à chaque étape. Dans la figure, on observe que la chaîne reste parfois plusieurs itérations consécutives à la même valeur. Cela se produit lorsque la valeur candidate proposée par l’algorithme est rejetée — la chaîne conserve alors la valeur précédente. À d’autres moments, on voit des sauts vers de nouvelles valeurs, qui correspondent aux propositions acceptées.</p>
+<p>On peut ensuite encapsuler l’algorithme dans une fonction réutilisable, ce qui permet de lancer facilement plusieurs chaînes :</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">metropolis</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">steps</span> <span class="op">=</span> <span class="fl">100</span>, <span class="va">inits</span> <span class="op">=</span> <span class="fl">0.5</span>, <span class="va">away</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="va">theta.post</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">steps</span><span class="op">)</span> <span class="co"># on crée un vecteur pour stocker les échantillons</span></span>
+<span>  <span class="va">theta.post</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">inits</span> <span class="co"># on initialise avec la valeur de départ</span></span>
+<span>  </span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">t</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="va">steps</span><span class="op">)</span><span class="op">{</span> <span class="co"># boucle sur les étapes (à partir de la 2e)</span></span>
+<span>    </span>
+<span>    <span class="va">theta_star</span> <span class="op">&lt;-</span> <span class="fu">move</span><span class="op">(</span><span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">away</span><span class="op">)</span> <span class="co"># proposition d'une nouvelle valeur</span></span>
+<span></span>
+<span>    <span class="co"># on calcule le log-ratio de la densité a posteriori entre candidat et position courante</span></span>
+<span>    <span class="va">logR</span> <span class="op">&lt;-</span> <span class="fu">posterior</span><span class="op">(</span><span class="va">y</span>, <span class="va">theta_star</span><span class="op">)</span> <span class="op">-</span> </span>
+<span>            <span class="fu">posterior</span><span class="op">(</span><span class="va">y</span>, <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logR</span><span class="op">)</span> <span class="co"># passage à l'échelle normale (non log)</span></span>
+<span>    </span>
+<span>    <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="co"># tirage d'un nombre aléatoire uniforme</span></span>
+<span>    <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">X</span> <span class="op">&lt;</span> <span class="va">R</span>, <span class="co"># si le tirage &lt; probabilité d'acceptation...</span></span>
+<span>                            <span class="va">theta_star</span>, <span class="co"># ... on accepte la valeur proposée</span></span>
+<span>                            <span class="va">theta.post</span><span class="op">[</span><span class="va">t</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="co"># sinon on conserve la précédente</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">theta.post</span><span class="op">)</span> <span class="co"># on retourne l’échantillon simulé</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>On peut maintenant utiliser la fonction <code>metropolis()</code> pour lancer une autre chaîne, cette fois-ci en partant de 0.2 :</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">theta.post2</span> <span class="op">&lt;-</span> <span class="fu">metropolis</span><span class="op">(</span>steps <span class="op">=</span> <span class="fl">100</span>, inits <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="co"># départ à 0.2</span></span></code></pre></div>
+<p>Notez qu’on parle souvent de “lancer plusieurs chaînes” MCMC afin de diagnostiquer la convergence. Il s’agit en réalité de réalisations indépendantes de la même chaîne de Markov, comme si on lançait plusieurs fois une pièce avec une distribution un peu plus compliquée qu’une Bernoulli.</p>
+On trace ensuite les deux chaînes ensemble comme dans la Figure <a href="mcmc.html#fig:traceplot2">2.4</a> :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:traceplot2"></span>
+<img src="02-methodesmcmc_files/figure-html/traceplot2-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune." width="90%"><p class="caption">
+Figure 2.4: Trace plot des valeurs simulées de la probabilité de survie <span class="math inline">\(\theta\)</span> au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune.
+</p>
+</div>
+<p>Notez que nous n’obtenons pas exactement les mêmes résultats car l’algorithme est stochastique. On observe l’évolution parallèle de deux chaînes lancées avec des valeurs initiales différentes. Si les deux chaînes se rejoignent rapidement et oscillent autour des mêmes valeurs, cela indique une bonne convergence vers la distribution stationnaire souhaitée. C’est une étape clé des diagnostics de convergence MCMC que l’on verra dans la suite de ce chapitre.</p>
+Pour observer la convergence sur une plus longue période, on lance une chaîne avec 1000 itérations. Cela permet d’obtenir un trace plot plus “lisse” qui montre la stabilité de la chaîne, comme dans la Figure <a href="mcmc.html#fig:traceplot3">2.5</a> :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:traceplot3"></span>
+<img src="02-methodesmcmc_files/figure-html/traceplot3-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations." width="90%"><p class="caption">
+Figure 2.5: Trace plot des valeurs simulées de la probabilité de survie <span class="math inline">\(\theta\)</span> au fil des 1000 itérations.
+</p>
+</div>
+<!-- La même chose avec trois chaînes et animé ! Vous pouvez retrouver le code pour reproduire cette figure à <https://gist.github.com/oliviergimenez/5ee33af9c8d947b72a39ed1764040bf3>. -->
+<!-- ![](images/mcmc-betabin.gif) -->
+<p>Avec un grand nombre d’itérations, chaque chaîne devrait se stabiliser autour de sa distribution stationnaire. Visuellement, on recherche une zone dense, homogène et bien explorée, ressemblant à une pelouse bien tondue.</p>
+<p>Une fois la distribution stationnaire atteinte, vous pouvez considérer les valeurs simulées de la chaîne de Markov comme un échantillon de la distribution a posteriori et obtenir des résumés numériques des paramètres (moyenne a posteriori, intervalle de crédibilité).</p>
+<p>Quand peut-on dire qu’on a atteint cette distribution stationnaire? Une fois qu’on a la convergence, combien de simulations faut-il encore faire pour obtenir une bonne approximation de la distribution a posteriori de nos paramètres? Je réponds à ces questions dans la section suivante.</p>
+</div>
+<div id="convergence-diag" class="section level2" number="2.4">
+<h2>
+<span class="header-section-number">2.4</span> Évaluer la convergence<a class="anchor" aria-label="anchor" href="#convergence-diag"><i class="fas fa-link"></i></a>
+</h2>
+<p>Lorsqu’on implémente une méthode MCMC, il faut déterminer combien de temps il faut à la chaîne de Markov pour converger vers la distribution cible, et combien d’itérations supplémentaires sont nécessaires après la convergence pour obtenir des estimations Monte Carlo fiables des résumés numériques (moyennes a posteriori, intervalles de crédibilité).</p>
+<div id="burn-in" class="section level3" number="2.4.1">
+<h3>
+<span class="header-section-number">2.4.1</span> Burn-in<a class="anchor" aria-label="anchor" href="#burn-in"><i class="fas fa-link"></i></a>
+</h3>
+<p>En pratique, on ignore les premières valeurs de la chaîne de Markov et on n’utilise que les valeurs simulées après convergence. Les observations initiales que l’on écarte sont généralement appelées la période de burn-in (ou pré-chauffage).</p>
+<p>La méthode la plus simple pour déterminer la durée de la période de burn-in est d’inspecter les trace plots. Reprenons notre exemple et observons dans la Figure <a href="mcmc.html#fig:burnin">2.6</a> un trace plot pour une chaîne démarrant à la valeur 0.99 :</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:burnin"></span>
+<img src="02-methodesmcmc_files/figure-html/burnin-1.png" alt="Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible." width="90%"><p class="caption">
+Figure 2.6: Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible.
+</p>
+</div>
+<p>La chaîne démarre à 0.99 et se stabilise rapidement, les valeurs oscillant autour de 0.3 à partir de la 100ème itération. On peut choisir la zone ombrée comme période de burn-in et éliminer les 100 premières valeurs. Par prudence, on pourrait utiliser 250 voire 500 itérations comme burn-in.</p>
+<p>Examiner un trace plot d’une seule chaîne est utile, mais on lance généralement plusieurs chaînes avec des valeurs initiales différentes pour vérifier que toutes atteignent la même distribution stationnaire. Cette approche est formalisée par la statistique de Brooks-Gelman-Rubin (BGR), notée <span class="math inline">\(\hat{R}\)</span>, qui mesure le ratio entre la variabilité totale (entre-chaînes + intra-chaîne) et la variabilité intra-chaîne. Elle est proche du test <span class="math inline">\(F\)</span> dans une analyse de variance (ici à un facteur dont les modalités sont les chaînes). Une valeur inférieure à 1.1 indique une convergence probable.</p>
+<p>Revenons à notre exemple : nous exécutons deux chaînes de Markov avec des valeurs initiales de 0.2 et 0.8, en faisant varier le nombre d’itérations de 100 à 1000 toutes les 50 itérations, et nous calculons la statistique BGR en utilisant la moitié des itérations comme période de burn-in (Figure <a href="mcmc.html#fig:bgr">2.7</a>).</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:bgr"></span>
+<img src="02-methodesmcmc_files/figure-html/bgr-1.png" alt="Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence." width="90%"><p class="caption">
+Figure 2.7: Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence.
+</p>
+</div>
+<p>Nous obtenons une valeur de la statistique BGR proche de 1 dès 300 itérations, ce qui suggère qu’avec un burn-in de 300 itérations, rien n’indique un problème de convergence.</p>
+<p>Il est important de garder à l’esprit qu’une valeur proche de 1 pour la statistique BGR constitue une condition nécessaire, mais non suffisante, à la convergence. En d’autres termes, ce diagnostic ne permet pas d’affirmer avec certitude que la chaîne a convergé, mais simplement qu’on ne détecte pas de signe évident qu’elle ne l’a pas fait. Mon conseil : prenez toujours le temps de jeter un coup d’oeil aux trace plots.</p>
+</div>
+<div id="longueur-de-chaîne" class="section level3" number="2.4.2">
+<h3>
+<span class="header-section-number">2.4.2</span> Longueur de chaîne<a class="anchor" aria-label="anchor" href="#longueur-de-cha%C3%AEne"><i class="fas fa-link"></i></a>
+</h3>
+<p>Quelle longueur de chaîne est nécessaire pour obtenir des estimations fiables des paramètres ? Il faut garder à l’esprit que les étapes successives d’une chaîne de Markov ne sont pas indépendantes. C’est ce qu’on appelle l’autocorrélation. Idéalement, on cherche à minimiser cette autocorrélation.</p>
+<p>Ici encore, les trace plots permettent de diagnostiquer des problèmes d’autocorrélation. Revenons à l’exemple de survie. La Figure <a href="mcmc.html#fig:trace-away">2.8</a> ci-dessous montre les trace plots (2000 itérations) pour différentes valeurs de l’écart-type (paramètre <code>away</code>) de la loi normale de proposition utilisée pour générer les valeurs candidates :</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:trace-away"></span>
+<img src="02-methodesmcmc_files/figure-html/trace-away-1.png" alt="Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations." width="90%"><p class="caption">
+Figure 2.8: Trace plots pour différentes valeurs de l’écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations.
+</p>
+</div>
+<p>Les petits et grands déplacements visibles dans les panneaux de gauche et de droite entraînent une forte corrélation entre les observations successives de la chaîne de Markov, tandis qu’un écart-type égal à 1 (au centre) permet une exploration efficace de l’espace des paramètres. Ce mouvement dans l’espace des paramètres est appelé mixing. Le mixing est considéré comme mauvais lorsque la chaîne fait de trop petits ou de trop grands sauts, et bon dans le cas contraire.</p>
+En complément des trace plots, les graphiques de la fonction d’autocorrélation (ACF) offrent un moyen pratique de visualiser la force de l’autocorrélation dans un échantillon donné. Les ACF montrent la corrélation entre les valeurs échantillonnées successivement, séparées par un nombre croissant d’itérations, appelé lag (décalage). On obtient dans la Figure <a href="mcmc.html#fig:acf">2.9</a> ces graphiques de fonction d’autocorrélation pour différentes valeurs de l’écart-type de la distribution de proposition grâce à la fonction <code><a href="https://pkg.robjhyndman.com/forecast/reference/autoplot.acf.html">forecast::ggAcf()</a></code> :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:acf"></span>
+<img src="02-methodesmcmc_files/figure-html/acf-1.png" alt="Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué." width="90%"><p class="caption">
+Figure 2.9: Fonctions d’autocorrélation (ACF) pour différentes valeurs de l’écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué.
+</p>
+</div>
+<p>Dans les panneaux de gauche et de droite, l’autocorrélation est forte, diminue lentement avec le lag, et le mixing est mauvais. Dans le panneau central, l’autocorrélation est faible, diminue rapidement avec le lag, et le mixing est bon.</p>
+<p>L’autocorrélation n’est pas forcément un gros problème. Des observations fortement corrélées nécessitent simplement un plus grand nombre d’échantillons, et donc des simulations plus longues. Mais combien d’itérations faut-il exactement ? La taille effective de l’échantillon (<code>n.eff</code>) mesure la longueur utile de la chaîne en tenant compte de l’autocorrélation. Il est recommandé de vérifier la n.eff pour chaque paramètre d’intérêt, ainsi que pour toute combinaison pertinente de paramètres. En général, on considère qu’il faut au moins <span class="math inline">\(\text{n.eff} \geq 100\)</span> observations indépendantes pour obtenir des estimations Monte Carlo fiables des paramètres du modèle. Dans l’exemple de la survie animale, n.eff peut être calculée avec la fonction <code><a href="https://rdrr.io/pkg/coda/man/effectiveSize.html">coda::effectiveSize()</a></code>:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">neff1</span> <span class="op">&lt;-</span> <span class="fu">coda</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/effectiveSize.html">effectiveSize</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">accepted_traj</span><span class="op">[</span><span class="va">d</span><span class="op">$</span><span class="va">proposal_sd</span><span class="op">==</span><span class="st">"Écart-type = 0.1"</span><span class="op">]</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">neff2</span> <span class="op">&lt;-</span> <span class="fu">coda</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/effectiveSize.html">effectiveSize</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">accepted_traj</span><span class="op">[</span><span class="va">d</span><span class="op">$</span><span class="va">proposal_sd</span><span class="op">==</span><span class="st">"Écart-type = 1"</span><span class="op">]</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">neff3</span> <span class="op">&lt;-</span> <span class="fu">coda</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/coda/man/effectiveSize.html">effectiveSize</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">accepted_traj</span><span class="op">[</span><span class="va">d</span><span class="op">$</span><span class="va">proposal_sd</span><span class="op">==</span><span class="st">"Écart-type = 10"</span><span class="op">]</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu">tibble</span><span class="op">(</span><span class="st">"Écart-type"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>       <span class="st">"n.eff"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">neff1</span>, <span class="va">neff2</span>, <span class="va">neff3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span><span class="co">#&gt;   `Écart-type` n.eff</span></span>
+<span><span class="co">#&gt;          &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1          0.1    55</span></span>
+<span><span class="co">#&gt; 2          1     343</span></span>
+<span><span class="co">#&gt; 3         10      23</span></span></code></pre></div>
+<p>Comme on pouvait s’y attendre, la valeur de <code>n.eff</code> est inférieure au nombre total d’itérations MCMC (2000) en raison de l’autocorrélation. Ce n’est que lorsque l’écart-type de la distribution de proposition est égal à 1 que le mixing est bon (<span class="math inline">\(\geq 100\)</span>), ce qui permet d’obtenir une taille d’échantillon effective satisfaisante.</p>
+</div>
+<div id="et-si-vous-avez-des-problèmes-de-convergence" class="section level3" number="2.4.3">
+<h3>
+<span class="header-section-number">2.4.3</span> Et si vous avez des problèmes de convergence ?<a class="anchor" aria-label="anchor" href="#et-si-vous-avez-des-probl%C3%A8mes-de-convergence"><i class="fas fa-link"></i></a>
+</h3>
+<p>Lorsque vous diagnostiquez la convergence d’une chaîne MCMC, vous rencontrerez (très) souvent des difficultés. Cette section propose quelques conseils pratiques qui, je l’espère, vous seront utiles.</p>
+<p>Lorsque le mixing est mauvais et que la taille effective de l’échantillon est faible, il peut suffire d’augmenter la période de burn-in et/ou d’augmenter le nombre de simulations. L’utilisation de priors plus informatifs peut également faciliter la convergence des chaînes de Markov, en aidant l’algorithme MCMC à explorer plus efficacement l’espace des paramètres. Dans le même esprit, choisir de meilleures valeurs initiales pour démarrer la chaîne peut aussi améliorer les choses. Une stratégie utile consiste à utiliser les estimations d’un modèle plus simple pour lequel vos chaînes MCMC convergent déjà.</p>
+<p>Si les problèmes de convergence persistent, il y a souvent un problème avec le modèle lui-même. Un bug dans le code ? Une faute de frappe ? Une erreur dans les équations ? Comme souvent en programmation, le meilleur moyen d’identifier le problème est de réduire la complexité du modèle et de repartir d’un modèle plus simple, jusqu’à ce que vous trouviez ce qui ne va pas.</p>
+<p>Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et le type de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les chapitres suivants.</p>
+</div>
+</div>
+<div id="en-résumé-1" class="section level2" number="2.5">
+<h2>
+<span class="header-section-number">2.5</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-1"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>L’idée des méthodes de Monte Carlo par chaînes de Markov (MCMC) est de simuler des valeurs à partir d’une chaîne de Markov dont la distribution stationnaire est précisément la distribution a posteriori des paramètres qu’on cherche à estimer.</p></li>
+<li><p>En pratique, on lance plusieurs chaînes de Markov en partant de valeurs initiales dispersées.</p></li>
+<li><p>On écarte les premières itérations (phase de pré-chauffage ou burn-in) et on considère que la convergence est atteinte lorsque toutes les chaînes convergent vers le même régime.</p></li>
+<li><p>À partir de là, on fait tourner les chaînes suffisamment longtemps, puis on calcule des estimations Monte Carlo de résumés numériques (par exemple, les moyennes a posteriori ou les intervalles de crédibilité) des paramètres.</p></li>
+<li><p>Evidemment, on n’a pas envie de construire et implémenter à la main les méthodes MCMC à chaque nouvelle analyse, et on verra dans le Chapitre <a href="logiciels.html#logiciels">3</a> comment se faciliter la tâche.</p></li>
+</ul>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="principes.html"><span class="header-section-number">1</span> L’approche bayésienne</a></div>
+<div class="next"><a href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#mcmc"><span class="header-section-number">2</span> Les méthodes MCMC</a></li>
+<li><a class="nav-link" href="#introduction-2"><span class="header-section-number">2.1</span> Introduction</a></li>
+<li><a class="nav-link" href="#application-du-th%C3%A9or%C3%A8me-de-bayes"><span class="header-section-number">2.2</span> Application du théorème de Bayes</a></li>
+<li><a class="nav-link" href="#les-m%C3%A9thodes-de-monte-carlo-par-cha%C3%AEnes-de-markov-mcmc"><span class="header-section-number">2.3</span> Les méthodes de Monte Carlo par chaînes de Markov (MCMC)</a></li>
+<li>
+<a class="nav-link" href="#convergence-diag"><span class="header-section-number">2.4</span> Évaluer la convergence</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#burn-in"><span class="header-section-number">2.4.1</span> Burn-in</a></li>
+<li><a class="nav-link" href="#longueur-de-cha%C3%AEne"><span class="header-section-number">2.4.2</span> Longueur de chaîne</a></li>
+<li><a class="nav-link" href="#et-si-vous-avez-des-probl%C3%A8mes-de-convergence"><span class="header-section-number">2.4.3</span> Et si vous avez des problèmes de convergence ?</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-1"><span class="header-section-number">2.5</span> En résumé</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes/blob/master/02-methodesmcmc.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes/edit/master/02-methodesmcmc.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-06-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>Ce livre a été généré avec le <a class="text-light" href="https://bookdown.org">package R bookdown</a>.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

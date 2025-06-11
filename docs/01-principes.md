@@ -50,7 +50,10 @@ Enfin, il y a le dénominateur $\Pr(\text{données})$, parfois appelée vraisemb
 
 Prenons un exemple concret pour fixer les idées. Je travaille sur le ragondin (*Myocastor coypus*) (Figure \@ref(fig:ragondinos)), un rongeur semi-aquatique originaire d’Amérique du Sud, introduit en Europe pour l’élevage de fourrure. Il est aujourd’hui considéré comme une espèce invasive, en raison des dégâts qu’il occasionne dans les milieux humides (érosion des berges, destruction de la végétation) et de son rôle possible dans la transmission à l'humain de la leptospirose, une infection bactérienne potentiellement sévère, transmise par l'eau. Grâce à sa forte fécondité et à sa bonne adaptation aux climats tempérés, le ragondin a proliféré rapidement.
 
-![(\#fig:ragondinos)Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet.](images/ragondin2.jpg){width=90%}
+<div class="figure" style="text-align: center">
+<img src="images/ragondin2.jpg" alt="Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet." width="90%" />
+<p class="caption">(\#fig:ragondinos)Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet.</p>
+</div>
 
 Une des questions qui m’intéressent est d’estimer la probabilité de survie à l'hiver, les ragondins étant particulièrement sensibles au froid. Pour cela, on équipe plusieurs individus d’une balise GPS au début de l’hiver, disons ici $n = 57$. A la fin de l'hiver, on observe que $y = 19$ ragondins sont encore vivants. L’objectif est d’estimer la probabilité de survie hivernale, que l’on notera $\theta$. Voici les données :
 
@@ -70,7 +73,10 @@ Deuxièmement, nous supposons que tous les individus ont la même probabilité d
 
 Sous ces deux hypothèses, le nombre $y$ d’animaux encore vivants à la fin de l’hiver suit une loi binomiale, avec $\theta$ comme probabilité de succès (survie), et $n$ comme nombre d’essais (individus suivis). On notera $y \sim \text{Bin}(n, \theta)$. La loi binomiale est en fait la somme de plusieurs épreuves de Bernoulli indépendantes, comme dans l’exemple classique du pile ou face. Je donne des exemples de tirages Bernoulli et binomiaux dans la Figure \@ref(fig:bernoulli-binomiale). À chaque lancé, ici le relâché d'un ragondin équipé d’un GPS en début d'hiver, on suppose une probabilité $\theta$ de succès, c’est-à-dire de survivre à l’hiver, et d'échec, c'est-à-dire de mourir de froid. Si toutes ces épreuves sont indépendantes et ont la même probabilité de succès (nos hypothèses), alors le nombre de succès ou de ragondins vivants en sortie d'hiver suit une loi binomiale (voir aussi le Chapitre \@ref(glms)).
 
-![(\#fig:bernoulli-binomiale) Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations. On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\).](01-principes_files/figure-docx/bernoulli-binomiale-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="01-principes_files/figure-html/bernoulli-binomiale-1.png" alt=" Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations. On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\)." width="90%" />
+<p class="caption">(\#fig:bernoulli-binomiale) Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations. On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\).</p>
+</div>
 
 ## Le maximum de vraisemblance {#maxvrais}
 
@@ -90,7 +96,10 @@ dbinom(x = 0, size = 57, prob = 1 - 0.5)
 
 On peut représenter cette vraisemblance dans `R` comme dans la Figure \@ref(fig:survie-vraisemblance-mle) :
 
-![(\#fig:survie-vraisemblance-mle)Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge.](01-principes_files/figure-docx/survie-vraisemblance-mle-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="01-principes_files/figure-html/survie-vraisemblance-mle-1.png" alt="Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge." width="90%" />
+<p class="caption">(\#fig:survie-vraisemblance-mle)Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge.</p>
+</div>
 
 Notre objectif est de trouver la valeur de $\theta$ qui maximise cette fonction. Autrement dit, on cherche la valeur de survie (sur l’axe des abscisses dans la Figure \@ref(fig:survie-vraisemblance-mle)) qui maximise la vraisemblance (sur l’axe des ordonnées). Cette valeur correspond à l’estimateur du maximum de vraisemblance, souvent noté $\hat{\theta}$. Pour ce faire, il est souvent plus pratique de travailler avec le logarithme de la vraisemblance (la log-vraisemblance) :
 
@@ -142,7 +151,10 @@ $$
 $$
 Vous pouvez oublier ces équations si vous n'êtes pas à l'aise avec. Essayons plutôt de visualiser cette distribution comme dans la Figure \@ref(fig:beta-exemples):
 
-![(\#fig:beta-exemples)Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné.](01-principes_files/figure-docx/beta-exemples-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="01-principes_files/figure-html/beta-exemples-1.png" alt="Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné." width="90%" />
+<p class="caption">(\#fig:beta-exemples)Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné.</p>
+</div>
 
 Chaque panneau de la figure montre la forme d'une loi bêta pour un couple de paramètres $(a, b)$ donné. On peut y observer plusieurs comportements caractéristiques.
 
@@ -165,7 +177,10 @@ $$
 
 Autrement dit, on retrouve donc une loi bêta, avec des paramètres mis à jour $a + y$ et $b + n - y$. On dit que la loi binomiale et la loi bêta sont conjuguées : lorsque l'on utilise une loi bêta comme distribution a priori pour un paramètre de probabilité dans un modèle binomial, la loi a posteriori obtenue est également une loi bêta. Si on utilise une loi uniforme a priori (i.e. Beta(1,1)), on obtient que la distribution a posteriori de la survie hivernale est une $\text{Beta}(1+19, 1+57-19) = \text{Beta}(20, 39)$. Au passage, la distribution a posteriori est connue, ce qui facilite grandement les calculs et leur interprétation. Par exemple, on sait que la moyenne de la $\text{Beta}(a, b)$ est $\displaystyle \frac{a}{a+b}$, soit  $\frac{20}{59} \approx 0.339$. On peut comparer cette valeur à l'estimateur du maximum de vraisemblance $19/57 \approx 0.333$. On peut également visualiser la distribution a posteriori comme dans la Figure \@ref(fig:posterior-survie), puisqu'on connait l'équation de la densité d'une loi Bêta :
 
-![(\#fig:posterior-survie)Distribution a priori uniforme (noir) et distribution a posteriori (rouge) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance.](01-principes_files/figure-docx/posterior-survie-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="01-principes_files/figure-html/posterior-survie-1.png" alt="Distribution a priori uniforme (noir) et distribution a posteriori (rouge) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance." width="90%" />
+<p class="caption">(\#fig:posterior-survie)Distribution a priori uniforme (noir) et distribution a posteriori (rouge) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance.</p>
+</div>
 
 Plus généralement, lorsque l'on dispose de suffisamment de données, les estimateurs bayésien et fréquentiste ont tendance à être très proches. Intuitivement, les données finissent par « dominer » l'information a priori. Grossièrement, le mode de la distribution a posteriori (la valeur pour laquelle la densité est maximale) correspond exactement à l’estimateur du maximum de vraisemblance.
 

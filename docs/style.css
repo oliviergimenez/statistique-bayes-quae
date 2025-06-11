@@ -1,0 +1,66 @@
+/* Cache le titre "Table of contents" dans la barre latérale du livre */
+.sidebar-book nav[aria-label="Table of contents"] > h2 {
+  display: none;
+}
+
+/* Ajoute de l’espace en haut (ajustez la valeur à votre goût) */
+.sidebar-book nav[aria-label="Table of contents"] {
+  padding-top: 0.75rem;   /* 0.75 rem ≈ 12 px sur la base par défaut */
+}
+
+/* Cache le titre "On this page" dans la barre de droite */
+.sidebar-chapter nav[aria-label="On this page"] > h2 {
+  display: none;
+}
+
+/* (optionnel) ajuster l’espace */
+.sidebar-chapter nav[aria-label="On this page"] {
+  padding-top: 0.5rem;
+}
+
+#search::placeholder { color: transparent; }
+
+#search {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.398 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zM6.5 11a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z'/%3E%3C/svg%3E")
+    no-repeat 0.75rem center;
+  background-size: 1rem 1rem;
+  padding-left: 2.25rem;
+}
+
+/* Cache tous les liens "source / edit" */
+#book-repo,
+#book-source,
+#book-edit {
+  display: none !important;
+}
+
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+.rmdnote, .rmdtip, .rmdwarning {
+  padding: 1em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #f5f5f5 5px center/3em no-repeat;
+}
+
+.rmdnote {
+  background-image: url("images/note.png");
+}
+.rmdtip {
+  background-image: url("images/tip.png");
+}
+.rmdwarning {
+  background-image: url("images/warning.png");
+}

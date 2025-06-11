@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.69      0.28    -1.25    -0.15 1.00     1551     1997
+#> Intercept    -0.70      0.28    -1.24    -0.18 1.00     1947     2993
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -79,7 +79,7 @@ Cette commande affiche un tableau récapitulatif des estimations postérieures p
 - Le diagnostic de convergence `Rhat`.
 - Et `Bulk_ESS` la taille effective d'échantillon (`Tail_ESS` est une autre mesure de la taille effective d'échantillon qu'on n'utilisera pas ici). 
 
-La moyenne a posteriori vaut -0.6858558 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
+La moyenne a posteriori vaut -0.6980814 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
 
 ``` r
 draws_fit <- as_draws_matrix(bayes.brms)
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3378754
+#> [1] 0.3350083
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1478069 0.2939825 0.3379197 0.3785993 0.5916079
+#> 0.1246799 0.2919122 0.3327997 0.3748815 0.5883135
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,7 +109,7 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.338  0.338 0.0624 0.0628 0.238 0.441  1.00    1551.    1997.
+#> 1 Intercept 0.335  0.333 0.0604 0.0615 0.239 0.440  1.00    1947.    2993.
 ```
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
@@ -121,7 +121,10 @@ draws_fit %>%
   labs(x = "Probabilité de survie", y = "Fréquence")
 ```
 
-![(\#fig:hist-surviebrms)Histogramme de la distribution a posteriori de la probabilité de survie (\(\theta\)) sur l'échelle logit.](03-miseenoeuvrepratique_files/figure-docx/hist-surviebrms-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="03-miseenoeuvrepratique_files/figure-html/hist-surviebrms-1.png" alt="Histogramme de la distribution a posteriori de la probabilité de survie (\(\theta\)) sur l'échelle logit." width="90%" />
+<p class="caption">(\#fig:hist-surviebrms)Histogramme de la distribution a posteriori de la probabilité de survie (\(\theta\)) sur l'échelle logit.</p>
+</div>
 
 Dans `brms`, on peut évaluer la convergence des chaînes MCMC (Figure \@ref(fig:trace-surviebrms)) :
 
@@ -129,7 +132,10 @@ Dans `brms`, on peut évaluer la convergence des chaînes MCMC (Figure \@ref(fig
 plot(bayes.brms)
 ```
 
-![(\#fig:trace-surviebrms)Trace plot et densité a posteriori de la probabilité de survie (\(\theta\)).](03-miseenoeuvrepratique_files/figure-docx/trace-surviebrms-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="03-miseenoeuvrepratique_files/figure-html/trace-surviebrms-1.png" alt="Trace plot et densité a posteriori de la probabilité de survie (\(\theta\))." width="90%" />
+<p class="caption">(\#fig:trace-surviebrms)Trace plot et densité a posteriori de la probabilité de survie (\(\theta\)).</p>
+</div>
 
 Ce graphique affiche les trace plots (à droite) ainsi que les densités a posteriori (à gauche). 
 Au passage, pour déterminer de la longueur de la période de pré-chauffage ou burn-in, il suffit de faire tourner `brms` avec `warmup = 0` pour quelques centaines ou milliers d'itérations et d'examiner la trace du paramètre pour décider du nombre d'itérations à utiliser pour atteindre la convergence.  
@@ -144,7 +150,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.934  0.922 0.165 0.157 0.697  1.22  1.00    1551.    1997.
+#> 1 Intercept 0.926  0.909 0.158 0.151 0.699  1.22  1.00    1947.    2993.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -157,7 +163,10 @@ lambda %>%
   labs(x = "Espérance de vie")
 ```
 
-![(\#fig:hist-life)Histogramme de la distribution a posteriori de l'espérance de vie.](03-miseenoeuvrepratique_files/figure-docx/hist-life-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="03-miseenoeuvrepratique_files/figure-html/hist-life-1.png" alt="Histogramme de la distribution a posteriori de l'espérance de vie." width="90%" />
+<p class="caption">(\#fig:hist-life)Histogramme de la distribution a posteriori de l'espérance de vie.</p>
+</div>
 
 Il y a tout un tas de paramètres qui sont fixés par défaut dans `brms`, il est important d'en être conscient. Ca concerne les priors en particulier. Dans `brms`, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :
 
@@ -202,7 +211,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.68      0.28    -1.24    -0.15 1.00     1932     2284
+#> Intercept    -0.68      0.27    -1.23    -0.15 1.00     1706     2026
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential

@@ -32,7 +32,10 @@ En pratique, une stratégie prudente consiste à commencer avec un prior faiblem
 
 Revenons à notre exemple fil rouge sur la survie des ragondins. Examinons comment différents choix de priors influencent la distribution a posteriori de cette probabilité de survie. Dans la Figure \@ref(fig:priors-comparaison), on a trois priors de plus en plus informatifs (en colonnes), et deux tailles d'échantillon (en lignes).
 
-![(\#fig:priors-comparaison)Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori.](04-priors_files/figure-docx/priors-comparaison-1.png){width=100%}
+<div class="figure" style="text-align: center">
+<img src="04-priors_files/figure-html/priors-comparaison-1.png" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori." width="100%" />
+<p class="caption">(\#fig:priors-comparaison)Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori.</p>
+</div>
 
 Avec peu de données (ligne du haut), l’effet du prior est visible : la distribution a posteriori de la survie reste proche du prior, en particulier avec la $\text{Beta}(20,1)$ qui tire l'estimation vers des valeurs élevées. Avec plus de données (ligne du bas), la distribution a posteriori est dominée par la vraisemblance : elle se concentre autour de la proportion observée, quel que soit le prior. On observe ainsi un principe fondamental de l'inférence bayésienne : plus les données sont nombreuses et informatives, moins le prior influence les résultats.
 
@@ -122,7 +125,10 @@ Imaginons maintenant qu'on a des données limitées. Que se passe‑t‑il si l�
 
 Cette fois, le prior informatif fait une vraie différence. On réduit la largeur de l’intervalle de près de 50%, tout en ramenant l’estimation moyenne vers une valeur plus réaliste pour un passereau. On note aussi que l’estimation postérieure du modèle B avec 3 années de données est proche de celle obtenue avec 7 années (Figure \@ref(fig:comparaison-prior-survie)). 
 
-![(\#fig:comparaison-prior-survie)Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57).](04-priors_files/figure-docx/comparaison-prior-survie-1.png){width=100%}
+<div class="figure" style="text-align: center">
+<img src="04-priors_files/figure-html/comparaison-prior-survie-1.png" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57)." width="100%" />
+<p class="caption">(\#fig:comparaison-prior-survie)Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57).</p>
+</div>
 
 Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain.
 
@@ -158,10 +164,10 @@ On peut vérifier que cette distribution bêta a bien pour moyenne et écart-typ
 ech_prior <- rbeta(n = 10000, shape1 = 24.3, shape2 = 18.3)
 # on calcule la moyenne empirique des tirages (doit approcher 0.57)
 mean(ech_prior)
-#> [1] 0.570905
+#> [1] 0.5707124
 # on calcule l'écart-type empirique des tirages (doit approcher 0.075)
 sqrt(var(ech_prior))
-#> [1] 0.0749117
+#> [1] 0.07465416
 ```
 
 On peut donc adopter un prior \(\text{Beta}(a=24.3,\,b=18.3)\) pour tenir compte de l'information moyenne et sa variabilité obtenue par la relation allométrique survie-masse. 
@@ -208,7 +214,10 @@ pnorm(c(-0.15, 0.25), mean = mu, sd = sigma)
 
 Visuellement, la Figure \@ref(fig:prior-normal-viz) représente la densité d'une loi normale avec une moyenne $\mu=0.05$ et un écart-type $\sigma=0.156$. L'intervalle en bleu clair correspond à l'intervalle crédible central à 80%, c’est-à-dire l'intervalle [−0.15; 0.25] qui contient 80% de la masse de probabilité. Les lignes pointillées grises indiquent les bornes de cet intervalle, tandis que la ligne en pointillés noirs marque la position de la moyenne. On observe que, grâce à la symétrie de la loi normale, l’intervalle est centré autour de la moyenne, et que 10% de la masse est située de chaque côté en dehors de cet intervalle.
 
-![(\#fig:prior-normal-viz)Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25.](04-priors_files/figure-docx/prior-normal-viz-1.png){width=100%}
+<div class="figure" style="text-align: center">
+<img src="04-priors_files/figure-html/prior-normal-viz-1.png" alt="Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25." width="100%" />
+<p class="caption">(\#fig:prior-normal-viz)Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25.</p>
+</div>
 
 ## Attention aux priors dits non-informatifs {#surprise}
 
@@ -238,7 +247,10 @@ prior2 <- plogis(logit_prior2)
 
 Ici la distribution induite sur $\theta$ est uniforme, couvrant surtout la plage de valeurs entre 0.05 et 0.95 comme on peut le voir dans la Figure \@ref(fig:prior-combined-ggplot) (panneau de droite), ce qui reflète mieux un manque d'information sur $\theta$. Ce deuxième choix est le bon, on parle de priors faiblement informatifs (ou weakly informative). 
 
-![(\#fig:prior-combined-ggplot)Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \).](04-priors_files/figure-docx/prior-combined-ggplot-1.png){width=100%}
+<div class="figure" style="text-align: center">
+<img src="04-priors_files/figure-html/prior-combined-ggplot-1.png" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \)." width="100%" />
+<p class="caption">(\#fig:prior-combined-ggplot)Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \).</p>
+</div>
 
 Il existe aussi des priors invariants, c’est-à-dire dont la forme tient compte de l’échelle du paramètre. Le prior de Jeffreys en est un exemple : il maximise l’information apportée par les données, tout en restant invariant par reparamétrisation. Par exemple, pour une probabilité \(\theta\), le prior de Jeffreys est $\text{Beta}(0.5, 0.5)$. Ce prior est moins plat qu'une uniforme $\text{Beta}(1, 1)$. Il est souvent utilisé lorsqu’on souhaite une approche objective, sans introduire d’information subjective. En pratique toutefois, le prior de Jeffreys est difficile à calculer, et on privilégiera l'approche par simulations pour s'assurer que les paramètres transformés ont des priors raisonnables. 
 

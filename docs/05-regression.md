@@ -47,7 +47,10 @@ data <- data.frame(y = y, x = x)
 ```
 
 La Figure \@ref(fig:donnees-simulees) ci-dessous montre les données simulées, ainsi que la droite de régression correspondant au modèle utilisé pour les générer : 
-![(\#fig:donnees-simulees)Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression.](05-regression_files/figure-docx/donnees-simulees-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/donnees-simulees-1.png" alt="Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression." width="90%" />
+<p class="caption">(\#fig:donnees-simulees)Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression.</p>
+</div>
 
 ### L'ajustement avec `brms`
 
@@ -94,7 +97,10 @@ On vérifie que le mixing est bon (Figure \@ref(fig:fig-posterior-regression)) :
 plot(lm.brms)
 ```
 
-![(\#fig:fig-posterior-regression)Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire.](05-regression_files/figure-docx/fig-posterior-regression-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.png" alt="Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire." width="90%" />
+<p class="caption">(\#fig:fig-posterior-regression)Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire.</p>
+</div>
 
 ### Des priors faiblement informatifs {#weakly-informative-priors}
 
@@ -124,10 +130,16 @@ ggplot(lines_df, aes(x = x, y = y, group = line)) +
   labs(x = "x", y = "y")
 ```
 
-![(\#fig:fig-prior-regression-vague)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).](05-regression_files/figure-docx/fig-prior-regression-vague-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/fig-prior-regression-vague-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100)." width="90%" />
+<p class="caption">(\#fig:fig-prior-regression-vague)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).</p>
+</div>
 
 On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour le poids. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). On fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
-![(\#fig:fig-prior-regression)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).](05-regression_files/figure-docx/fig-prior-regression-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%" />
+<p class="caption">(\#fig:fig-prior-regression)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).</p>
+</div>
 
 On obtient des valeurs plus raisonnables pour le poids des ragondins qui dépassent rarement 10 kilogrammes. Il y a aussi un avantage numérique à utiliser des priors faiblement informatifs, ils aident les méthodes MCMC à ne pas se perdre dans l'espace de toutes les valeurs possibles pour les paramètres à estimer, et leur permettent de se focaliser sur les valeurs réalistes de ces paramètres. En faisant ça, vous avez peut-être l'impression qu'on utilise les données pour construire les priors, alors qu'on a dit que le prior devait refléter l'information disponible avant de voir les données. C'est l'occasion de préciser un peu ce point. L'important est surtout que le prior représente l'information indépendante des données qui sont utilisées dans la vraisemblance. 
 
@@ -139,7 +151,10 @@ Une alternative plus souple et plus réaliste consiste à utiliser une loi expon
 
 Par défaut, on prend souvent $\lambda = 1$. Avec $\lambda = 1$, la moyenne et l’écart-type de cette loi sont tous deux égaux à $1$, ce qui induit une a priori modeste mais non restrictive (Figure \@ref(fig:fig-prior-sigma)). 
 
-![(\#fig:fig-prior-sigma)Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde.](05-regression_files/figure-docx/fig-prior-sigma-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/fig-prior-sigma-1.png" alt="Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde." width="90%" />
+<p class="caption">(\#fig:fig-prior-sigma)Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde.</p>
+</div>
 
 On peut formaliser ce modèle comme suit : 
 \begin{align}
@@ -202,7 +217,10 @@ summary(lm.brms)
 Et pour finir, on peut comparer avec l'ajustement par maximum de vraisemblance qu'on obtient simplement avec la commande `lm(y ~ x, data = data)`, tout est dans la Figure \@ref(fig:comparaison-methodes) :
 
 
-![(\#fig:comparaison-methodes)Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.](05-regression_files/figure-docx/comparaison-methodes-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/comparaison-methodes-1.png" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%" />
+<p class="caption">(\#fig:comparaison-methodes)Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.</p>
+</div>
 
 Les moyennes a posteriori obtenues avec `brms` sont proches des estimations par maximum de vraisemblance pour les deux paramètres de régression. Les intervalles de crédibilité obtenus avec `brms` et l'intervalle de confiance obtenu par maximum de vraisemblance englobent tous les vraies valeurs des paramètres qui ont servi à simuler les données.  
 
@@ -251,7 +269,10 @@ ggplot(data, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
-![(\#fig:brms-fit-plot)Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.](05-regression_files/figure-docx/brms-fit-plot-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/brms-fit-plot-1.png" alt="Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%" />
+<p class="caption">(\#fig:brms-fit-plot)Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.</p>
+</div>
 
 Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre \@ref(glms)), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L'idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.
 
@@ -261,7 +282,10 @@ Dans `brms`, il suffit de faire :
 pp_check(lm.brms)
 ```
 
-![(\#fig:ppcheck-brms)Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.](05-regression_files/figure-docx/ppcheck-brms-1.png){width=90%}
+<div class="figure" style="text-align: center">
+<img src="05-regression_files/figure-html/ppcheck-brms-1.png" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%" />
+<p class="caption">(\#fig:ppcheck-brms)Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.</p>
+</div>
 
 La fonction `pp_check()` génère des graphiques de posterior predictive checks (Figure \@ref(fig:ppcheck-brms)). Elle compare les données observées à des données simulées à partir du modèle ajusté. Si le modèle est bien ajusté aux données, alors on devrait pouvoir l'utiliser pour générer des données qui ressemblent aux données observées. Par conséquent, si les courbes simulées recouvrent bien les observations, cela indique que le modèle capte correctement la structure des données. Dans le cas contraire, cela peut suggérer un problème de spécification du modèle, par exemple un lien ou une famille de distribution inadaptée (voir Chapitre \@ref(glms)).  
 

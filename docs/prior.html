@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapitre 4 Les distributions a priori | Statistique bayésienne avec R</title>
+<meta name="author" content="Olivier Gimenez">
+<meta name="description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
+<meta name="generator" content="bookdown 0.43 with bs4_book()">
+<meta property="og:title" content="Chapitre 4 Les distributions a priori | Statistique bayésienne avec R">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/prior.html">
+<meta property="og:description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapitre 4 Les distributions a priori | Statistique bayésienne avec R">
+<meta name="twitter:description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Roboto-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Langue française --><script src="assets/lang-fr.js"></script><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-MTKSQWQE5K"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MTKSQWQE5K');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+          margin-bottom: 0em;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Statistique bayésienne avec R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Introduction</a></li>
+<li><a class="" href="principes.html"><span class="header-section-number">1</span> L’approche bayésienne</a></li>
+<li><a class="" href="mcmc.html"><span class="header-section-number">2</span> Les méthodes MCMC</a></li>
+<li><a class="" href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></li>
+<li><a class="active" href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></li>
+<li><a class="" href="lms.html"><span class="header-section-number">5</span> La régression</a></li>
+<li><a class="" href="glms.html"><span class="header-section-number">6</span> Modèles linéaires généralisés, et généralisés mixtes</a></li>
+<li><a class="" href="conclusions.html">Conclusions</a></li>
+<li><a class="" href="r%C3%A9f%C3%A9rences.html">Références</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="prior" class="section level1" number="4">
+<h1>
+<span class="header-section-number">Chapitre 4</span> Les distributions a priori<a class="anchor" aria-label="anchor" href="#prior"><i class="fas fa-link"></i></a>
+</h1>
+<div id="introduction-4" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction-4"><i class="fas fa-link"></i></a>
+</h2>
+<p>Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors interagissent avec les données via le théorème de Bayes pour produire la distribution a posteriori, et comment cette influence varie selon la quantité d’information apportée par les données. Nous apprendrons également à intégrer des informations extérieures pertinentes issues d’expertises ou d’études antérieures, et à évaluer de manière critique nos choix a priori à l’aide de simulations.</p>
+</div>
+<div id="roleprior" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> Le rôle du prior<a class="anchor" aria-label="anchor" href="#roleprior"><i class="fas fa-link"></i></a>
+</h2>
+<p>En statistique bayésienne, le prior joue un rôle essentiel : il traduit nos connaissances, nos incertitudes ou, au contraire, notre absence d’information sur les paramètres d’un modèle. Bien choisir ses priors est donc une étape clé de toute analyse bayésienne. Pourquoi utiliser un prior ?</p>
+<ul>
+<li><p>Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on partait de rien. Nous verrons un exemple dans la Section <a href="prior.html#informativeprior">4.4</a>.</p></li>
+<li><p>Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.</p></li>
+<li><p>Pour encadrer les modèles complexes : dans les modèles mixtes, ou en présence de paramètres difficilement estimables, les priors permettent de borner l’espace des solutions à des valeurs plausibles et d’éviter des estimations aberrantes. Par exemple, dans un modèle mixte (voir Chapitre <a href="glms.html#glms">6</a>) où l’on estime la variance entre groupes ou modalités d’un effet, l’absence de prior peut entraîner des valeurs irréalistes ou des instabilités numériques. Un prior faiblement informatif peut aider dans cette situation.</p></li>
+<li><p>Pour prévenir le sur-ajustement : dans les modèles comportant de nombreuses variables explicatives, les priors jouent un rôle de régularisation en pénalisant les effets peu importants. Par exemple, dans une régression incluant de nombreuses covariables, un prior du type <span class="math inline">\(N(0,1.5^2)\)</span> empêche le modèle d’attribuer des effets trop forts à des variables peu informatives, réduisant ainsi le risque de sur-ajustement.</p></li>
+</ul>
+<!-- - Laisser les données dominer quand elles sont nombreuses : à l’inverse, lorsqu’on dispose d’un grand nombre d’observations, le prior a peu d’effet : la vraisemblance devient prédominante dans le calcul de la distribution a posteiori. Dans ces cas, le choix du prior devient moins critique. --><p>Le choix d’un prior dépend directement du contexte et de la question scientifique.</p>
+<ul>
+<li><p>Un prior non-informatif vise à exprimer un manque de connaissance : il est souvent utilisé lorsqu’on ne veut pas introduire d’hypothèses fortes. En pratique, cela se traduit par des distributions larges ou uniformes. Mais attention : même un prior apparemment vague peut être informatif une fois transformé sur l’échelle du modèle, comme on le verra dans la Section <a href="prior.html#surprise">4.5</a>.</p></li>
+<li><p>Un prior informatif reflète une connaissance crédible et externe au jeu de données analysé : il peut provenir d’une synthèse bibliographique, d’une expérience passée ou de l’avis d’un spécialiste. Il a pour avantage de réduire l’incertitude sur les paramètres, surtout avec peu de données. On verra un exemple dans la Section <a href="prior.html#informativeprior">4.4</a>.</p></li>
+<li><p>Un prior faiblement informatif (ou weakly informative) est un peu un compromis entre les priors non-informatifs et informatifs. L’idée est d’exclure des valeurs manifestement aberrantes ou incompatibles avec ce que l’on sait du phénomène étudié, tout en laissant suffisamment de liberté au modèle pour apprendre des données. Ce type de prior est utilisé notamment dans <code>brms</code>. On verra un exemple dans le Chapitre <a href="glms.html#glms">6</a> qui suit.</p></li>
+</ul>
+<p>En pratique, une stratégie prudente consiste à commencer avec un prior faiblement informatif, comme une loi normale centrée avec une variance modérée, puis à tester des alternatives plus informatives (ou plus vagues) pour examiner l’impact sur les résultats a posteriori. C’est l’idée de l’analyse de sensibilité qu’on développe dans la Section <a href="prior.html#sensibilite">4.3</a>.</p>
+</div>
+<div id="sensibilite" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> Sensibilité au prior<a class="anchor" aria-label="anchor" href="#sensibilite"><i class="fas fa-link"></i></a>
+</h2>
+<p>Revenons à notre exemple fil rouge sur la survie des ragondins. Examinons comment différents choix de priors influencent la distribution a posteriori de cette probabilité de survie. Dans la Figure <a href="prior.html#fig:priors-comparaison">4.1</a>, on a trois priors de plus en plus informatifs (en colonnes), et deux tailles d’échantillon (en lignes).</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:priors-comparaison"></span>
+<img src="04-priors_files/figure-html/priors-comparaison-1.png" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori." width="100%"><p class="caption">
+Figure 4.1: Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori.
+</p>
+</div>
+<p>Avec peu de données (ligne du haut), l’effet du prior est visible : la distribution a posteriori de la survie reste proche du prior, en particulier avec la <span class="math inline">\(\text{Beta}(20,1)\)</span> qui tire l’estimation vers des valeurs élevées. Avec plus de données (ligne du bas), la distribution a posteriori est dominée par la vraisemblance : elle se concentre autour de la proportion observée, quel que soit le prior. On observe ainsi un principe fondamental de l’inférence bayésienne : plus les données sont nombreuses et informatives, moins le prior influence les résultats.</p>
+<!-- Prior Beta(2, 2) : ici, on suppose une connaissance initiale centrée sur 0.5, avec plus de poids au centre qu’aux extrêmes. Cette légère conviction pousse la postérieure un peu vers le centre, mais l’impact reste limité. Encore une fois, les données ont suffisamment de poids pour atténuer l'effet du prior. -->
+<!-- Prior Beta(20, 1) : ce prior très informatif traduit une forte conviction préalable que la survie est élevée (mode ≈ 0.95). Cette croyance contredit les données (qui suggèrent une survie ≈ 0.33), mais la postérieure est néanmoins tirée vers le haut (≈ 0.44). C’est un cas typique où un prior dominateur impose sa structure, même face à un échantillon non négligeable. -->
+<!-- D'abord une $\text{Beta}(0.5,0.5)$. Ce prior est faiblement informatif ; il accorde un léger poids supplémentaire aux valeurs proches de 0 et 1, mais reste relativement non-informatif. Le prior est large, la vraisemblance domine. L’a posteriori est très proche de $\text{Beta}(20,39)$ obtenu avec un prior uniforme. L’influence du prior est donc minime. -->
+<!-- Ensuite considérons un prior modérément informatif $\text{Beta}(2,2)$. Ici, on suppose une connaissance initiale centrée sur 0.5, avec plus de poids au centre qu’aux extrêmes. Le prior contracte légèrement l’a posteriori vers 0.5, mais la différence reste faible grâce à la taille de l’échantillon. -->
+<!-- Passons à un prior fortement informatif $\text{Beta}(20,1)$. Ce prior reflète une forte conviction préalable que la survie est élevée (mode ≈ 0.95). Malgré des données suggérant une survie ≈ 0.33, le prior tire fortement l’a posteriori vers le haut (≈ 0.44). C’est un exemple classique où un prior très informatif domine les données, surtout quand celles‑ci restent relativement limitées. -->
+<p>On peut formaliser les observations faites à la Figure <a href="prior.html#fig:priors-comparaison">4.1</a>. Rappelez-vous que lorsque la vraisemblance est <span class="math inline">\(\text{Bin}(n,\theta)\)</span> avec <span class="math inline">\(y\)</span> succès, et que le prior est une loi <span class="math inline">\(\text{Beta}(a,b)\)</span>, la loi a posteriori est également bêta (conjugaison), et plus exactement <span class="math inline">\(\text{Beta}(a+y,\;b+n-y)\)</span>. Or la moyenne d’une <span class="math inline">\(\text{Beta}(a,b)\)</span> est <span class="math inline">\(\displaystyle \frac{a}{a+b}\)</span>, et donc la moyenne de la distribution a posteriori <span class="math inline">\(\text{Beta}(a+y,\;b+n-y)\)</span> est <span class="math inline">\(\displaystyle \frac{a+y}{a+b+n}\)</span> qui peut se réécrire comme une moyenne pondérée entre la moyenne de la distribution a priori <span class="math inline">\(\mu_{prior} = \displaystyle \frac{a}{a+b}\)</span> et la proportion observée <span class="math inline">\(y/n\)</span> qui n’est autre que l’estimateur du maximum de vraisemblance <span class="math inline">\(\hat{\theta}\)</span>, avec le poids <span class="math inline">\(w = \displaystyle \frac{n}{a+b+n}\)</span>. Autrement dit la moyenne de la distribution a posteriori vaut <span class="math inline">\((1-w)\mu_{prior} + w \hat{\theta}\)</span>. Ainsi, quand l’échantillon de taille <span class="math inline">\(n\)</span> est grand, <span class="math inline">\(w\)</span> tend vers 1, et la moyenne a posteriori se rapproche de l’estimateur du maximum de vraisemblance. À l’inverse, pour un petit échantillon ou un prior très informatif (la somme <span class="math inline">\(a+b\)</span> est grande, voir Figure <a href="principes.html#fig:beta-exemples">1.4</a>), <span class="math inline">\(w\)</span> est petit, et le prior tire d’avantage l’estimation. En résumé, quand les données sont limitées, on s’appuie d’avantage sur le prior ; quand elles sont riches, on laisse parler la vraisemblance.</p>
+<p>En conclusion, c’est toujours une bonne idée de faire ce genre d’analyse de sensibilité. En comparant les résultats obtenus avec différents priors (non-informatif, peu informatif, informatif), on peut s’assurer que les conclusions ne dépendent pas excessivement des choix a priori. Si c’est le cas, pas de panique, ça veut simplement dire qu’on a peu d’informations sur le paramètre en question, et qu’il faut redoubler de prudence et bien réfléchir au prior utilisé. On y reviendra dans la suite.</p>
+<!-- Même chose pour la variance : la variance a posteriori est plus faible qu’en MLE seul, car on intègre une information externe (le prior), ce qui stabilise l’estimation — surtout en petit échantillon. -->
+<!-- ```{r priors-comparaison, echo=FALSE, fig.cap = "Comparaison de l'effet de trois priors Beta sur la postérieure d'une probabilité de survie. Le trait noir représente le prior, le trait rouge la distribution a posteriori. Vraisemblance is a Bin(19,57). ", out.width = "100%"} -->
+<!-- library(ggplot2) -->
+<!-- library(patchwork) -->
+<!-- x <- seq(0, 1, length.out = 200) -->
+<!-- # Fonction pour créer un panneau avec prior et posterior affichés -->
+<!-- make_plot <- function(a, b, y, n) { -->
+<!--   post_a <- a + y -->
+<!--   post_b <- b + n - y -->
+<!--   titre <- sprintf("Prior Beta(%g, %g)\nPosterior Beta(%g, %g)", a, b, post_a, post_b) -->
+<!--   df <- data.frame( -->
+<!--     theta = rep(x, 2), -->
+<!--     density = c(dbeta(x, post_a, post_b), dbeta(x, a, b)), -->
+<!--     dist = rep(c("Posterior", "Prior"), each = length(x)) -->
+<!--   ) -->
+<!--   ggplot(df, aes(x = theta, y = density, colour = dist)) + -->
+<!--     geom_line(size = 1.2) + -->
+<!--     scale_colour_manual(values = c("Posterior" = "red", "Prior" = "black")) + -->
+<!--     labs(x = expression(theta), y = "Densité", title = titre, colour = NULL) + -->
+<!--     theme_minimal(base_size = 14) + -->
+<!--     theme(legend.position = "top", -->
+<!--           plot.title = element_text(size = 13, hjust = 0.5, lineheight = 1.1)) -->
+<!-- } -->
+<!-- # Créer les 3 panneaux -->
+<!-- p1 <- make_plot(0.5, 0.5, y = 19, n = 57) -->
+<!-- p2 <- make_plot(2, 2, y = 19, n = 57) -->
+<!-- p3 <- make_plot(20, 1, y = 19, n = 57) -->
+<!-- # Assembler -->
+<!-- (p1 | p2 | p3) + plot_layout(guides = "collect") & theme(legend.position = "top") -->
+<!-- ``` -->
+</div>
+<div id="informativeprior" class="section level2" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> Comment intégrer l’information a priori ?<a class="anchor" aria-label="anchor" href="#informativeprior"><i class="fas fa-link"></i></a>
+</h2>
+<div id="méta-analyse" class="section level3" number="4.4.1">
+<h3>
+<span class="header-section-number">4.4.1</span> Méta-analyse<a class="anchor" aria-label="anchor" href="#m%C3%A9ta-analyse"><i class="fas fa-link"></i></a>
+</h3>
+<p>Repartons de notre exemple fil rouge sur l’estimation d’une probabilité de survie, mais en le complexifiant légèrement pour tenir compte d’un problème fréquent lorsqu’on étudie des populations animales : la détection imparfaite des individus. En effet, selon leur comportement ou les conditions de terrain, un animal peut très bien être vivant et présent, mais ne pas être détecté au moment de l’échantillonnage. Pour corriger ce biais, on utilise souvent des protocoles de capture–recapture, qui reposent sur l’identification individuelle des animaux, grâce à une bague, un motif de pelage, un profil génétique, etc.</p>
+<p>Un individu peut ainsi être détecté (1) ou pas (0), et on code par exemple 101 qui signifie : vu la première année, manqué la seconde, puis revu la troisième. Dans le modèle le plus simple, on suppose une probabilité de survie <span class="math inline">\(\theta\)</span> constante et une probabilité de détection <span class="math inline">\(p\)</span> constante. La vraisemblance pour l’historique 101 est donc : <span class="math inline">\(\Pr(101)=\theta\,(1-p)\,\theta\,p\)</span>. Pour obtenir la vraisemblance complète, on fait ce calcul pour chaque individu et on suppose que tous partagent les mêmes <span class="math inline">\(\theta\)</span> et <span class="math inline">\(p\)</span>, et qu’ils sont indépendants.</p>
+<p>Pour changer des ragondins, intéressons-nous au Cincle plongeur (<em>Cinclus cinclus</em>) un oiseau étudié pendant plus de 40 ans par Gilbert Marzolin, un professeur de mathématiques passionné d’ornithologie avec qui j’ai eu la chance de travailler. Nous disposons ici de données de capture–recapture sur 7 ans (1981–1987) pour plus de 200 oiseaux.</p>
+<p>On va démarrer par un prior non-informatif sur la probabilité de survie, au hasard une <span class="math inline">\(\text{Beta}(1,1)\)</span>. Ce sera notre modèle A. Comme prior alternatif, on peut s’appuyer sur des connaissances accumulées pour des espèces similaires. Chez les passereaux, on observe par exemple une relation entre la masse corporelle et la probabilité de survie : en moyenne, les oiseaux plus lourds vivent plus longtemps. Cette relation dite allométrique a été quantifiée par <span class="citation">McCarthy (<a href="r%C3%A9f%C3%A9rences.html#ref-mccarthy2007">2007</a>)</span> grâce à une régression linéaire (voir Chapitre <a href="lms.html#lms">5</a>), à partir des données de survie et de masse pour 27 espèces de passereaux européens. En utilisant cette régression, et sachant que le cincle pèse en moyenne 59.8 grammes, on peut prédire sa probabilité de survie annuelle. Le modèle fournit ainsi une estimation de 0.57 avec une erreur standard de 0.075. Ces valeurs nous permettent de définir un prior informatif, sous la forme d’une loi normale centrée en 0.57 et de variance <span class="math inline">\(0.075^2\)</span>. Ce sera notre modèle B.</p>
+<p>On obtient ainsi les résultats suivants :</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="11%">
+<col width="21%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Modèle</th>
+<th>Prior pour <span class="math inline">\(\theta\)</span>
+</th>
+<th>survie moy. a posteriori</th>
+<th>intervalle crédibilité 95%</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>Beta(1,1)</td>
+<td>0.56</td>
+<td>[0.51 ; 0.61]</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>N(0.57, 0.075²)</td>
+<td>0.56</td>
+<td>[0.52 ; 0.61]</td>
+</tr>
+</tbody>
+</table></div>
+<p>Avec un jeu de données riche (7 années), l’information contenue dans la vraisemblance domine ; le prior informatif n’apporte presque aucune information, et les deux modèles produisent des résultats très proches.</p>
+<p>Imaginons maintenant qu’on a des données limitées. Que se passe‑t‑il si l’on ne dispose que des trois premières années par exemple ? On refait l’analyse, et les résultats sont maintenant :</p>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="11%">
+<col width="21%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Modèle</th>
+<th>Prior pour <span class="math inline">\(\theta\)</span>
+</th>
+<th>survie moy. a posteriori</th>
+<th>intervalle crédibilité 95%</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>Beta(1,1)</td>
+<td>0.70</td>
+<td>[0.47 ; 0.95]</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>N(0.57, 0.075²)</td>
+<td>0.60</td>
+<td>[0.48 ; 0.72]</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cette fois, le prior informatif fait une vraie différence. On réduit la largeur de l’intervalle de près de 50%, tout en ramenant l’estimation moyenne vers une valeur plus réaliste pour un passereau. On note aussi que l’estimation postérieure du modèle B avec 3 années de données est proche de celle obtenue avec 7 années (Figure <a href="prior.html#fig:comparaison-prior-survie">4.2</a>).</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:comparaison-prior-survie"></span>
+<img src="04-priors_files/figure-html/comparaison-prior-survie-1.png" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57)." width="100%"><p class="caption">
+Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57).
+</p>
+</div>
+<p>Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l’allongement des protocoles de terrain.</p>
+</div>
+<div id="méthode-du-moment-matching" class="section level3" number="4.4.2">
+<h3>
+<span class="header-section-number">4.4.2</span> Méthode du moment-matching<a class="anchor" aria-label="anchor" href="#m%C3%A9thode-du-moment-matching"><i class="fas fa-link"></i></a>
+</h3>
+<p>Dans l’exemple du cincle, on a utilisé une distribution normale comme prior informatif pour un paramètre qui se trouve être une probabilité. Or la normale peut prendre des valeurs négatives ou plus grande que 1, ce qui n’est pas souhaitable pour une probabilité. Dans l’exemple, le prior informatif <span class="math inline">\(N(0.57, 0.075^2)\)</span> est en moyenne entre 0 et 1 avec une petite variance, donc peu de chance que cela tourne mal. Vous pouvez vous en rendre compte en simulant des données avec <code>R</code> et la commande <code>summary(rnorm(n = 100, mean = 0.57, sd = 0.075))</code>. Malgré tout, ça n’est pas très satisfaisant.</p>
+<p>La bonne nouvelle c’est qu’on peut construire un prior informatif plus adéquat pour une probabilité par la méthode dit du “moment-matching”. La méthode du moment-matching sert à choisir les paramètres d’une loi a priori en les calant sur les moments (souvent la moyenne et la variance) qui traduisent l’information a priori qu’on possède (avant de voir les données).</p>
+<p>Lorsque l’information a priori est disponible sous forme d’une moyenne <span class="math inline">\(\mu\)</span> et d’un écart‑type <span class="math inline">\(\sigma\)</span>, on peut transformer ces moments en paramètres <span class="math inline">\(a,b\)</span> d’une distribution bêta. Pour rappel, la moyenne et la variance d’une bêta de paramètres <span class="math inline">\(a\)</span> et <span class="math inline">\(b\)</span> sont <span class="math inline">\(\mu=\dfrac{a}{a+b}\)</span> et <span class="math inline">\(\sigma^2=\dfrac{ab}{(a+b)^2(a+b+1)}\)</span>. En inversant ces relations on obtient : <span class="math inline">\(a=\displaystyle \Bigl(\frac{1-\mu}{\sigma^2}-\frac{1}{\mu}\Bigr)\mu^2\)</span> et <span class="math inline">\(b=\displaystyle a\Bigl(\frac{1}{\mu}-1\Bigr)\)</span>. Dans notre exemple, on a <span class="math inline">\(\mu=0.57\)</span> et <span class="math inline">\(\sigma=0.075\)</span> dont on peut déduire <span class="math inline">\(a = 24.3\)</span> et <span class="math inline">\(b = 18.3\)</span> avec quelques lignes de code :</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># paramètres de moyenne et d'écart-type souhaités pour la distribution bêta</span></span>
+<span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fl">0.57</span> <span class="co"># moyenne de la probabilité</span></span>
+<span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.075</span> <span class="co"># écart-type sur cette probabilité</span></span>
+<span><span class="co"># formules inverses pour obtenir les paramètres a et b d'une distribution bêta</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">mu</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">sigma</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">mu</span><span class="op">)</span> <span class="op">*</span> <span class="va">mu</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">mu</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># affichage des valeurs de a et b arrondies</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">a</span>, <span class="fl">1</span><span class="op">)</span>, b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">b</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    a    b </span></span>
+<span><span class="co">#&gt; 24.3 18.3</span></span></code></pre></div>
+<p>On peut vérifier que cette distribution bêta a bien pour moyenne et écart-type les valeurs données par la méta-analyse :</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># on génère 10000 valeurs tirées d'une loi Bêta avec les paramètres a = 24.3 et b = 18.3</span></span>
+<span><span class="va">ech_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10000</span>, shape1 <span class="op">=</span> <span class="fl">24.3</span>, shape2 <span class="op">=</span> <span class="fl">18.3</span><span class="op">)</span></span>
+<span><span class="co"># on calcule la moyenne empirique des tirages (doit approcher 0.57)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.5707124</span></span>
+<span><span class="co"># on calcule l'écart-type empirique des tirages (doit approcher 0.075)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">var</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.07465416</span></span></code></pre></div>
+<p>On peut donc adopter un prior <span class="math inline">\(\text{Beta}(a=24.3,\,b=18.3)\)</span> pour tenir compte de l’information moyenne et sa variabilité obtenue par la relation allométrique survie-masse.</p>
+<p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet du poids des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
+<p>On peut commencer par la moyenne <span class="math inline">\(\mu\)</span>. L’intervalle est symétrique, donc on peut déduire directement que la moyenne <span class="math inline">\(\mu\)</span> du prior est le milieu de l’intervalle : <span class="math inline">\(\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05\)</span>.</p>
+<p>Passons à l’écart-type <span class="math inline">\(\sigma\)</span>. L’expert·e affime que 80% des valeurs de <span class="math inline">\(\theta\)</span> sont comprises entre –0.15 et 0.25. Or pour une loi normale, cette proportion s’écrit <span class="math inline">\(\Pr(\mu - z\,\sigma \leq \theta \leq \mu + z \, \sigma) = 0.80\)</span>. Cela signifie que 80% de la masse de la distribution est contenue dans un intervalle centré sur <span class="math inline">\(\mu\)</span> et de largeur <span class="math inline">\(2z\sigma\)</span>. Pour un niveau de 80%, la valeur de <span class="math inline">\(z\)</span> vaut environ 1.2816 (on l’obtient via <code>qnorm(0.90)</code> où 0.90 est le quantile supérieur <span class="math inline">\(1−\alpha/2 = 1-20/2\)</span> avec <span class="math inline">\((1−\alpha)\% = 80\%\)</span> et donc <span class="math inline">\(\alpha = 0.20\)</span>). Finalement, on obtient <span class="math inline">\(\sigma = \displaystyle \frac{0.25-(-0.15)}{2 \times 1.2816} \approx 0.156\)</span>. Voici le calcul dans <code>R</code> :</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># borne inférieure et supérieure données par l’expert·e</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.15</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span>  <span class="fl">0.25</span></span>
+<span></span>
+<span><span class="co"># niveau de confiance exprimé</span></span>
+<span><span class="va">level</span> <span class="op">&lt;-</span> <span class="fl">0.80</span></span>
+<span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">level</span></span>
+<span></span>
+<span><span class="co"># valeur z correspondant à un intervalle de crédibilité à 80 %</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">alpha</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># ≈ 1.2816</span></span>
+<span></span>
+<span><span class="co"># moyenne = centre de l’intervalle</span></span>
+<span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span></span>
+<span></span>
+<span><span class="co"># écart-type déduit de la largeur de l’intervalle</span></span>
+<span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">b</span> <span class="op">-</span> <span class="va">a</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">z</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mu</span></span>
+<span><span class="co">#&gt; [1] 0.05</span></span>
+<span><span class="va">sigma</span></span>
+<span><span class="co">#&gt; [1] 0.1560608</span></span></code></pre></div>
+<p>On conclut que le prior informatif voulu est une <span class="math inline">\(N(\mu=0.05,\sigma=0.156)\)</span>. On peut vérifier que tout s’est bien passé :</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mu</span>    <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
+<span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.1560608</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.15</span>, <span class="fl">0.25</span><span class="op">)</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.09999996 0.90000004</span></span>
+<span><span class="co">#&gt; 0.10 0.90    # Ok : 10 % à gauche, 90 % à droite → 80 % au centre</span></span></code></pre></div>
+<p>Visuellement, la Figure <a href="prior.html#fig:prior-normal-viz">4.3</a> représente la densité d’une loi normale avec une moyenne <span class="math inline">\(\mu=0.05\)</span> et un écart-type <span class="math inline">\(\sigma=0.156\)</span>. L’intervalle en bleu clair correspond à l’intervalle crédible central à 80%, c’est-à-dire l’intervalle [−0.15; 0.25] qui contient 80% de la masse de probabilité. Les lignes pointillées grises indiquent les bornes de cet intervalle, tandis que la ligne en pointillés noirs marque la position de la moyenne. On observe que, grâce à la symétrie de la loi normale, l’intervalle est centré autour de la moyenne, et que 10% de la masse est située de chaque côté en dehors de cet intervalle.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:prior-normal-viz"></span>
+<img src="04-priors_files/figure-html/prior-normal-viz-1.png" alt="Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25." width="100%"><p class="caption">
+Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25.
+</p>
+</div>
+</div>
+</div>
+<div id="surprise" class="section level2" number="4.5">
+<h2>
+<span class="header-section-number">4.5</span> Attention aux priors dits non-informatifs<a class="anchor" aria-label="anchor" href="#surprise"><i class="fas fa-link"></i></a>
+</h2>
+<p>En statistique bayésienne, on utilise souvent des priors non-informatifs. Mais attention, les apparences peuvent être trompeuses, surtout lorsqu’on travaille sur des paramètres définis sur des échelles transformées, comme le logit ou le log dans les modèles linéaires généralisés (Chapitre <a href="glms.html#glms">6</a>). Prenons un exemple courant où l’on modélise une probabilité <span class="math inline">\(\theta\)</span> sur l’échelle logit via un paramètre <span class="math inline">\(\beta\)</span> tel que <span class="math inline">\(\text{logit}(\theta) = \beta\)</span>.</p>
+<p>En pratique, on peut utiliser les simulations pour vérifier que des priors ne réservent pas de mauvaises surprises après transformation, c’est ce qu’on appelle des prior predictive checks. Ca se passe avant même d’ajuster un modèle, et pour ce faire on va :</p>
+<ol style="list-style-type: decimal">
+<li>simuler des valeurs depuis le prior de <span class="math inline">\(\beta\)</span> sur l’échelle logit ;</li>
+<li>appliquer la transformation réciproque du logit pour obtenir <span class="math inline">\(\theta\)</span> ;</li>
+<li>inspecter la distribution a priori induite sur <span class="math inline">\(\theta\)</span> et juger si elle semble réaliste.</li>
+</ol>
+<p>Un premier choix est de prendre comme prior une loi normale avec une grande variance, par exemple <span class="math inline">\(\beta \sim N(0, 10^2)\)</span>. Les étapes 1 et 2 s’obtiennent via :</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">logit_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="co"># simulation</span></span>
+<span><span class="va">prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">logit_prior</span><span class="op">)</span> <span class="co"># transformation</span></span></code></pre></div>
+<p>Le problème est qu’après transformation avec la fonction réciproque du logit, la majorité des valeurs simulées, et donc la probabilité <span class="math inline">\(\theta\)</span>, sont proches de 0 ou de 1 comme on le voit dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de gauche), ce qui favorise de manière implicite des valeurs extrêmes. On passe d’un prior non-informatif sur l’échelle logit à un prior très informatif (sans le vouloir) sur l’échelle naturelle de la probabilité.</p>
+<p>Un autre choix consiste à prendre <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>. Les deux premières étapes de la simulation se résument à :</p>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">logit_prior2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
+<span><span class="va">prior2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">logit_prior2</span><span class="op">)</span></span></code></pre></div>
+<p>Ici la distribution induite sur <span class="math inline">\(\theta\)</span> est uniforme, couvrant surtout la plage de valeurs entre 0.05 et 0.95 comme on peut le voir dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de droite), ce qui reflète mieux un manque d’information sur <span class="math inline">\(\theta\)</span>. Ce deuxième choix est le bon, on parle de priors faiblement informatifs (ou weakly informative).</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:prior-combined-ggplot"></span>
+<img src="04-priors_files/figure-html/prior-combined-ggplot-1.png" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \)." width="100%"><p class="caption">
+Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="math inline">\(\theta = \text{logit}^{-1}(\beta)\)</span> après transformation par la fonction logit réciproque de <span class="math inline">\(\beta \sim N(0, 10^2)\)</span> et <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>.
+</p>
+</div>
+<p>Il existe aussi des priors invariants, c’est-à-dire dont la forme tient compte de l’échelle du paramètre. Le prior de Jeffreys en est un exemple : il maximise l’information apportée par les données, tout en restant invariant par reparamétrisation. Par exemple, pour une probabilité <span class="math inline">\(\theta\)</span>, le prior de Jeffreys est <span class="math inline">\(\text{Beta}(0.5, 0.5)\)</span>. Ce prior est moins plat qu’une uniforme <span class="math inline">\(\text{Beta}(1, 1)\)</span>. Il est souvent utilisé lorsqu’on souhaite une approche objective, sans introduire d’information subjective. En pratique toutefois, le prior de Jeffreys est difficile à calculer, et on privilégiera l’approche par simulations pour s’assurer que les paramètres transformés ont des priors raisonnables.</p>
+</div>
+<div id="en-résumé-3" class="section level2" number="4.6">
+<h2>
+<span class="header-section-number">4.6</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-3"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>Plus les données sont riches, moins le prior influence l’estimation a posteriori.</p></li>
+<li><p>N’hésitez pas à prendre le temps de visualiser vos priors sur l’échelle naturelle des paramètres à l’aide de simulations.</p></li>
+<li><p>Les méthodes de moment-matching offrent un moyen pratique de transformer, d’encoder des connaissances dans les paramètres de distributions qui peuvent servir de priors (bêta ou normale par exemple).</p></li>
+<li><p>Quand utiliser quel type de prior ?</p></li>
+</ul>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="11%">
+<col width="30%">
+<col width="29%">
+<col width="29%">
+</colgroup>
+<thead><tr class="header">
+<th>Type de prior</th>
+<th>Usage recommandé</th>
+<th>Avantages</th>
+<th>Précautions</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Informé</td>
+<td>Quand on dispose d’informations solides (expertise, méta-analyse, etc.)</td>
+<td>Intègre les connaissances disponibles, utile avec peu de données</td>
+<td>Risque de biais si mal calibré</td>
+</tr>
+<tr class="even">
+<td>Faiblement informatif</td>
+<td>Par défaut si l’on souhaite guider l’inférence sans la contraindre</td>
+<td>Protège contre des valeurs aberrantes, améliore la stabilité numérique</td>
+<td>Doit être adapté à l’échelle du paramètre</td>
+</tr>
+<tr class="odd">
+<td>Non-informatif</td>
+<td>Cas exploratoires, ou pour laisser parler les données</td>
+<td>Ne privilégie a priori aucune valeur particulière</td>
+<td>Peut être trompeur sur des échelles transformées (logit, log)</td>
+</tr>
+<tr class="even">
+<td>De référence / Jeffreys</td>
+<td>Quand on recherche une approche invariante (une <span class="math inline">\(\text{Beta}(0.5,0.5)\)</span> dans l’exemple fil rouge)</td>
+<td>Invariant par changement de paramétrisation</td>
+<td>Parfois difficile à calculer ou à interpréter</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></div>
+<div class="next"><a href="lms.html"><span class="header-section-number">5</span> La régression</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#prior"><span class="header-section-number">4</span> Les distributions a priori</a></li>
+<li><a class="nav-link" href="#introduction-4"><span class="header-section-number">4.1</span> Introduction</a></li>
+<li><a class="nav-link" href="#roleprior"><span class="header-section-number">4.2</span> Le rôle du prior</a></li>
+<li><a class="nav-link" href="#sensibilite"><span class="header-section-number">4.3</span> Sensibilité au prior</a></li>
+<li>
+<a class="nav-link" href="#informativeprior"><span class="header-section-number">4.4</span> Comment intégrer l’information a priori ?</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#m%C3%A9ta-analyse"><span class="header-section-number">4.4.1</span> Méta-analyse</a></li>
+<li><a class="nav-link" href="#m%C3%A9thode-du-moment-matching"><span class="header-section-number">4.4.2</span> Méthode du moment-matching</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#surprise"><span class="header-section-number">4.5</span> Attention aux priors dits non-informatifs</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-3"><span class="header-section-number">4.6</span> En résumé</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes/blob/master/04-priors.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes/edit/master/04-priors.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-06-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>Ce livre a été généré avec le <a class="text-light" href="https://bookdown.org">package R bookdown</a>.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

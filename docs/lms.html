@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapitre 5 La régression | Statistique bayésienne avec R</title>
+<meta name="author" content="Olivier Gimenez">
+<meta name="description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
+<meta name="generator" content="bookdown 0.43 with bs4_book()">
+<meta property="og:title" content="Chapitre 5 La régression | Statistique bayésienne avec R">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/lms.html">
+<meta property="og:description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapitre 5 La régression | Statistique bayésienne avec R">
+<meta name="twitter:description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Roboto-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Langue française --><script src="assets/lang-fr.js"></script><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-MTKSQWQE5K"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MTKSQWQE5K');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+          margin-bottom: 0em;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Statistique bayésienne avec R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Introduction</a></li>
+<li><a class="" href="principes.html"><span class="header-section-number">1</span> L’approche bayésienne</a></li>
+<li><a class="" href="mcmc.html"><span class="header-section-number">2</span> Les méthodes MCMC</a></li>
+<li><a class="" href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></li>
+<li><a class="" href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></li>
+<li><a class="active" href="lms.html"><span class="header-section-number">5</span> La régression</a></li>
+<li><a class="" href="glms.html"><span class="header-section-number">6</span> Modèles linéaires généralisés, et généralisés mixtes</a></li>
+<li><a class="" href="conclusions.html">Conclusions</a></li>
+<li><a class="" href="r%C3%A9f%C3%A9rences.html">Références</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="lms" class="section level1" number="5">
+<h1>
+<span class="header-section-number">Chapitre 5</span> La régression<a class="anchor" aria-label="anchor" href="#lms"><i class="fas fa-link"></i></a>
+</h1>
+<div id="introduction-5" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction-5"><i class="fas fa-link"></i></a>
+</h2>
+<p>Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil rouge sur la survie. Ce sera l’occasion d’aborder comment et pourquoi utiliser un modèle pour simuler des données. Nous en profiterons pour illustrer la comparaison et la validation des modèles. Nous utiliserons <code>brms</code> (l’équivalent en <code>NIMBLE</code> est disponible dans la version enrichie du livre en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/lms.html" class="uri">https://oliviergimenez.github.io/statistique-bayes/lms.html</a>) et comparerons avec l’approche fréquentiste.</p>
+</div>
+<div id="la-régression-linéaire" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> La régression linéaire<a class="anchor" aria-label="anchor" href="#la-r%C3%A9gression-lin%C3%A9aire"><i class="fas fa-link"></i></a>
+</h2>
+<div id="le-modèle" class="section level3" number="5.2.1">
+<h3>
+<span class="header-section-number">5.2.1</span> Le modèle<a class="anchor" aria-label="anchor" href="#le-mod%C3%A8le"><i class="fas fa-link"></i></a>
+</h3>
+<p>Pour changer un peu, je vous propose d’utiliser <code>brms</code> sur un exemple différent de celui de l’estimation de la survie. Attardons-nous sur la régression linéaire.</p>
+<p>Commençons par poser les bases de notre modèle linéaire. On a <span class="math inline">\(n\)</span> mesures d’une variable réponse <span class="math inline">\(y_i\)</span> avec <span class="math inline">\(i\)</span> qui varie de 1 à <span class="math inline">\(n\)</span>. Pensez par exemple au poids (en kilogrammes) de nos ragondins dans l’exemple fil rouge. On associe chaque mesure à une variable explicative <span class="math inline">\(x_i\)</span>, par exemple la température (en degrés celsius) pour nos ragondins. Le modèle comporte une ordonnée à l’origine (ou intercept) <span class="math inline">\(\beta_0\)</span>, et une pente <span class="math inline">\(\beta_1\)</span> qui décrit l’effet de <span class="math inline">\(x_i\)</span> sur <span class="math inline">\(y_i\)</span>, ou de la température sur le poids des ragondins. On a aussi besoin d’un paramètre pour décrire la variabilité résiduelle représentée par un paramètre de variance <span class="math inline">\(\sigma^2\)</span>, qui capte la part de variation dans les <span class="math inline">\(y_i\)</span> non expliquée par les <span class="math inline">\(x_i\)</span>. Vous avez probablement déjà rencontré ce modèle sous la forme : <span class="math inline">\(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\)</span> où les erreurs <span class="math inline">\(\varepsilon_i\)</span> sont supposées indépendantes et distribuées selon une loi normale de moyenne 0 et de variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>L’intercept <span class="math inline">\(\beta_0\)</span> nous donne le poids quand la température est de 0 degré (<span class="math inline">\(x_i = 0\)</span>). Le paramètre <span class="math inline">\(\beta_1\)</span> nous renseigne sur le changement dans la variable réponse pour une augmentation d’une unité (ici 1 degré celsius) de la variable explicative (d’où le terme pente pour désigner ce paramètre). En général, on conseille (fortement) de centrer (soustraire la moyenne) et réduire (diviser par l’écart-type) pour des questions numériques et d’interprétation. Numérique d’abord car cela permet aux algorithmes, qu’ils soient fréquentistes ou bayésiens, de ne pas se perdre dans des recoins de l’espace du paramètre. Et d’interprétation ensuite, car on interprète alors l’intercept <span class="math inline">\(\beta_0\)</span> comme la valeur de la variable réponse pour une valeur moyenne de la variable explicative.</p>
+<p>Dans cette section, plutôt que d’analyser de “vraies” données, nous allons, à partir des paramètres <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> et <span class="math inline">\(\sigma\)</span>, simuler des données artificielles, comme si elles provenaient d’un vrai processus sous-jacent.</p>
+<!-- Cette étape est très utile pour vérifier que notre modèle est capable de retrouver les paramètres utilisés — un bon réflexe à adopter avant d’analyser des données réelles. -->
+</div>
+<div id="simuler-des-données" class="section level3" number="5.2.2">
+<h3>
+<span class="header-section-number">5.2.2</span> Simuler des données<a class="anchor" aria-label="anchor" href="#simuler-des-donn%C3%A9es"><i class="fas fa-link"></i></a>
+</h3>
+<p>Qu’est-ce que j’entends par simuler des données? L’analyse et la simulation des données sont deux faces d’un même modèle. Dans l’analyse, on utilise les données pour estimer les paramètres d’un modèle. Dans la simulation, on fixe les paramètres et on utilise le modèle pour générer des données. Une raison d’utiliser les simulations est que cette gymnastique va nous obliger à bien comprendre le modèle ; si je n’arrive pas à simuler des données à partir d’un modèle, c’est que je n’ai pas complètement compris comment il marchait. Il y a des tas d’autres bonnes raisons pour utiliser les simulations. Comme la vérité (les paramètres et le modèle) est connue, on peut vérifier que le modèle est bien codé. On peut évaluer le biais et la précision des estimations de nos paramètres, évaluer les effets de ne pas respecter les hypothèses du modèle, planifier un protocole de récolte de données ou encore évaluer la puissance d’un test statistique. Bref, c’est une technique très utile à avoir dans votre boîte à outils !</p>
+<p>Revenons à notre exemple. Pour simuler des données selon le modèle de régression linéaire, on commence par fixer nos paramètres : <span class="math inline">\(\beta_0 = 0.1\)</span>, <span class="math inline">\(\beta_1 = 1\)</span> et <span class="math inline">\(\sigma^2 = 0.5\)</span> :</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">beta0</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># valeur vraie de l'intercept</span></span>
+<span><span class="va">beta1</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># valeur vraie du coefficient de x</span></span>
+<span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="co"># écart-type des erreurs</span></span></code></pre></div>
+<p>Puis on simule <span class="math inline">\(n = 100\)</span> valeurs <span class="math inline">\(x_i\)</span> de notre variable explicative selon une loi normale de moyenne 0 et d’écart-type 1, autrement dit <span class="math inline">\(N(0,1)\)</span> :</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">666</span><span class="op">)</span> <span class="co"># pour rendre la simulation reproductible</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="co"># nombre d'observations</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># covariable x simulée selon une loi normale standard</span></span></code></pre></div>
+<p>Enfin, on simule les valeurs de la variable réponse, en ajoutant une erreur normale <code>epsilon</code> à la relation linéaire <code>beta0 + beta1 * x</code> :</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">epsilon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span> <span class="co"># génère les erreurs normales</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">beta0</span> <span class="op">+</span> <span class="va">beta1</span> <span class="op">*</span> <span class="va">x</span> <span class="op">+</span> <span class="va">epsilon</span> <span class="co"># ajoute les erreurs à la relation linéaire</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">y</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></code></pre></div>
+La Figure <a href="lms.html#fig:donnees-simulees">5.1</a> ci-dessous montre les données simulées, ainsi que la droite de régression correspondant au modèle utilisé pour les générer :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:donnees-simulees"></span>
+<img src="05-regression_files/figure-html/donnees-simulees-1.png" alt="Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression." width="90%"><p class="caption">
+Figure 5.1: Données simulées (n = 100) selon le modèle <span class="math inline">\(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\)</span>, avec <span class="math inline">\(\beta_0 = 0.1\)</span>, <span class="math inline">\(\beta_1 = 1\)</span> et <span class="math inline">\(\sigma = 1\)</span>. La droite rouge correspond à la droite de régression.
+</p>
+</div>
+</div>
+<div id="lajustement-avec-brms" class="section level3" number="5.2.3">
+<h3>
+<span class="header-section-number">5.2.3</span> L’ajustement avec <code>brms</code><a class="anchor" aria-label="anchor" href="#lajustement-avec-brms"><i class="fas fa-link"></i></a>
+</h3>
+<p>Dans cette section, on ajuste le modèle de régression linéaire aux données qu’on vient de générer ou simuler avec <code>brms</code>. Si tout se passe bien, les paramètres estimés devraient être proches des valeurs utilisées pour générer les données. Je vais relativement vite ici puisqu’on a couvert les différentes étapes au Chapitre <a href="logiciels.html#logiciels">3</a>. La syntaxe est très proche de celle qu’on utiliserait pour ajuster le modèle par maximum de vraisemblance avec la fonction <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> dans <code>R</code> :</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lm.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="co"># formule : y en fonction de x</span></span>
+<span>               data <span class="op">=</span> <span class="va">data</span>, <span class="co"># jeu de données</span></span>
+<span>               family <span class="op">=</span> <span class="va">gaussian</span><span class="op">)</span> <span class="co"># distribution normale</span></span></code></pre></div>
+<p>Jetons un coup d’oeil aux résumés numériques et aux diagnostics de convergence :</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  Family: gaussian </span></span>
+<span><span class="co">#&gt;   Links: mu = identity; sigma = identity </span></span>
+<span><span class="co">#&gt; Formula: y ~ x </span></span>
+<span><span class="co">#&gt;    Data: data (Number of observations: 100) </span></span>
+<span><span class="co">#&gt;   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 4000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Regression Coefficients:</span></span>
+<span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; Intercept     0.06      0.06    -0.05     0.17 1.00     4138     3110</span></span>
+<span><span class="co">#&gt; x             1.10      0.06     0.99     1.21 1.00     3735     3192</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Further Distributional Parameters:</span></span>
+<span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.66 1.00     3951     2849</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
+<span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
+<span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
+<p>Par défaut, <code>brms</code> a utilisé 4 chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l’inférence a posteriori. Dans les sorties, <code>Intercept</code>, <code>x</code> et <code>sigma</code> correspondent respectivement aux paramètres <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> et <span class="math inline">\(\sigma\)</span> du modèle. Le <span class="math inline">\(\hat{R}\)</span> pour les 3 paramètres vaut 1, et les tailles d’échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données.</p>
+<p>On vérifie que le mixing est bon (Figure <a href="lms.html#fig:fig-posterior-regression">5.2</a>) :</p>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:fig-posterior-regression"></span>
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.png" alt="Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire." width="90%"><p class="caption">
+Figure 5.2: Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire.
+</p>
+</div>
+</div>
+<div id="weakly-informative-priors" class="section level3" number="5.2.4">
+<h3>
+<span class="header-section-number">5.2.4</span> Des priors faiblement informatifs<a class="anchor" aria-label="anchor" href="#weakly-informative-priors"><i class="fas fa-link"></i></a>
+</h3>
+<p>Plutôt que d’utiliser les priors par défaut de <code>brms</code>, choisissons d’autres priors. Nous allons utiliser des priors faiblement informatifs, et plus spécifiquement une normale avec moyenne 0 et écart-type 1.5 ou <span class="math inline">\(N(0,1.5)\)</span> pour les paramètres de régression <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span>. On a déjà parlé des priors faiblement informatifs au Chapitre <a href="prior.html#prior">4</a>. L’idée est proche de celle des priors vagues ou non-informatifs, dans le sens où l’on s’efforce de refléter via les priors faiblement informatifs le fait qu’on n’a pas vraiment d’information sur les paramètres du modèle. La différence est que les priors non-informatifs peuvent induire des valeurs aberrantes comme on l’a vu au Chapitre <a href="prior.html#prior">4</a>. C’est encore le cas ici. Prenez par exemple des <span class="math inline">\(N(0,100)\)</span> pour les paramètres de la relation linéaire qui lie le poids des ragondins à la température, et simulez tout un tas de valeurs dans ces priors, puis formez la relation linéaire :</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># nombre de droites à simuler</span></span>
+<span><span class="va">n_lines</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="co"># tirages des intercepts et pentes selon les priors</span></span>
+<span><span class="va">intercepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_lines</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">slopes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_lines</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># création d'un data frame</span></span>
+<span><span class="va">lines_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_lines</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">y_vals</span> <span class="op">&lt;-</span> <span class="va">intercepts</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">+</span> <span class="va">slopes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">*</span> <span class="va">x</span></span>
+<span>  <span class="va">temp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y_vals</span>, line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">lines_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">lines_df</span>, <span class="va">temp_df</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># tracé avec ggplot2</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">lines_df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, group <span class="op">=</span> <span class="va">line</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"x"</span>, y <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:fig-prior-regression-vague"></span>
+<img src="05-regression_files/figure-html/fig-prior-regression-vague-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100)." width="90%"><p class="caption">
+Figure 5.3: Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).
+</p>
+</div>
+On voit dans la Figure <a href="lms.html#fig:fig-prior-regression-vague">5.3</a> qu’on obtient des valeurs aberrantes pour les <span class="math inline">\(y_i\)</span>, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour le poids. On vient de faire un “prior predictive check”, comme au Chapitre <a href="prior.html#prior">4</a>. On fait la même chose avec notre prior faiblement informatif <span class="math inline">\(N(0,1.5)\)</span> :
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:fig-prior-regression"></span>
+<img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%"><p class="caption">
+Figure 5.4: Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).
+</p>
+</div>
+<p>On obtient des valeurs plus raisonnables pour le poids des ragondins qui dépassent rarement 10 kilogrammes. Il y a aussi un avantage numérique à utiliser des priors faiblement informatifs, ils aident les méthodes MCMC à ne pas se perdre dans l’espace de toutes les valeurs possibles pour les paramètres à estimer, et leur permettent de se focaliser sur les valeurs réalistes de ces paramètres. En faisant ça, vous avez peut-être l’impression qu’on utilise les données pour construire les priors, alors qu’on a dit que le prior devait refléter l’information disponible avant de voir les données. C’est l’occasion de préciser un peu ce point. L’important est surtout que le prior représente l’information indépendante des données qui sont utilisées dans la vraisemblance.</p>
+<p>On s’est jusqu’ici concentrés sur les paramètres de régression, l’intercept <span class="math inline">\(\beta_0\)</span> et la pente <span class="math inline">\(\beta_1\)</span>. Mais qu’en est-il de l’écart-type, <span class="math inline">\(\sigma\)</span> ? Ce paramètre est tout aussi important : il reflète à quel point les observations s’écartent de la tendance moyenne décrite par la droite de régression.</p>
+<p>Une option souvent envisagée est de lui attribuer une loi uniforme, par exemple <span class="math inline">\(\sigma \sim U(0, B)\)</span>, avec une borne inférieure naturelle (0, puisque <span class="math inline">\(\sigma\)</span> est toujours positive), mais une borne supérieure <span class="math inline">\(B\)</span> difficile à choisir. Quelle valeur maximale donner à un écart-type ? Dans certains cas, une valeur apparemment raisonnable peut se révéler trop large. Par exemple, si l’on modélise des tailles humaines et que l’on fixe <span class="math inline">\(\sigma \sim U(0, 50)\)</span> (en cm), cela revient à supposer que 95% des tailles sont réparties sur une plage de 100 cm autour de la moyenne – ce qui est très improbable.</p>
+<p>Une alternative plus souple et plus réaliste consiste à utiliser une loi exponentielle <span class="math inline">\(\sigma \sim \exp(\lambda)\)</span> où <span class="math inline">\(\lambda &gt; 0\)</span> est un paramètre de taux. Cette loi est définie uniquement pour des valeurs positives, ce qui est cohérent avec la nature de <span class="math inline">\(\sigma\)</span>, et elle favorise les petites valeurs d’écart-type tout en laissant la possibilité à <span class="math inline">\(\sigma\)</span> d’être plus grande si les données le justifient.</p>
+<p>Par défaut, on prend souvent <span class="math inline">\(\lambda = 1\)</span>. Avec <span class="math inline">\(\lambda = 1\)</span>, la moyenne et l’écart-type de cette loi sont tous deux égaux à <span class="math inline">\(1\)</span>, ce qui induit une a priori modeste mais non restrictive (Figure <a href="lms.html#fig:fig-prior-sigma">5.5</a>).</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:fig-prior-sigma"></span>
+<img src="05-regression_files/figure-html/fig-prior-sigma-1.png" alt="Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde." width="90%"><p class="caption">
+Figure 5.5: Comparaison entre deux lois a priori pour l’écart-type <span class="math inline">\(\sigma\)</span> : une loi uniforme <span class="math inline">\(\text{U}(0,5)\)</span>, qui donne la même densité entre 0 et 5, et une loi exponentielle <span class="math inline">\(\text{Exp}(1)\)</span>, qui favorise les petites valeurs tout en conservant une queue plus lourde.
+</p>
+</div>
+<p>On peut formaliser ce modèle comme suit :
+<span class="math display">\[\begin{align}
+y_i &amp;\sim \text{Normale}(\mu_i) &amp;\text{[vraisemblance]}\\
+\mu_i &amp;= \beta_0 + \beta_1 \; x_i &amp;\text{[relation linéaire]}\\
+\beta_0, \beta_1 &amp;\sim \text{Normale}(0, 1.5) &amp;\text{[prior sur les paramètres]} \\
+\sigma &amp;\sim \text{Exp}(1) &amp;\text{[prior sur les paramètres]} \\
+\end{align}\]</span></p>
+<p>Spécifions ces priors :</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">myprior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>, <span class="co"># prior sur le coefficient de x</span></span>
+<span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>, <span class="co"># prior sur l'intercept</span></span>
+<span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/brmsfamily.html">exponential</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span> <span class="co"># prior sur l'écart-type de l'erreur</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Puis refaisons l’ajustement avec <code>brms</code> :</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lm.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, </span>
+<span>               data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>               family <span class="op">=</span> <span class="va">gaussian</span>, </span>
+<span>               prior <span class="op">=</span> <span class="va">myprior</span><span class="op">)</span></span></code></pre></div>
+<p>On vérifie que les résumés numériques obtenus sont proches de ceux obtenus avec les priors par défaut, et surtout des valeurs utilisées pour simuler les données :</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  Family: gaussian </span></span>
+<span><span class="co">#&gt;   Links: mu = identity; sigma = identity </span></span>
+<span><span class="co">#&gt; Formula: y ~ x </span></span>
+<span><span class="co">#&gt;    Data: data (Number of observations: 100) </span></span>
+<span><span class="co">#&gt;   Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 4000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Regression Coefficients:</span></span>
+<span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; Intercept     0.06      0.06    -0.06     0.18 1.00     3648     2815</span></span>
+<span><span class="co">#&gt; x             1.10      0.06     0.99     1.20 1.00     3778     2918</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Further Distributional Parameters:</span></span>
+<span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.66 1.00     3555     2593</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
+<span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
+<span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
+<!-- On verra dans la suite comment évaluation des modèles, et vérifier que les hypothèses sous-jacentes sont respectées.   -->
+</div>
+<div id="lajustement-par-maximum-de-vraisemblance" class="section level3" number="5.2.5">
+<h3>
+<span class="header-section-number">5.2.5</span> L’ajustement par maximum de vraisemblance<a class="anchor" aria-label="anchor" href="#lajustement-par-maximum-de-vraisemblance"><i class="fas fa-link"></i></a>
+</h3>
+<p>Et pour finir, on peut comparer avec l’ajustement par maximum de vraisemblance qu’on obtient simplement avec la commande <code>lm(y ~ x, data = data)</code>, tout est dans la Figure <a href="lms.html#fig:comparaison-methodes">5.6</a> :</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:comparaison-methodes"></span>
+<img src="05-regression_files/figure-html/comparaison-methodes-1.png" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%"><p class="caption">
+Figure 5.6: Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l’origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l’estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.
+</p>
+</div>
+<p>Les moyennes a posteriori obtenues avec <code>brms</code> sont proches des estimations par maximum de vraisemblance pour les deux paramètres de régression. Les intervalles de crédibilité obtenus avec <code>brms</code> et l’intervalle de confiance obtenu par maximum de vraisemblance englobent tous les vraies valeurs des paramètres qui ont servi à simuler les données.</p>
+</div>
+</div>
+<div id="lévaluation-des-modèles" class="section level2" number="5.3">
+<h2>
+<span class="header-section-number">5.3</span> L’évaluation des modèles<a class="anchor" aria-label="anchor" href="#l%C3%A9valuation-des-mod%C3%A8les"><i class="fas fa-link"></i></a>
+</h2>
+<p>La qualité de l’ajustement d’un modèle aux données est essentielle pour évaluer la confiance que l’on peut accorder aux estimations des paramètres. Les tests de qualité d’ajustement (ou goodness-of-fit en anglais) sont bien établis en statistique fréquentiste, et beaucoup d’entre eux peuvent aussi être utilisés dans des modèles bayésiens simples. C’est le cas par exemple de l’analyse des résidus.</p>
+<p>Dans le cas d’une régression linéaire, il y a plusieurs hypothèses sur lesquelles repose le modèle. Ce sont les hypothèses d’indépendance, de normalité, de linéarité et d’homoscédasticité (<span class="math inline">\(\sigma\)</span> ne varie pas avec la variable explicative). On peut en général évaluer les deux premières avec le contexte. Concernant les deux autres, on peut visualiser l’ajustement en superposant la droite de régression estimée au nuage de points observés. Avec le package <code>brms</code>, cela donne la Figure <a href="lms.html#fig:brms-fit-plot">5.7</a> :</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># extrait les valeurs tirées dans les distributions a posteriori des paramètres</span></span>
+<span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_df.html">as_draws_df</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># crée une grille de x pour tracer l'intervalle de crédibilité</span></span>
+<span><span class="va">grille_x</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">x</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># pour chaque x, simule des valeurs de y à partir des échantillons</span></span>
+<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="va">post</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">b_Intercept</span>, <span class="va">b_x</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">expand_grid</span><span class="op">(</span><span class="va">grille_x</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="va">b_Intercept</span> <span class="op">+</span> <span class="va">b_x</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span>    mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">y</span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">y</span>, <span class="fl">0.975</span><span class="op">)</span>,</span>
+<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># droite "vraie" (rouge) sur la même grille</span></span>
+<span><span class="va">true_line</span> <span class="op">&lt;-</span> <span class="va">grille_x</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="va">beta0</span> <span class="op">+</span> <span class="va">beta1</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># extrait les moyennes a posteriori des paramètres</span></span>
+<span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span><span class="op">$</span><span class="va">fixed</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">slope</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span><span class="op">$</span><span class="va">fixed</span><span class="op">[</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># tracé</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_ribbon</span><span class="op">(</span>data <span class="op">=</span> <span class="va">pred</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, ymin <span class="op">=</span> <span class="va">lower</span>, ymax <span class="op">=</span> <span class="va">upper</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"blue"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span>, inherit.aes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>data <span class="op">=</span> <span class="va">pred</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">mean</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span>, size <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>data <span class="op">=</span> <span class="va">true_line</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, size <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"x"</span>, y <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">grille_x</span><span class="op">$</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:brms-fit-plot"></span>
+<img src="05-regression_files/figure-html/brms-fit-plot-1.png" alt="Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%"><p class="caption">
+Figure 5.7: Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l’ordonnée à l’origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.
+</p>
+</div>
+<p>Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre <a href="glms.html#glms">6</a>), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L’idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.</p>
+<p>Dans <code>brms</code>, il suffit de faire :</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:ppcheck-brms"></span>
+<img src="05-regression_files/figure-html/ppcheck-brms-1.png" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%"><p class="caption">
+Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.
+</p>
+</div>
+<p>La fonction <code><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check()</a></code> génère des graphiques de posterior predictive checks (Figure <a href="lms.html#fig:ppcheck-brms">5.8</a>). Elle compare les données observées à des données simulées à partir du modèle ajusté. Si le modèle est bien ajusté aux données, alors on devrait pouvoir l’utiliser pour générer des données qui ressemblent aux données observées. Par conséquent, si les courbes simulées recouvrent bien les observations, cela indique que le modèle capte correctement la structure des données. Dans le cas contraire, cela peut suggérer un problème de spécification du modèle, par exemple un lien ou une famille de distribution inadaptée (voir Chapitre <a href="glms.html#glms">6</a>).</p>
+<p>On peut également calculer une Bayesian p-value qui représente la proportion de jeux de données simulés sous le modèle pour lesquels la statistique choisie (ici la moyenne) est aussi grande ou plus grande que celle observée. Une valeur proche de 0 ou de 1 peut indiquer un mauvais ajustement du modèle pour cette statistique particulière, tandis qu’une valeur proche de 0.5 suggère un bon ajustement. Avec <code>brms</code>, cette Bayesian p-value s’obtient comme suit :</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extraire les simulations de y_rep</span></span>
+<span><span class="va">y_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculer la statistique de test sur les données simulées (moyenne ici)</span></span>
+<span><span class="va">T_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span><span class="op">(</span><span class="va">y_rep</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculer la statistique observée</span></span>
+<span><span class="va">T_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculer la Bayesian p-value</span></span>
+<span><span class="va">bayes_pval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">T_sim</span> <span class="op">&gt;=</span> <span class="va">T_obs</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Afficher le résultat</span></span>
+<span><span class="va">bayes_pval</span></span>
+<span><span class="co">#&gt; [1] 0.5</span></span></code></pre></div>
+</div>
+<div id="la-comparaison-de-modèles" class="section level2" number="5.4">
+<h2>
+<span class="header-section-number">5.4</span> La comparaison de modèles<a class="anchor" aria-label="anchor" href="#la-comparaison-de-mod%C3%A8les"><i class="fas fa-link"></i></a>
+</h2>
+<p>Comme on l’a vu dans le Chapitre <a href="principes.html#principes">1</a>, la statistique bayésienne permet de comparer plusieurs hypothèses entre elles, et de savoir à quel point point une hypothèse est plausible à partir des données que nous avons collectées.</p>
+<!-- Formellement, cela revient à estimer la probabilité qu’un modèle soit vrai étant donné les données, ce qu’on appelle la probabilité a posteriori du modèle. Une méthode classique pour obtenir ces probabilités repose sur les facteurs de Bayes. Mais ces derniers peuvent être coûteux à calculer, et sont souvent très sensibles aux choix des lois a priori, ce qui limite leur utilisation en pratique. Une autre possibilité consiste à estimer directement les probabilités a posteriori des modèles via un algorithme de type MCMC à sauts réversibles (reversible jump MCMC), relativement simple à mettre en œuvre lorsqu’on souhaite sélectionner un sous-ensemble de covariables explicatives. -->
+<p>Il est essentiel, avant de comparer des modèles, de se demander quel est l’objectif de l’analyse : s’agit-il de mieux comprendre un phénomène (approche explicative), ou plutôt de faire des prédictions (approche prédictive) ?</p>
+<p>Une stratégie consiste à construire un modèle unique incluant les variables jugées pertinentes, puis à l’ajuster, l’examiner, le tester, et l’améliorer progressivement. Cette approche vise moins à identifier le meilleur modèle qu’à explorer différentes variantes pour mieux comprendre le système étudié.</p>
+<p>Pour évaluer la capacité prédictive d’un modèle, on peut s’appuyer sur des données déjà utilisées pour l’ajustement (prédiction interne) ou, de manière plus fiable, sur de nouvelles données (prédiction externe). Cette dernière approche nécessite toutefois de diviser les données en un jeu d’apprentissage et un jeu de test. À défaut, il est possible d’estimer les performances prédictives sur les données d’apprentissage elles-mêmes à l’aide d’outils comme le WAIC ou le LOO-CV.</p>
+<p>Le WAIC (Watanabe-Akaike Information Criterion) et le LOO-CV (Leave-One-Out cross-validation) permettent de comparer des modèles en estimant leur capacité à prédire de nouvelles données. Ils combinent l’ajustement aux données observées avec une pénalisation de la complexité du modèle. Une valeur de WAIC/LOO-CV plus faible indique un meilleur modèle. Le WAIC est basé sur une approximation théorique, tandis que le LOO-CV repose sur une validation croisée. Le LOO-CV est généralement plus précis, surtout pour les modèles complexes ou les jeux de données de taille limitée, mais il est aussi plus coûteux en calcul. En pratique, lorsque les modèles sont bien spécifiés et que l’échantillon est grand, WAIC et LOO-CV donnent souvent des résultats très proches.</p>
+<p>Je reviens à l’exemple de la régression linéaire. On aimerait tester l’hypothèse que la variable <span class="math inline">\(x\)</span> explique bien une part importante de la variation dans <span class="math inline">\(y\)</span>. Cela revient à comparer les modèles avec et sans cette variable.</p>
+<p>Dans <code>brms</code>, on ajuste ces deux modèles avec des priors faiblement informatifs :</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="lms.html#cb56-1" tabindex="-1"></a><span class="co"># Modèle avec covariable</span></span>
+<span id="cb56-2"><a href="lms.html#cb56-2" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb56-3"><a href="lms.html#cb56-3" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb56-4"><a href="lms.html#cb56-4" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
+<span id="cb56-5"><a href="lms.html#cb56-5" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> b),</span>
+<span id="cb56-6"><a href="lms.html#cb56-6" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma)</span>
+<span id="cb56-7"><a href="lms.html#cb56-7" tabindex="-1"></a>            ))</span>
+<span id="cb56-8"><a href="lms.html#cb56-8" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="lms.html#cb56-9" tabindex="-1"></a><span class="co"># Modèle sans covariable</span></span>
+<span id="cb56-10"><a href="lms.html#cb56-10" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb56-11"><a href="lms.html#cb56-11" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb56-12"><a href="lms.html#cb56-12" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
+<span id="cb56-13"><a href="lms.html#cb56-13" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma))</span></code></pre></div>
+<p>La fonction <code><a href="https://mc-stan.org/loo/reference/waic.html">waic()</a></code> permet d’extraire le WAIC, où le modèle avec la plus petite valeur est préféré. Si le modèle avec <span class="math inline">\(x\)</span> est bien le bon (c’est ce qu’on attend puisque c’est comme ça que les données ont été simulées), on devrait voir qu’il est nettement meilleur que celui sans covariable :</p>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calcul du WAIC pour chaque modèle</span></span>
+<span><span class="va">waic1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit1</span><span class="op">)</span></span>
+<span><span class="va">waic0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Comparaison</span></span>
+<span><span class="va">waic1</span><span class="op">$</span><span class="va">estimates</span><span class="op">[</span><span class="st">'waic'</span>,<span class="op">]</span></span>
+<span><span class="co">#&gt;  Estimate        SE </span></span>
+<span><span class="co">#&gt; 172.43145  13.14333</span></span>
+<span><span class="va">waic0</span><span class="op">$</span><span class="va">estimates</span><span class="op">[</span><span class="st">'waic'</span>,<span class="op">]</span></span>
+<span><span class="co">#&gt;  Estimate        SE </span></span>
+<span><span class="co">#&gt; 334.03145  17.13167</span></span></code></pre></div>
+<p>Ouf, c’est bien le cas. La fonction <code><a href="https://mc-stan.org/loo/reference/loo.html">loo()</a></code> permet de calculer le LOO-CV (une approximation en fait) :</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Leave-one-out cross-validation</span></span>
+<span><span class="va">loo1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/loo.html">loo</a></span><span class="op">(</span><span class="va">fit1</span><span class="op">)</span></span>
+<span><span class="va">loo0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/loo.html">loo</a></span><span class="op">(</span><span class="va">fit0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Comparaison</span></span>
+<span><span class="fu"><a href="https://mc-stan.org/loo/reference/loo_compare.html">loo_compare</a></span><span class="op">(</span><span class="va">loo0</span>, <span class="va">loo1</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      elpd_diff se_diff</span></span>
+<span><span class="co">#&gt; fit1   0.0       0.0  </span></span>
+<span><span class="co">#&gt; fit0 -80.8       9.1</span></span></code></pre></div>
+<p>On arrive à la même conclusion qu’avec le WAIC.</p>
+</div>
+<div id="en-résumé-4" class="section level2" number="5.5">
+<h2>
+<span class="header-section-number">5.5</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-4"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>La régression linéaire permet de modéliser la relation entre une variable réponse continue et une ou plusieurs variables explicatives, en tenant compte d’une variabilité résiduelle.</p></li>
+<li><p>Simuler des données à partir d’un modèle est un excellent moyen de comprendre son fonctionnement et de tester son code.</p></li>
+<li><p>Les lois a priori faiblement informatives (comme <span class="math inline">\(N(0, 1.5)\)</span> pour les coefficients ou <span class="math inline">\(\text{Exp}(1)\)</span> pour <span class="math inline">\(\sigma\)</span>) aident à encadrer les valeurs réalistes tout en laissant au modèle la liberté d’apprendre des données.</p></li>
+<li><p>L’ajustement et la comparaison des modèles peuvent se faire à l’aide de posterior predictive checks et de critères comme le WAIC. Ces outils permettent d’évaluer la qualité du modèle au regard des données, et d’arbitrer entre plusieurs modèles concurrents.</p></li>
+</ul>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></div>
+<div class="next"><a href="glms.html"><span class="header-section-number">6</span> Modèles linéaires généralisés, et généralisés mixtes</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#lms"><span class="header-section-number">5</span> La régression</a></li>
+<li><a class="nav-link" href="#introduction-5"><span class="header-section-number">5.1</span> Introduction</a></li>
+<li>
+<a class="nav-link" href="#la-r%C3%A9gression-lin%C3%A9aire"><span class="header-section-number">5.2</span> La régression linéaire</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#le-mod%C3%A8le"><span class="header-section-number">5.2.1</span> Le modèle</a></li>
+<li><a class="nav-link" href="#simuler-des-donn%C3%A9es"><span class="header-section-number">5.2.2</span> Simuler des données</a></li>
+<li><a class="nav-link" href="#lajustement-avec-brms"><span class="header-section-number">5.2.3</span> L’ajustement avec brms</a></li>
+<li><a class="nav-link" href="#weakly-informative-priors"><span class="header-section-number">5.2.4</span> Des priors faiblement informatifs</a></li>
+<li><a class="nav-link" href="#lajustement-par-maximum-de-vraisemblance"><span class="header-section-number">5.2.5</span> L’ajustement par maximum de vraisemblance</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#l%C3%A9valuation-des-mod%C3%A8les"><span class="header-section-number">5.3</span> L’évaluation des modèles</a></li>
+<li><a class="nav-link" href="#la-comparaison-de-mod%C3%A8les"><span class="header-section-number">5.4</span> La comparaison de modèles</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-4"><span class="header-section-number">5.5</span> En résumé</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes/blob/master/05-regression.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes/edit/master/05-regression.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-06-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>Ce livre a été généré avec le <a class="text-light" href="https://bookdown.org">package R bookdown</a>.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

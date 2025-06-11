@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapitre 3 Mise en oeuvre pratique | Statistique bayésienne avec R</title>
+<meta name="author" content="Olivier Gimenez">
+<meta name="description" content="3.1 Introduction Dans ce chapitre, nous découvrirons brms un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans le version enrichie en ligne à...">
+<meta name="generator" content="bookdown 0.43 with bs4_book()">
+<meta property="og:title" content="Chapitre 3 Mise en oeuvre pratique | Statistique bayésienne avec R">
+<meta property="og:type" content="book">
+<meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/logiciels.html">
+<meta property="og:description" content="3.1 Introduction Dans ce chapitre, nous découvrirons brms un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans le version enrichie en ligne à...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapitre 3 Mise en oeuvre pratique | Statistique bayésienne avec R">
+<meta name="twitter:description" content="3.1 Introduction Dans ce chapitre, nous découvrirons brms un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans le version enrichie en ligne à...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Roboto-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Langue française --><script src="assets/lang-fr.js"></script><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-MTKSQWQE5K"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MTKSQWQE5K');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+          margin-bottom: 0em;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Statistique bayésienne avec R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Introduction</a></li>
+<li><a class="" href="principes.html"><span class="header-section-number">1</span> L’approche bayésienne</a></li>
+<li><a class="" href="mcmc.html"><span class="header-section-number">2</span> Les méthodes MCMC</a></li>
+<li><a class="active" href="logiciels.html"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></li>
+<li><a class="" href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></li>
+<li><a class="" href="lms.html"><span class="header-section-number">5</span> La régression</a></li>
+<li><a class="" href="glms.html"><span class="header-section-number">6</span> Modèles linéaires généralisés, et généralisés mixtes</a></li>
+<li><a class="" href="conclusions.html">Conclusions</a></li>
+<li><a class="" href="r%C3%A9f%C3%A9rences.html">Références</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="logiciels" class="section level1" number="3">
+<h1>
+<span class="header-section-number">Chapitre 3</span> Mise en oeuvre pratique<a class="anchor" aria-label="anchor" href="#logiciels"><i class="fas fa-link"></i></a>
+</h1>
+<div id="introduction-3" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction-3"><i class="fas fa-link"></i></a>
+</h2>
+<p>Dans ce chapitre, nous découvrirons <code>brms</code> un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans le version enrichie en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/logiciels.html" class="uri">https://oliviergimenez.github.io/statistique-bayes/logiciels.html</a>, vous trouverez aussi une introduction à <code>NIMBLE</code>. Il s’agit de deux packages <code>R</code> qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s’applique automatiquement. Grâce à une syntaxe proche de celle de <code>R</code>, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.</p>
+</div>
+<div id="brms" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> <code>brms</code><a class="anchor" aria-label="anchor" href="#brms"><i class="fas fa-link"></i></a>
+</h2>
+<p><code>brms</code> signifie <strong>B</strong>ayesian <strong>R</strong>egression <strong>M</strong>odels using <strong>S</strong>tan. Ce package permet de formuler et d’estimer des modèles de régression (voir la section suivante et les Chapitres <a href="lms.html#lms">5</a> et <a href="glms.html#glms">6</a>) de manière intuitive grâce à une syntaxe proche de celle du package <code>lme4</code> (la référence <code>R</code> pour les modèles mixtes), tout en s’appuyant sur <code>Stan</code>. Le package est en constant développement, rendez-vous à <a href="https://paul-buerkner.github.io/brms/" class="uri">https://paul-buerkner.github.io/brms/</a>. Vous pouvez obtenir de l’aide via <a href="https://discourse.mc-stan.org/" class="uri">https://discourse.mc-stan.org/</a>.</p>
+<p>Pour utiliser <code>brms</code>, on commence par préparer les données :</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">19</span>, n <span class="op">=</span> <span class="fl">57</span><span class="op">)</span></span></code></pre></div>
+<!-- ### Estimation classique (fréquentiste) -->
+<!-- ```{r} -->
+<!-- mle <- glm(cbind(alive, total - alive) ~ 1, -->
+<!--            family = binomial("logit"), -->
+<!--            data = dat) -->
+<!-- plogis(coef(mle))  # retour à l'échelle [0,1] -->
+<!-- ``` -->
+<p>Sans oublier de charger <code>brms</code> :</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/paul-buerkner/brms">brms</a></span><span class="op">)</span></span></code></pre></div>
+<p>La vraisemblance est binomiale dans notre exemple fil rouge. Dans <code>brms</code>, on peut exprimer cela simplement :</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bayes.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">|</span> <span class="fu">trials</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, <span class="co"># le nombre de succès est fonction d'un intercept</span></span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span><span class="st">"logit"</span><span class="op">)</span>, <span class="co"># famille binomiale avec fonction de lien logit</span></span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>, <span class="co"># données utilisées</span></span>
+<span>  chains <span class="op">=</span> <span class="fl">3</span>, <span class="co"># nombre de chaînes MCMC</span></span>
+<span>  iter <span class="op">=</span> <span class="fl">2000</span>, <span class="co"># nombre total d'itérations par chaîne</span></span>
+<span>  warmup <span class="op">=</span> <span class="fl">300</span>, <span class="co"># nombre d'itérations burn-in</span></span>
+<span>  thin <span class="op">=</span> <span class="fl">1</span> <span class="co"># pas de sous-échantillonnage (chaque itération est conservée)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>La syntaxe est relativement simple mais nécessite quelques explications. L’argument <code>y | trials(n) ~ 1</code> permet de spécifier un modèle dans lequel on a <span class="math inline">\(y\)</span> succès parmi <span class="math inline">\(n\)</span> essais, et on estime une ordonnée à l’origine ou intercept seulement, le <code>1</code> après <code>~</code>. Pourquoi un intercept ici? Pourquoi pas directement la survie <span class="math inline">\(\theta\)</span>. Parce qu’on utilise <code>family = binomial("logit")</code> à la ligne d’après pour spécifier à <code>brms</code> que la variable réponse suit une loi binomiale. Autrement dit on a un modèle linéaire généralisé (voir le Chapitre <a href="glms.html#glms">6</a>) avec <span class="math inline">\(\text{logit}(\theta) = \beta\)</span> et on estime <span class="math inline">\(\beta\)</span> l’intercept. Les arguments <code>iter = 2000</code>, <code>warmup = 300</code> et <code>chains = 3</code> stipulent à <code>brms</code> d’utiliser 300 itérations pour l’adaptation (burn-in), et les 1700 suivantes pour l’inférence, avec 3 chaînes.
+<!-- - `seed = 666` : fixe la graine aléatoire pour assurer la reproductibilité. -->
+<!-- - `prior(beta(1, 1), class = "Intercept")` : spécifie une loi bêta(1,1), équivalente à une loi uniforme sur [0,1], sur l'échelle de probabilité. --></p>
+<p>Jetons un coup d’oeil aux résultats :</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  Family: binomial </span></span>
+<span><span class="co">#&gt;   Links: mu = logit </span></span>
+<span><span class="co">#&gt; Formula: y | trials(n) ~ 1 </span></span>
+<span><span class="co">#&gt;    Data: dat (Number of observations: 1) </span></span>
+<span><span class="co">#&gt;   Draws: 3 chains, each with iter = 2000; warmup = 300; thin = 1;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 5100</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Regression Coefficients:</span></span>
+<span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; Intercept    -0.70      0.28    -1.24    -0.18 1.00     1947     2993</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
+<span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
+<span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
+<p>Cette commande affiche un tableau récapitulatif des estimations postérieures pour chaque paramètre du modèle. On y trouve :</p>
+<ul>
+<li>
+<code>Estimate</code> est la moyenne a posteriori.</li>
+<li>
+<code>Est.Error</code> est l’écart-type de cette estimation.</li>
+<li>
+<code>l-95% CI</code> et <code>u-95% CI</code> sont les bornes de l’intervalle de crédibilité à 95%.</li>
+<li>Le diagnostic de convergence <code>Rhat</code>.</li>
+<li>Et <code>Bulk_ESS</code> la taille effective d’échantillon (<code>Tail_ESS</code> est une autre mesure de la taille effective d’échantillon qu’on n’utilisera pas ici).</li>
+</ul>
+<p>La moyenne a posteriori vaut -0.6980814 bien loin de la proportion de ragondins qui ont survécu à l’hiver (<span class="math inline">\(19/57 \approx 0.33\)</span>). Comme toujours dans <code>R</code> et l’implémentation des modèles linéaires généralisés (voir Chapitre <a href="glms.html#glms">6</a>), les estimations des paramètres sont données sur l’échelle de la fonction de lien. Ici l’intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d’abord les valeurs générées dans la distribution a posteriori de l’intercept <span class="math inline">\(\beta\)</span> avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">brms::as_draws_matrix()</a></code> :</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">draws_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">as_draws_matrix</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span></code></pre></div>
+<p>Puis on applique la fonction logistique réciproque <code><a href="https://rdrr.io/r/stats/Logistic.html">plogis()</a></code> sur chacune de ces valeurs pour obtenir tout un tas de valeurs simulées dans la distribution a posteriori de la survie <span class="math inline">\(\theta\)</span> :</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">draws_fit</span><span class="op">[</span>,<span class="st">'Intercept'</span><span class="op">]</span> <span class="co"># sélectionne la colonne intercept</span></span>
+<span><span class="va">theta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">beta</span><span class="op">)</span>  <span class="co"># conversion logit -&gt; [0,1]</span></span></code></pre></div>
+<p>On obtient ainsi une estimation directe de la moyenne a posteriori de la probabilité de survie, accompagnée de son intervalle de crédibilité à 95% :</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.3350083</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">theta</span>, probas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>,<span class="fl">97.5</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        0%       25%       50%       75%      100% </span></span>
+<span><span class="co">#&gt; 0.1246799 0.2919122 0.3327997 0.3748815 0.5883135</span></span></code></pre></div>
+<p>Ou plus directement avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_summary.html">posterior::summarise_draws()</a></code> :</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">summarise_draws</span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
+<span><span class="co">#&gt;   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Intercept 0.335  0.333 0.0604 0.0615 0.239 0.440  1.00    1947.    2993.</span></span></code></pre></div>
+<p>Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d’utiliser (Figure <a href="logiciels.html#fig:hist-surviebrms">3.1</a>) :</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">draws_fit</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">theta</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Probabilité de survie"</span>, y <span class="op">=</span> <span class="st">"Fréquence"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:hist-surviebrms"></span>
+<img src="03-miseenoeuvrepratique_files/figure-html/hist-surviebrms-1.png" alt="Histogramme de la distribution a posteriori de la probabilité de survie (\(\theta\)) sur l'échelle logit." width="90%"><p class="caption">
+Figure 3.1: Histogramme de la distribution a posteriori de la probabilité de survie (<span class="math inline">\(\theta\)</span>) sur l’échelle logit.
+</p>
+</div>
+<p>Dans <code>brms</code>, on peut évaluer la convergence des chaînes MCMC (Figure <a href="logiciels.html#fig:trace-surviebrms">3.2</a>) :</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:trace-surviebrms"></span>
+<img src="03-miseenoeuvrepratique_files/figure-html/trace-surviebrms-1.png" alt="Trace plot et densité a posteriori de la probabilité de survie (\(\theta\))." width="90%"><p class="caption">
+Figure 3.2: Trace plot et densité a posteriori de la probabilité de survie (<span class="math inline">\(\theta\)</span>).
+</p>
+</div>
+<p>Ce graphique affiche les trace plots (à droite) ainsi que les densités a posteriori (à gauche).
+Au passage, pour déterminer de la longueur de la période de pré-chauffage ou burn-in, il suffit de faire tourner <code>brms</code> avec <code>warmup = 0</code> pour quelques centaines ou milliers d’itérations et d’examiner la trace du paramètre pour décider du nombre d’itérations à utiliser pour atteindre la convergence.</p>
+<p>Un avantage majeur des méthodes MCMC est qu’elles permettent d’obtenir la distribution a posteriori de n’importe quelle fonction des paramètres en appliquant cette fonction aux valeurs tirées dans les distributions a posteriori de ces paramètres. A noter qu’ici on estime l’intercept <span class="math inline">\(\beta\)</span> et on a donc déjà utilisé cette idée pour obtenir la distribution a posteriori de la probabilité de survie en appliquant la fonction logit réciproque. Comme autre exemple, disons que j’aimerais calculer l’espérance de vie des ragondins, celle-ci étant donnée par <span class="math inline">\(\lambda = -1/\log(\theta)\)</span> :</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">draws_fit</span><span class="op">[</span>,<span class="st">'Intercept'</span><span class="op">]</span> <span class="co"># sélectionne la colonne intercept</span></span>
+<span><span class="va">theta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">beta</span><span class="op">)</span>  <span class="co"># conversion logit -&gt; [0,1]</span></span>
+<span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">theta</span><span class="op">)</span> <span class="co"># transforme survie en espérance de vie</span></span>
+<span><span class="fu">summarize_draws</span><span class="op">(</span><span class="va">lambda</span><span class="op">)</span> <span class="co"># résumé des tirages : moyenne, médiane, intervalles</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
+<span><span class="co">#&gt;   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Intercept 0.926  0.909 0.158 0.151 0.699  1.22  1.00    1947.    2993.</span></span></code></pre></div>
+<p>L’espérance de vie est d’un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure <a href="logiciels.html#fig:hist-life">3.3</a>) :</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Espérance de vie"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:hist-life"></span>
+<img src="03-miseenoeuvrepratique_files/figure-html/hist-life-1.png" alt="Histogramme de la distribution a posteriori de l'espérance de vie." width="90%"><p class="caption">
+Figure 3.3: Histogramme de la distribution a posteriori de l’espérance de vie.
+</p>
+</div>
+<p>Il y a tout un tas de paramètres qui sont fixés par défaut dans <code>brms</code>, il est important d’en être conscient. Ca concerne les priors en particulier. Dans <code>brms</code>, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/prior_summary.html">prior_summary</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Intercept ~ student_t(3, 0, 2.5)</span></span></code></pre></div>
+<p>Le package <code>brms</code> utilise comme a priori faiblement informatif une loi de Student à 3 degrés de liberté, centrée en 0, avec un écart-type de 2.5. Les 3 degrés de liberté donnent une distribution avec des queues plus épaisses qu’une normale, permettant une certaine robustesse aux valeurs extrêmes. Le centre en 0 traduit une absence d’a priori fort sur la valeur de l’intercept. La largeur 2.5 autorise une variation raisonnablement large de l’intercept sans être complètement non-informatif.</p>
+<p>Dans certains cas, il est pertinent de définir soi-même un prior, par exemple pour refléter des connaissances issues de la littérature ou pour contraindre d’avantage l’estimation (prior informatif). Ici, on propose un prior normal centré en 0 avec un écart-type de 1.5 sur l’intercept, on en reparlera au Chapitre <a href="prior.html#prior">4</a> :</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nlprior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"Intercept"</span><span class="op">)</span></span></code></pre></div>
+<p>On peut ensuite l’utiliser dans la spécification du modèle :</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bayes.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">|</span> <span class="fu">trials</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>                  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span><span class="st">"logit"</span><span class="op">)</span>,</span>
+<span>                  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>                  prior <span class="op">=</span> <span class="va">nlprior</span>, <span class="co"># nos propres priors</span></span>
+<span>                  chains <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>                  iter <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>                  warmup <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>                  thin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Vous pouvez vérifier que les résultats sont proches de ceux obtenus avec le prior par défaut :</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  Family: binomial </span></span>
+<span><span class="co">#&gt;   Links: mu = logit </span></span>
+<span><span class="co">#&gt; Formula: y | trials(n) ~ 1 </span></span>
+<span><span class="co">#&gt;    Data: dat (Number of observations: 1) </span></span>
+<span><span class="co">#&gt;   Draws: 3 chains, each with iter = 2000; warmup = 300; thin = 1;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 5100</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Regression Coefficients:</span></span>
+<span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; Intercept    -0.68      0.27    -1.23    -0.15 1.00     1706     2026</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
+<span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
+<span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
+</div>
+<div id="en-résumé-2" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-2"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><code>brms</code> permet de tirer parti des méthodes MCMC sans avoir à écrire le modèle soi-même (la vraisemblance en particulier).</p></li>
+<li><p>Sa syntaxe est simple et proche de celle de <code>lme4</code>, ce qui le rend particulièrement adapté pour les modèles linéaires généralisés (mixtes ou pas ; voir Chapitre <a href="glms.html#glms">6</a>).</p></li>
+<li><p>En contrepartie, <code>brms</code> repose sur des composants préprogrammés (familles de modèles, etc.), et il est important d’être attentif aux choix faits par défaut, notamment en ce qui concerne les distributions a priori.</p></li>
+<li><p>Ce chapitre propose ainsi une première approche concrète de l’implémentation des modèles bayésiens, avant d’aborder des modèles plus riches, comme les modèles mixtes.</p></li>
+</ul>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="mcmc.html"><span class="header-section-number">2</span> Les méthodes MCMC</a></div>
+<div class="next"><a href="prior.html"><span class="header-section-number">4</span> Les distributions a priori</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#logiciels"><span class="header-section-number">3</span> Mise en oeuvre pratique</a></li>
+<li><a class="nav-link" href="#introduction-3"><span class="header-section-number">3.1</span> Introduction</a></li>
+<li><a class="nav-link" href="#brms"><span class="header-section-number">3.2</span> brms</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-2"><span class="header-section-number">3.3</span> En résumé</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes/blob/master/03-miseenoeuvrepratique.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes/edit/master/03-miseenoeuvrepratique.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-06-11.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>Ce livre a été généré avec le <a class="text-light" href="https://bookdown.org">package R bookdown</a>.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
