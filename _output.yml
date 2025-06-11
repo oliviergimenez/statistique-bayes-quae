@@ -1,0 +1,44 @@
+bookdown::bs4_book:
+  template: "templates/bs4_book_fr.html"
+  includes:
+#    in_header: assets/lang-fr.js   
+    in_header: header.html
+  css: style.css
+  theme:
+    primary: "#5b7886"
+    base_font:
+      google: Roboto
+  language: fr
+  repo: https://github.com/oliviergimenez/statistique-bayes
+
+bookdown::word_document2:
+  toc: true
+  number_sections: false
+  reference_docx: "template.docx"
+
+#  includes:
+#    in_header: _includes/analytics.html
+
+# bookdown::gitbook:
+#   css: style.css
+#   config:
+#     language: fr
+#     toc:
+#       collapse: section
+#       before: |
+#         <li><a href="./">Statistique bayésienne avec R pour les non-spécialistes</a></li>
+#       after: |
+#         <li><a href="https://github.com/rstudio/bookdown" target="blank">Publié avec bookdown</a></li>
+#     edit:
+#       link: https://github.com/oliviergimenez/statistique-bayes/edit/master/%s
+# #  includes:
+# #    in_header: _includes/analytics.html
+# 
+# bookdown::pdf_book:
+#   includes:
+#     in_header: preamble.tex
+#   latex_engine: xelatex
+#   citation_package: natbib
+#   keep_tex: yes
+
+# bookdown::epub_book: default

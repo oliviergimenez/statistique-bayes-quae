@@ -1,0 +1,23 @@
+delete_merged_file: true
+new_session: yes
+before_chapter_script: "_common.R"
+output: bookdown::bs4_book
+output_dir: "docs"
+
+language:
+  ui:
+    chapter_name: "Chapitre "
+    toc: "Table des matières"
+    references: "Références"
+    appendix_name: "Annexe"
+  label:
+    fig: "Figure "
+    tab: "Table "
+    eq: "Équation "
+    thm: "Théorème "
+    lem: "Lemme "
+    def: "Définition "
+    cor: "Corollaire "
+    prp: "Proposition "
+    ex: "Exemple "
+    proof: "Preuve"

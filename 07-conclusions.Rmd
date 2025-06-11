@@ -1,0 +1,35 @@
+# Conclusions {-}
+
+## Ce qu'on a vu
+
+J'espère avec ce livre avoir démystifié (un peu) la statistique bayésienne et les méthodes MCMC. J'espère aussi vous avoir donné les clés pour comprendre la différence entre les approches fréquentiste et bayésienne, à mieux lire la section « Méthodes » des articles recourant à l'inférence bayésienne, et à acquérir une certaine autonomie dans la conduite d’analyses bayésiennes.
+
+Tout au long du livre, nous avons abordé plusieurs étapes essentielles. Nous avons commencé par explorer les motivations qui justifient le recours à l’approche bayésienne. Nous avons ensuite introduit le théorème de Bayes et discuté de son interprétation. Nous avons découvert les méthodes de Monte Carlo par chaînes de Markov (MCMC), puis manipulé `brms` pour ajuster des modèles complexes (et `NIMBLE` dans la version enrichie de ce livre, disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/index.html>). Une attention particulière a été portée au rôle des distributions a priori, qu’elles soient non informatives ou informatives, ainsi qu’à l’utilisation de ces approches dans des études de cas autour des GLM et GLMM.
+
+## La statistique bayésienne, en résumé
+
+L’approche bayésienne offre de nombreux atouts. Elle permet de quantifier l’incertitude de manière cohérente à l’aide de la probabilité, elle autorise l’intégration explicite de connaissances a priori, et elle rend possible l’ajustement de modèles complexes complexes via MCMC. De plus, les intervalles de crédibilité bayésiens sont plus intuitifs que les intervalles de confiance fréquentistes.
+
+Certaines précautions sont toutefois de mise. La vérification de la convergence des chaînes MCMC est une étape cruciale, mais parfois laborieuse. Le choix des distributions a priori nécessite de prendre certaines précautions. L'adéquation du modèle aux données doit être systématiquement évaluée. Enfin, le coût computationnel n’est pas négligeable, en particulier pour les modèles les plus complexes et/ou les gros jeux de données.
+
+## Quelques conseils
+
+Avant de terminer, je voudrais vous laisser avec quelques conseils inspirés de ma propre expérience. Ces conseils ne sont pas forcément spécifiques à la statistique bayésienne, et ils valent ce qu'ils valent.
+
+Tout d’abord, prenez le temps de formuler clairement votre question. Cela paraît évident, mais cette étape est essentielle pour rester sur la bonne voie et faire les bons choix, par exemple celui de n'utiliser qu’un sous-ensemble des données pour répondre à une question spécifique.
+
+Ensuite, réfléchissez d’abord à votre modèle, à la formaliser soit avec des équations, soit en le dessinant, soit avec des mots. Ne vous précipitez pas sur le clavier. Décrivez les observations, les processus. Vérifiez que vous le comprenez. 
+
+A ce sujet, pensez à faire des simulations. Simuler des données à partir de votre modèle permet souvent de mieux le comprendre. C’est une excellente manière de tester vos hypothèses et de diagnostiquer d’éventuels problèmes. 
+
+Lors de l’ajustement du modèle, commencez simple. Un modèle avec tous les paramètres constants est une bonne base. Cela permet de s'assurer que les données sont bien lues et formatées, qu'il n'y a pas de données aberrantes (un zéro en trop, une virgule mal placée) ou que les a priori ne génèrent pas des comportements atypiques. Cette approche est particulièrement importante pour la statistique bayésienne pour s'assurer des bonnes performances et de la convergence de l'algorithme MCMC, tout en se faisant une idée du temps nécessaire à faire tourner l'analyse. Une fois que tous les voyants sont au vert, ajoutez de la complexité progressivement, les effets aléatoires par exemple, jusqu'à parvenir à la structure de modèle qui vous semble la plus adaptée pour répondre à votre question.
+
+<!-- La reproductibilité est un pilier essentiel de la démarche scientifique moderne, en particulier dans les approches bayésiennes où les analyses reposent sur de nombreux choix et étapes, souvent sensibles à l’aléa. Penser la reproductibilité dès le début – et non à la fin – renforce la qualité, la transparence et l’impact de vos travaux. Concrètement, cela passe par quelques bonnes pratiques : fixer les graines aléatoires pour garantir des résultats reproductibles ; écrire un code clair et lisible, documenté avec soin ; utiliser un système de contrôle de version (comme Git) pour suivre les modifications, collaborer efficacement et revenir en arrière si besoin. Ces habitudes facilitent aussi le débogage, l’automatisation des analyses, et le partage avec d’autres chercheurs. Bref, la reproductibilité n’est pas une contrainte, mais un atout puissant dans votre boîte à outils bayésienne. -->
+
+Pour approfondir ces aspects pratiques, je recommande la lecture de l’article « Ten quick tips to get you started with Bayesian statistics » [@gimenez2025]. 
+
+## En conclusion
+
+En résumé, adoptez une approche pragmatique. Le choix de l’approche statistique (fréquentiste ou bayésienne) dépend de vos objectifs, qu'il s'agisse de la rapidité, de la complexité du modèle ou du type d’incertitude que vous souhaitez quantifier. Discutez de vos options avec des collègues plus expérimenté.e.s si besoin. Le bayésien n’est pas un dogme : c’est un outil puissant parmi d’autres dans votre boîte à outils.
+
+Merci pour votre attention. N'hésitez pas à m'écrire si vous avez des questions ou si vous voudriez voir un aspect particulier développé dans une nouvelle édition de cet ouvrage. Et bonne découverte de la statistique bayésienne ! 

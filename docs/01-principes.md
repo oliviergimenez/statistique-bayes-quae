@@ -1,0 +1,191 @@
+# L'approche bayésienne {#principes}
+
+## Introduction
+
+Dans ce chapitre, on pose les bases en faisant quelques rappels de probabilité utiles pour la suite. J'introduis les notions clés de la statistique bayésienne à travers un exemple simple qui permet de fixer les idées, et qu'on utilisera souvent dans le livre. On fera aussi des parallèles entre la statistique classique ou fréquentiste et la statistique bayésienne. 
+
+## Le théorème de Bayes
+
+Ne tardons plus et entrons dans le vif du sujet. La statistique bayésienne repose sur le théorème de Bayes (ou formule, ou loi, selon ce que vous préférez), nommé d'après le révérend Thomas Bayes. Ce théorème a été publié en 1763, deux ans après la mort de Bayes grâce aux efforts de son ami Richard Price, et a été découvert indépendamment par Pierre-Simon Laplace.
+
+Comme nous allons le voir dans un instant, le théorème de Bayes porte sur les probabilités conditionnelles, qui sont parfois un peu délicates à comprendre. La probabilité conditionnelle d'un résultat ou événement A sachant un événement B, que l'on note $\Pr(A \mid B)$, est la probabilité que A se produise, révisée en tenant compte de l'information supplémentaire que l'événement B s'est produit. Par exemple, imaginez qu'un de vos amis lance un dé (équilibré) et vous demande la probabilité que le résultat soit un six (A). Votre réponse est 1/6 car chaque face du dé a la même chance d'apparaître. Maintenant, imaginez que l'on vous dise que le nombre obtenu est pair (B) avant de répondre. Comme il n'y a que trois nombres pairs, dont un seul est six, vous pouvez réviser votre réponse : $\Pr(A \mid B) = 1/3$.
+
+<!-- L'ordre des événements A et B est important, veillez à ne pas confondre $\Pr(A \mid B)$ et $\Pr(B \mid A)$. -->
+
+Vous voyez comment l'information supplémentaire (ici, savoir que le nombre est pair) change l'estimation ? C'est exactement ce type de raisonnement que le théorème de Bayes formalise et généralise : il permet de calculer la probabilité d'un événement A sachant qu'un autre événement B s'est produit. Plus précisément, le théorème de Bayes vous donne $\Pr(A \mid B)$ en utilisant les probabilités marginales $\Pr(A)$ et $\Pr(B)$ et la probabilité $\Pr(B \mid A)$ :
+
+$$\Pr(A \mid B) = \displaystyle{\frac{ \Pr(B \mid A) \; \Pr(A)}{\Pr(B)}}.$$
+
+Le théorème de Bayes est souvent considéré comme un moyen d'inférer une cause inconnue A d'un effet particulier B, en connaissant la probabilité de l'effet B sachant la cause A. Pensez, par exemple, à une situation où un diagnostic médical est requis, avec A une maladie inconnue et B des symptômes ; la médecin connaît les chances d'avoir certains symptômes en fonction de plusieurs maladies ou $\Pr(\text{symptômes}|\text{maladie})$, et souhaite déduire la probabilité d'avoir une maladie connaissant les symptômes ou $\Pr(\text{maladie}|\text{symptômes})$. Cette manière de renverser $\Pr(B \mid A)$ en $\Pr(A \mid B)$ explique pourquoi le raisonnement bayésien est parfois appelé "probabilité inverse".
+
+Plutôt que d'utiliser des lettres au risque de s'embrouiller, je trouve plus facile de retenir le théorème de Bayes écrit ainsi :
+
+$$\Pr(\text{hypothèse} \mid \text{données}) = \frac{ \Pr(\text{données} \mid \text{hypothèse}) \; \Pr(\text{hypothèse})}{\Pr(\text{données})}.$$
+
+L'hypothèse peut être un paramètre comme la probabilité de présence d'une espèce, ou des coefficients de régression liant cette probabilité de présence à des variables environnementales. Le théorème de Bayes nous dit comment obtenir la probabilité d'une hypothèse à partir des données disponibles.
+
+C'est pertinent car, réfléchissez-y, c'est exactement ce que fait la méthode scientifique. Nous voulons savoir à quel point une hypothèse est plausible à partir de données que nous avons collectées, et peut-être comparer plusieurs hypothèses entre elles. De ce point de vue, le raisonnement bayésien s'accorde avec le raisonnement scientifique, ce qui explique probablement pourquoi le cadre bayésien est si naturel pour faire et comprendre la statistique.
+
+Vous pourriez alors demander pourquoi la statistique bayésienne n'est-elle pas la norme ? Pendant longtemps, la mise en œuvre du théorème de Bayes a été limitée par des difficultés de calcul, comme nous le verrons au chapitre suivant. Fort heureusement, l'amélioration de la puissance de calcul de nos ordinateurs et le développement de nouveaux algorithmes ont entraîné un essor marqué de l'approche bayésienne au cours des trente dernières années.
+
+## Qu'est-ce que la statistique bayésienne? {#statbayes}
+
+Les problèmes statistiques typiques consistent à estimer un paramètre (ou plusieurs) à partir de données disponibles. On va noter ce ou ces paramètres de manière générique, disons $\theta$. Pour estimer $\theta$, vous êtes sûrement plus familier de l'approche fréquentiste que de l'approche bayésienne. L'approche fréquentiste, en particulier l'estimation par maximum de vraisemblance, suppose que les paramètres sont fixes, et de valeurs inconnues. Les estimateurs classiques sont donc en général des valeurs ponctuelles. L'approche bayésienne suppose que les paramètres ne sont pas fixes et suivent une distribution inconnue. Une distribution de probabilité est une expression mathématique qui donne la probabilité qu'une variable aléatoire prenne certaines valeurs. Elle peut être discrète (par exemple Bernoulli, Binomiale ou Poisson) ou continue (par exemple la loi normale ou gaussienne).
+
+L'approche bayésienne repose sur l'idée que vous commencez avec certaines connaissances sur le système avant même de l'étudier vous mêmes. Ensuite, vous collectez des données et mettez à jour ces connaissances a priori en fonction des observations. Ces observations peuvent venir du terrain, du laboratoire ou de l'expertise de collègues. Ce processus de mise à jour repose sur le théorème de Bayes. De façon simplifiée, si l'on prend $A = \theta$ et $B = \text{données}$, alors le théorème de Bayes permet d'estimer le paramètre $\theta$ à partir des données comme suit :
+
+$$\Pr(\theta \mid \text{données}) = \frac{\Pr(\text{données} \mid \theta) \times \Pr(\theta)}{\Pr(\text{données})}.$$
+
+Prenons un peu de temps pour passer en revue chaque terme de cette formule.
+
+À gauche, nous avons $\Pr(\theta \mid \text{données})$ la distribution a posteriori. La probabilité de $\theta$ sachant les données. Elle représente ce que vous savez après avoir vu les données. C'est la base de l'inférence et c'est précisément ce que vous cherchez : une distribution, possiblement multivariée si vous avez plusieurs paramètres.
+
+À droite, on trouve ${\Pr(\text{données} \mid \theta)}$ la vraisemblance. La probabilité des données sachant $\theta$. Cette quantité est la même que dans l'approche classique ou fréquentiste. Car oui, les approches bayésienne et fréquentiste partagent la même composante, la vraisemblance, ce qui explique pourquoi leurs résultats sont souvent proches. La vraisemblance exprime l'information que contiennent vos données, étant donné un modèle paramétré par $\theta$. On en reparle à la Section \@ref(maxvrais).
+
+Ensuite, nous avons $\Pr(\theta)$ la distribution a priori. Cette quantité représente ce que vous savez avant de voir les données. Cette distribution a priori ne doit pas dépendre des données, autrement dit on ne devrait pas utiliser les données pour la construire. Elle peut être vague ou non-informative si vous ne savez rien sur $\theta$. Souvent, vous ne partez jamais de zéro, et vous souhaitez que votre a priori reflète les connaissances existantes. Je vous parlerai plus en détails des priors au Chapitre \@ref(prior).
+
+Enfin, il y a le dénominateur $\Pr(\text{données})$, parfois appelée vraisemblance moyenne (average likelihood), moyenne par rapport au prior, car il s'obtient en intégrant la vraisemblance selon la loi a priori ${\Pr(\text{données}) = \int{L(\text{données} \mid \theta) \times \Pr(\theta) \, d\theta}}$. Cette quantité permet de normaliser la distribution a posteriori pour qu'elle intègre à 1. Autrement dit, comme $\int{\Pr(\theta \mid \text{données}) \, d\theta} = 1$ puisque l'aire sous une distribution de probabilité est 1, on a que $\displaystyle \int{\frac{\Pr(\text{données} \mid \theta) \times \Pr(\theta)}{\Pr(\text{données})} \, d\theta} = 1$. Et puisque $\Pr(\text{données})$ ne dépend pas de $\theta$, on a que $\Pr(\text{données}) = \int{\Pr(\text{données} \mid \theta) \times \Pr(\theta) \, d\theta}$. C'est une intégrale de dimension égale au nombre de paramètres $\theta$ à estimer : pour 2 paramètres, une intégrale double, pour 3 paramètres une intégrale triple, etc. Or, au-delà de 3 dimensions, il devient difficile, voire impossible, de calculer cette intégrale. C'est l'une des raisons pour lesquelles l'approche bayésienne n'a pas été utilisée plus tôt, et pourquoi on a besoin d'algorithmes pour estimer les distributions a posteriori, comme je l'explique dans le Chapitre \@ref(mcmc). En attendant, on va dérouler un exemple relativement simple dans lequel la distribution a posteriori a une forme explicite.
+
+## Un exemple fil rouge
+
+Prenons un exemple concret pour fixer les idées. Je travaille sur le ragondin (*Myocastor coypus*) (Figure \@ref(fig:ragondinos)), un rongeur semi-aquatique originaire d’Amérique du Sud, introduit en Europe pour l’élevage de fourrure. Il est aujourd’hui considéré comme une espèce invasive, en raison des dégâts qu’il occasionne dans les milieux humides (érosion des berges, destruction de la végétation) et de son rôle possible dans la transmission à l'humain de la leptospirose, une infection bactérienne potentiellement sévère, transmise par l'eau. Grâce à sa forte fécondité et à sa bonne adaptation aux climats tempérés, le ragondin a proliféré rapidement.
+
+![(\#fig:ragondinos)Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet.](images/ragondin2.jpg){width=90%}
+
+Une des questions qui m’intéressent est d’estimer la probabilité de survie à l'hiver, les ragondins étant particulièrement sensibles au froid. Pour cela, on équipe plusieurs individus d’une balise GPS au début de l’hiver, disons ici $n = 57$. A la fin de l'hiver, on observe que $y = 19$ ragondins sont encore vivants. L’objectif est d’estimer la probabilité de survie hivernale, que l’on notera $\theta$. Voici les données :
+
+
+``` r
+y <- 19 # nombre d'individus ayant survécu à l'hiver
+n <- 57 # nombre d'individus suivis au début de l'hiver
+```
+
+Vous vous dites sûrement qu’avec ces éléments, on peut déjà estimer une probabilité de survie. Intuitivement, on pense à la proportion d’individus ayant survécu, soit $19/57$. Et vous n’avez pas tort. C’est une estimation raisonnable de $\theta$, la probabilité de survie hivernale. Essayons maintenant de formaliser cette intuition, afin de mieux comprendre ce qu’elle représente, et ce qu’elle suppose.
+
+Comme mentionné plus haut, la vraisemblance est une idée centrale qu'on retrouve dans les approches fréquentiste et bayésienne. Commençons donc par construire cette vraisemblance. Pour cela, il nous faut poser quelques hypothèses.
+
+Premièrement, nous supposons que les individus sont indépendants, c’est-à-dire que la survie d'un ragondin n’influence pas la survie des autres ragondins. C’est une hypothèse forte, surtout quand on sait qu’une femelle peut se reproduire 2 à 3 fois par an et donner naissance à jusqu’à 10 petits dépendants d’elle au début de leur vie. Mais en modélisation, il vaut souvent mieux commencer simplement.
+
+Deuxièmement, nous supposons que tous les individus ont la même probabilité de survie. Là encore, c’est une simplification : on sait, par exemple, que la mortalité des jeunes est plus élevée que celle des adultes.
+
+Sous ces deux hypothèses, le nombre $y$ d’animaux encore vivants à la fin de l’hiver suit une loi binomiale, avec $\theta$ comme probabilité de succès (survie), et $n$ comme nombre d’essais (individus suivis). On notera $y \sim \text{Bin}(n, \theta)$. La loi binomiale est en fait la somme de plusieurs épreuves de Bernoulli indépendantes, comme dans l’exemple classique du pile ou face. Je donne des exemples de tirages Bernoulli et binomiaux dans la Figure \@ref(fig:bernoulli-binomiale). À chaque lancé, ici le relâché d'un ragondin équipé d’un GPS en début d'hiver, on suppose une probabilité $\theta$ de succès, c’est-à-dire de survivre à l’hiver, et d'échec, c'est-à-dire de mourir de froid. Si toutes ces épreuves sont indépendantes et ont la même probabilité de succès (nos hypothèses), alors le nombre de succès ou de ragondins vivants en sortie d'hiver suit une loi binomiale (voir aussi le Chapitre \@ref(glms)).
+
+![(\#fig:bernoulli-binomiale) Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations. On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\).](01-principes_files/figure-docx/bernoulli-binomiale-1.png){width=90%}
+
+## Le maximum de vraisemblance {#maxvrais}
+
+Dans l’approche classique (ou fréquentiste), on estime la probabilité de survie $\theta$ en utilisant la méthode du maximum de vraisemblance. Mais qu’est-ce que cela signifie concrètement ? Il s’agit de trouver la valeur de $\theta$ qui rend les données observées les plus probables. Autrement dit, puisque les données sont ce qu’elles sont — elles ont été observées — on cherche la valeur de $\theta$ qui maximise la probabilité que cet ensemble de données ait été produit.
+
+Comment justifie-t-on mathématiquement cette idée plutôt intuitive ? Relisez bien la fin du paragraphe précédent. L'idée de chercher la valeur qui donne la plus grande probabilité revient à maximiser quelque chose. Mais quoi exactement ? La probabilité des données, étant donné un certain modèle paramétré par $\theta$, autrement dit la vraisemblance ou $\Pr(\text{données}|\theta)$ qu'on a vue à la Section \@ref(statbayes). L'estimation classique repose donc sur la maximisation de la vraisemblance, ou plutôt la fonction de vraisemblance, c'est-à-dire la vraisemblance considérée comme une fonction de $\theta$.
+
+Dans notre cas, on est face à une expérience binomiale : on suit $n$ ragondins à travers l’hiver, chacun ayant une probabilité $\theta$ de survivre. On connaît la probabilité de chaque issue possible (ou fonction de masse). Par exemple, la probabilité qu’aucun ragondin ne survive est $(1-\theta)^n$, car chacun des $n$ individus meurt avec une probabilité $1-\theta$. Si on prend par exemple une probabilité de survie de 0.5, on a $(1-0.5)^{57} \approx 0$. On peut calculer cette probabilité dans `R` avec la fonction `dbinom()` :
+
+
+``` r
+dbinom(x = 0, size = 57, prob = 1 - 0.5)
+#> [1] 6.938894e-18
+```
+
+À l’inverse, la probabilité que tous survivent est $\theta^n$ qui vaut la même chose. Vous pouvez vérifier avec `R` et la ligne de commande `dbinom(x = 57, size = 57, prob = 0.5)`. Si un seul ragondin survit, il faut que l’un des $n$ survive et que les $n-1$ autres meurent, avec probabilité $(1-\theta)^{n-1}$. Comme n’importe lequel des $n$ ragondins peut être celui qui survit, on obtient une probabilité totale de $n \theta (1-\theta)^{n-1}$. On peut calculer cette probabilité avec `dbinom(x = 1, size = 57, prob = 0.5)`. Plus généralement, la probabilité que $y$ individus survivent est donnée par $\displaystyle \binom{n}{y}\theta^y(1-\theta)^{n-y}$. Si l’on considère cette expression comme une fonction de $\theta$ (et non de $y$), on obtient la fonction de vraisemblance $\displaystyle \mathcal{L}(\theta) = \binom{n}{y} \theta^y (1 - \theta)^{n - y}$. Le terme $\displaystyle \binom{n}{y}$ est appelé coefficient binomial. Il correspond au nombre de façons différentes de choisir $y$ survivants parmi les $n$ ragondins, sans tenir compte de leur ordre.
+
+On peut représenter cette vraisemblance dans `R` comme dans la Figure \@ref(fig:survie-vraisemblance-mle) :
+
+![(\#fig:survie-vraisemblance-mle)Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge.](01-principes_files/figure-docx/survie-vraisemblance-mle-1.png){width=90%}
+
+Notre objectif est de trouver la valeur de $\theta$ qui maximise cette fonction. Autrement dit, on cherche la valeur de survie (sur l’axe des abscisses dans la Figure \@ref(fig:survie-vraisemblance-mle)) qui maximise la vraisemblance (sur l’axe des ordonnées). Cette valeur correspond à l’estimateur du maximum de vraisemblance, souvent noté $\hat{\theta}$. Pour ce faire, il est souvent plus pratique de travailler avec le logarithme de la vraisemblance (la log-vraisemblance) :
+
+$$
+\ell(\theta) = \log \mathcal{L}(\theta) = \log \binom{n}{y} + y \log \theta + (n - y) \log (1 - \theta).
+$$
+Le premier terme, $\displaystyle \log \binom{n}{y}$, ne dépend pas de $\theta$, on peut donc l’ignorer pour la suite. On dérive alors la log-vraisemblance par rapport à $\theta$ :
+
+$$
+\displaystyle \frac{d\ell(\theta)}{d\theta} = \frac{y}{\theta} - \frac{n - y}{1 - \theta}.
+$$
+
+On cherche la valeur de $\theta$ qui annule cette dérivée :
+
+$$
+\frac{y}{\theta} - \frac{n - y}{1 - \theta} = 0.
+$$
+
+Après quelques simplifications, on obtient que l'estimateur du maximum de vraisemblance $\hat{\theta}$ est :
+
+$$
+\hat{\theta} = \frac{y}{n}.
+$$
+
+Ce résultat rejoint notre intuition de départ : l’estimateur du maximum de vraisemblance est la proportion d’individus qui ont survécu, soit $19/57 \approx 0.333$. On peut visualiser ce résultat sur la Figure \@ref(fig:survie-vraisemblance-mle), où le maximum de vraisemblance est indiqué par une ligne pointillée rouge.
+
+En pratique, les modèles contiennent plusieurs paramètres, des dizaines voire des centaines, et on ne peut pas appliquer la même méthode pour maximiser la vraisemblance et trouver les estimateurs du maximum de vraisemblance. On utilise plutôt des algorithmes itératifs d'optimisation qui vont résoudre le problème pour nous, par exemple dans `R` (voir Chapitre \@ref(glms)), ça donne : 
+
+``` r
+mod <- glm(cbind(y, n - y) ~ 1, family = binomial)
+theta_hat <- plogis(coef(mod))
+theta_hat
+#> (Intercept) 
+#>   0.3333333
+```
+
+## Et en bayésien?
+
+Dans l'approche bayésienne, on commence par exprimer nos connaissances a priori sur la quantité que l'on souhaite estimer. Ici, la probabilité de survie hivernale $\theta$. On sait que $\theta$ est une variable continue comprise entre 0 et 1. Une distribution a priori naturelle dans ce cas est la distribution bêta. La distribution bêta est définie par deux paramètres $a$ et $b$ qui en contrôlent la forme :
+
+$$
+q(\theta \mid a, b) = \frac{1}{\text{Beta}(a, b)}{\theta^{a - 1}} {(1-\theta)^{b - 1}}
+$$
+
+avec :
+
+$$
+\text{Beta}(a, b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}, \quad \Gamma(n) = (n-1)!
+$$
+Vous pouvez oublier ces équations si vous n'êtes pas à l'aise avec. Essayons plutôt de visualiser cette distribution comme dans la Figure \@ref(fig:beta-exemples):
+
+![(\#fig:beta-exemples)Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné.](01-principes_files/figure-docx/beta-exemples-1.png){width=90%}
+
+Chaque panneau de la figure montre la forme d'une loi bêta pour un couple de paramètres $(a, b)$ donné. On peut y observer plusieurs comportements caractéristiques.
+
+- Beta(1,1) (en haut à gauche) correspond à une loi uniforme : toutes les valeurs de $\theta$ entre 0 et 1 sont considérées comme également probables. La densité est constante, ce qui signifie que la probabilité d’observer une valeur entre 0.1 et 0.2 est la même que celle d’en observer une entre 0.8 et 0.9. Cette probabilité est l’aire du rectangle délimité par le trait rouge et les lignes verticales calées à 0.1 et 0.2 ou 0.8 et 0.9 (les zones ombrées en rouge). On a une situation d’absence de connaissance a priori.
+- Beta(2,1) et Beta(1,2) représentent des connaissances asymétriques : la première est biaisée vers des valeurs proches de 1, la seconde vers des valeurs proches de 0. La probabilité d’observer une valeur entre 0.1 et 0.2 est plus petite que celle d’en observer une entre 0.8 et 0.9, et vice-versa.
+- Beta(2,2) est symétrique, mais donne plus de poids aux valeurs centrales qu'une loi uniforme. La probabilité d’observer une valeur entre 0.1 et 0.2 est plus petite que celle d’en observer une entre 0.5 et 0.6.
+- Beta(10,10) représente une connaissance très concentrée autour de 0.5 : c’est un prior très informatif. La probabilité d’observer une valeur entre 0.2 et 0.3 est beaucoup plus petite que celle d’en observer une entre 0.5 et 0.6.
+- Beta(0.8,0.8) illustre une distribution en forme de U ou de baignoire, qui favorise les valeurs extrêmes (proches de 0 ou de 1). Les probabilités d’observer une valeur entre 0 et 0.1 et entre 0.9 et 1 sont plus grandes que celle d'en observer une entre 0.45 et 0.55.
+
+Ces exemples permettent de visualiser comment les paramètres $a$ et $b$ influencent la forme du prior. Comment passe-t-on de ce prior à la distribution a posteriori?
+
+On suppose que $\theta \sim \text{Beta}(a, b)$ et on a observé $y = 19$ survivants parmi $n = 57$ individus. La vraisemblance est $\displaystyle \binom{n}{y}\theta^y(1 - \theta)^{n - y}$. Pour l'instant, on va ignorer le dénominateur $\Pr(y)$ dans le théorème de Bayes, on verra dans le chapitre suivant pourquoi. On a donc que l'a posteriori est proportionnel au produit de la vraisemblance et de l'a priori : $\Pr(\theta \mid y) \propto \Pr(y \mid \theta) \times \Pr(\theta)$. Dans notre cas, on multiplie terme à terme la vraisemblance et le prior, et en réarrangeant les termes en $\theta$ et $1-\theta$, on a :
+
+$$
+\begin{aligned}
+\Pr(\theta \mid y) &\propto \underbrace{\theta^y (1 - \theta)^{n - y}}_{\text{vraisemblance binomiale}} \times \underbrace{\theta^{a - 1} (1 - \theta)^{b - 1}}_{\text{a priori bêta}} \\
+&\propto \underbrace{\theta^{a + y - 1} (1 - \theta)^{b + n - y - 1}}_{\text{forme d'une loi bêta}}
+\end{aligned}
+$$
+
+Autrement dit, on retrouve donc une loi bêta, avec des paramètres mis à jour $a + y$ et $b + n - y$. On dit que la loi binomiale et la loi bêta sont conjuguées : lorsque l'on utilise une loi bêta comme distribution a priori pour un paramètre de probabilité dans un modèle binomial, la loi a posteriori obtenue est également une loi bêta. Si on utilise une loi uniforme a priori (i.e. Beta(1,1)), on obtient que la distribution a posteriori de la survie hivernale est une $\text{Beta}(1+19, 1+57-19) = \text{Beta}(20, 39)$. Au passage, la distribution a posteriori est connue, ce qui facilite grandement les calculs et leur interprétation. Par exemple, on sait que la moyenne de la $\text{Beta}(a, b)$ est $\displaystyle \frac{a}{a+b}$, soit  $\frac{20}{59} \approx 0.339$. On peut comparer cette valeur à l'estimateur du maximum de vraisemblance $19/57 \approx 0.333$. On peut également visualiser la distribution a posteriori comme dans la Figure \@ref(fig:posterior-survie), puisqu'on connait l'équation de la densité d'une loi Bêta :
+
+![(\#fig:posterior-survie)Distribution a priori uniforme (noir) et distribution a posteriori (rouge) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance.](01-principes_files/figure-docx/posterior-survie-1.png){width=90%}
+
+Plus généralement, lorsque l'on dispose de suffisamment de données, les estimateurs bayésien et fréquentiste ont tendance à être très proches. Intuitivement, les données finissent par « dominer » l'information a priori. Grossièrement, le mode de la distribution a posteriori (la valeur pour laquelle la densité est maximale) correspond exactement à l’estimateur du maximum de vraisemblance.
+
+C’est une illustration du lien entre les deux approches, et du rôle central que joue la vraisemblance en statistique : elle constitue le point commun fondamental entre les approches bayésienne et fréquentiste.
+
+## En résumé
+
+- Le théorème de Bayes est un outil de mise à jour des connaissances.
+- La statistique bayésienne repose sur la vraisemblance et une loi a priori pour les paramètres du modèle.
+- La statistique fréquentiste fournit un estimateur ponctuel quand la statistique bayésienne estime une distribution pour chaque paramètre.
+- Souvent, les approches classique et bayésienne donnent des estimations proches.
+- Dans certains cas, la loi a posteriori est explicite (ex : conjugaison bêta/binomiale).
+- Dans la plupart des cas, il nous faudra utiliser des simulations pour obtenir la distribution a posteriori, comme on va le voir dans le Chapitre \@ref(mcmc).
+
+<!-- - On peut fournir une comparaison des approches fréquentiste et bayésienne sur la base de quelques critères importants : -->
+
+<!-- | Critère         | Statistique fréquentiste | Statistique bayésienne | -->
+<!-- |----------------|------------------------|------------------------| -->
+<!-- | Nature des paramètres | Fixes mais inconnus | Variables aléatoires avec une distribution | -->
+<!-- | Estimation | Estimateur ponctuel (maximum de vraisemblance) | Distribution *a posteriori* | -->
+<!-- | Intervalle de confiance | Intervalle de confiance basé sur des hypothèses asymptotiques | Intervalle de crédibilité basé sur la distribution *a posteriori* | -->
+<!-- | Intégration des connaissances préalables | Non | Oui, via la distribution *a priori* | -->
+<!-- | Interprétation de la probabilité | Fréquence sur un grand nombre d’essais | Degré de croyance basé sur l’information disponible | -->
