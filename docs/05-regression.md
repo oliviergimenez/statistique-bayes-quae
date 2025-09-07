@@ -10,9 +10,9 @@ Ce chapitre présente l’application de la statistique bayésienne à la régre
 
 Pour changer un peu, je vous propose d'utiliser `brms` sur un exemple différent de celui de l'estimation de la survie. Attardons-nous sur la régression linéaire.  
 
-Commençons par poser les bases de notre modèle linéaire. On a $n$ mesures d'une variable réponse $y_i$ avec $i$ qui varie de 1 à $n$. Pensez par exemple au poids (en kilogrammes) de nos ragondins dans l'exemple fil rouge. On associe chaque mesure à une variable explicative $x_i$, par exemple la température (en degrés celsius) pour nos ragondins. Le modèle comporte une ordonnée à l'origine (ou intercept) $\beta_0$, et une pente $\beta_1$ qui décrit l’effet de $x_i$ sur $y_i$, ou de la température sur le poids des ragondins. On a aussi besoin d'un paramètre pour décrire la variabilité résiduelle représentée par un paramètre de variance $\sigma^2$, qui capte la part de variation dans les $y_i$ non expliquée par les $x_i$. Vous avez probablement déjà rencontré ce modèle sous la forme : $y_i = \beta_0 + \beta_1 x_i + \varepsilon_i$ où les erreurs $\varepsilon_i$ sont supposées indépendantes et distribuées selon une loi normale de moyenne 0 et de variance $\sigma^2$. 
+Commençons par poser les bases de notre modèle linéaire. On a $n$ mesures d'une variable réponse $y_i$ avec $i$ qui varie de 1 à $n$. Pensez par exemple à la masse (en kilogrammes) de nos ragondins dans l'exemple fil rouge. On associe chaque mesure à une variable explicative $x_i$, par exemple la température extérieure moyenne en hiver (en degrés Celsius) pour nos ragondins. On cherche à étudier l’effet de la température sur la masse. Le plus simple est de supposer une relation linéaire entre les deux, on utilise donc un modèle de régression linéaire. Le modèle comporte une ordonnée à l'origine (ou intercept) $\beta_0$, et une pente $\beta_1$ qui décrit l’effet de $x_i$ sur $y_i$, ou de la température sur la masse des ragondins. On a aussi besoin d'un paramètre pour décrire la variabilité résiduelle représentée par un paramètre de variance $\sigma^2$, qui capte la part de variation dans les $y_i$ non expliquée par les $x_i$. Vous avez probablement déjà rencontré ce modèle sous la forme : $y_i = \beta_0 + \beta_1 x_i + \varepsilon_i$ où les erreurs $\varepsilon_i$ sont supposées indépendantes et distribuées selon une loi normale de moyenne 0 et de variance $\sigma^2$. 
 
-L'intercept $\beta_0$ nous donne le poids quand la température est de 0 degré ($x_i = 0$). Le paramètre $\beta_1$ nous renseigne sur le changement dans la variable réponse pour une augmentation d'une unité (ici 1 degré celsius) de la variable explicative (d'où le terme pente pour désigner ce paramètre). En général, on conseille (fortement) de centrer (soustraire la moyenne) et réduire (diviser par l'écart-type) pour des questions numériques et d'interprétation. Numérique d'abord car cela permet aux algorithmes, qu'ils soient fréquentistes ou bayésiens, de ne pas se perdre dans des recoins de l'espace du paramètre. Et d'interprétation ensuite, car on interprète alors l'intercept $\beta_0$ comme la valeur de la variable réponse pour une valeur moyenne de la variable explicative. 
+L'intercept $\beta_0$ nous donne la masse quand la température est de 0 degré ($x_i = 0$). Le paramètre $\beta_1$ nous renseigne sur le changement dans la variable réponse pour une augmentation d'une unité (ici 1 degré Celsius) de la variable explicative (d'où le terme "pente" pour désigner ce paramètre). En général, on conseille (fortement) de centrer (soustraire la moyenne) et réduire (diviser par l'écart-type) les valeurs de la variable explicative pour des questions numériques et d'interprétation. Numérique d'abord car cela permet aux algorithmes, qu'ils soient fréquentistes ou bayésiens, de ne pas se perdre dans des recoins de l'espace du paramètre. Et d'interprétation ensuite, car on interprète alors l'intercept $\beta_0$ comme la valeur de la variable réponse pour une valeur moyenne de la variable explicative. 
 
 Dans cette section, plutôt que d'analyser de "vraies" données, nous allons, à partir des paramètres $\beta_0$, $\beta_1$ et $\sigma$, simuler des données artificielles, comme si elles provenaient d’un vrai processus sous-jacent. 
 
@@ -20,7 +20,7 @@ Dans cette section, plutôt que d'analyser de "vraies" données, nous allons, à
 
 ### Simuler des données
 
-Qu'est-ce que j'entends par simuler des données? L'analyse et la simulation des données sont deux faces d'un même modèle. Dans l'analyse, on utilise les données pour estimer les paramètres d'un modèle. Dans la simulation, on fixe les paramètres et on utilise le modèle pour générer des données. Une raison d'utiliser les simulations est que cette gymnastique va nous obliger à bien comprendre le modèle ; si je n'arrive pas à simuler des données à partir d'un modèle, c'est que je n'ai pas complètement compris comment il marchait. Il y a des tas d'autres bonnes raisons pour utiliser les simulations. Comme la vérité (les paramètres et le modèle) est connue, on peut vérifier que le modèle est bien codé. On peut évaluer le biais et la précision des estimations de nos paramètres, évaluer les effets de ne pas respecter les hypothèses du modèle, planifier un protocole de récolte de données ou encore évaluer la puissance d'un test statistique. Bref, c'est une technique très utile à avoir dans votre boîte à outils ! 
+Qu'est-ce que j'entends par simuler des données ? L'analyse et la simulation des données sont deux faces d'un même modèle. Dans l'analyse, on utilise les données pour estimer les paramètres d'un modèle. Dans la simulation, on fixe les paramètres et on utilise le modèle pour générer des données. Une raison d'utiliser les simulations est que cette gymnastique va nous obliger à bien comprendre le modèle ; si je n'arrive pas à simuler des données à partir d'un modèle, c'est que je n'ai pas complètement compris comment il marchait. Il y a des tas d'autres bonnes raisons pour utiliser les simulations. Comme la vérité (les paramètres et le modèle) est connue, on peut vérifier que le modèle est bien codé. On peut évaluer le biais et la précision des estimations de nos paramètres, évaluer les effets de ne pas respecter les hypothèses du modèle, planifier un protocole de récolte de données ou encore évaluer la puissance d'un test statistique. Bref, c'est une technique très utile à avoir dans votre boîte à outils ! 
 
 Revenons à notre exemple. Pour simuler des données selon le modèle de régression linéaire, on commence par fixer nos paramètres : $\beta_0 = 0.1$, $\beta_1 = 1$ et $\sigma^2 = 0.5$ : 
 
@@ -56,7 +56,7 @@ La Figure \@ref(fig:donnees-simulees) ci-dessous montre les données simulées, 
 
 
 
-Dans cette section, on ajuste le modèle de régression linéaire aux données qu'on vient de générer ou simuler avec `brms`. Si tout se passe bien, les paramètres estimés devraient être proches des valeurs utilisées pour générer les données. Je vais relativement vite ici puisqu'on a couvert les différentes étapes au Chapitre \@ref(logiciels). La syntaxe est très proche de celle qu'on utiliserait pour ajuster le modèle par maximum de vraisemblance avec la fonction `lm()` dans `R` : 
+Dans cette section, on utilise `brms` pour ajuster le modèle de régression linéaire aux données qu'on vient de générer. Si tout se passe bien, les paramètres estimés devraient être proches des valeurs utilisées pour générer les données. Je vais relativement vite ici puisqu'on a couvert les différentes étapes au Chapitre \@ref(logiciels). La syntaxe est très proche de celle qu'on utiliserait pour ajuster le modèle par maximum de vraisemblance avec la fonction `lm()` dans `R` : 
 
 
 ``` r
@@ -98,13 +98,13 @@ plot(lm.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-posterior-regression-1.png" alt="Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire." width="90%" />
-<p class="caption">(\#fig:fig-posterior-regression)Histogramme des distributions a posteriori (colonne de gauche) et trace (colonne de droite) des paramètres de la régression linéaire.</p>
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.png" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire." width="90%" />
+<p class="caption">(\#fig:fig-posterior-regression)Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire.</p>
 </div>
 
 ### Des priors faiblement informatifs {#weakly-informative-priors}
 
-Plutôt que d'utiliser les priors par défaut de `brms`, choisissons d'autres priors. Nous allons utiliser des priors faiblement informatifs, et plus spécifiquement une normale avec moyenne 0 et écart-type 1.5 ou $N(0,1.5)$ pour les paramètres de régression $\beta_0$ et $\beta_1$. On a déjà parlé des priors faiblement informatifs au Chapitre \@ref(prior). L'idée est proche de celle des priors vagues ou non-informatifs, dans le sens où l'on s'efforce de refléter via les priors faiblement informatifs le fait qu'on n'a pas vraiment d'information sur les paramètres du modèle. La différence est que les priors non-informatifs peuvent induire des valeurs aberrantes comme on l'a vu au Chapitre \@ref(prior). C'est encore le cas ici. Prenez par exemple des $N(0,100)$ pour les paramètres de la relation linéaire qui lie le poids des ragondins à la température, et simulez tout un tas de valeurs dans ces priors, puis formez la relation linéaire : 
+Plutôt que d'utiliser les priors par défaut de `brms`, choisissons d'autres priors. Nous allons utiliser des priors faiblement informatifs, et plus spécifiquement une normale avec moyenne 0 et écart-type 1.5 ou $N(0,1.5)$ pour les paramètres de régression $\beta_0$ et $\beta_1$. On a déjà parlé des priors faiblement informatifs au Chapitre \@ref(prior). L'idée est proche de celle des priors vagues ou non-informatifs, dans le sens où l'on s'efforce de refléter via les priors faiblement informatifs le fait qu'on n'a pas vraiment d'information sur les paramètres du modèle. La différence est que les priors non-informatifs peuvent induire des valeurs aberrantes comme on l'a vu au Chapitre \@ref(prior). C'est encore le cas ici. Prenez par exemple des $N(0,100)$ pour les paramètres de la relation linéaire qui lie la masse des ragondins à la température, et simulez tout un tas de valeurs dans ces priors, puis formez la relation linéaire : 
 
 ``` r
 
@@ -135,13 +135,13 @@ ggplot(lines_df, aes(x = x, y = y, group = line)) +
 <p class="caption">(\#fig:fig-prior-regression-vague)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).</p>
 </div>
 
-On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour le poids. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). On fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
+On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). On fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
 <div class="figure" style="text-align: center">
 <img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%" />
 <p class="caption">(\#fig:fig-prior-regression)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).</p>
 </div>
 
-On obtient des valeurs plus raisonnables pour le poids des ragondins qui dépassent rarement 10 kilogrammes. Il y a aussi un avantage numérique à utiliser des priors faiblement informatifs, ils aident les méthodes MCMC à ne pas se perdre dans l'espace de toutes les valeurs possibles pour les paramètres à estimer, et leur permettent de se focaliser sur les valeurs réalistes de ces paramètres. En faisant ça, vous avez peut-être l'impression qu'on utilise les données pour construire les priors, alors qu'on a dit que le prior devait refléter l'information disponible avant de voir les données. C'est l'occasion de préciser un peu ce point. L'important est surtout que le prior représente l'information indépendante des données qui sont utilisées dans la vraisemblance. 
+On obtient des valeurs plus raisonnables pour la masse des ragondins qui dépassent rarement 10 kilogrammes. Il y a aussi un avantage numérique à utiliser des priors faiblement informatifs, ils aident les méthodes MCMC à ne pas se perdre dans l'espace de toutes les valeurs possibles pour les paramètres à estimer, et leur permettent de se focaliser sur les valeurs réalistes de ces paramètres. En faisant ça, vous avez peut-être l'impression qu'on utilise les données pour construire les priors, alors qu'on a dit que le prior devait refléter l'information disponible avant de voir les données. C'est l'occasion de préciser un peu ce point. L'important est surtout que le prior représente l'information indépendante des données qui sont utilisées dans la vraisemblance. 
 
 On s'est jusqu'ici concentrés sur les paramètres de régression, l’intercept $\beta_0$ et la pente $\beta_1$. Mais qu’en est-il de l'écart-type, $\sigma$ ? Ce paramètre est tout aussi important : il reflète à quel point les observations s’écartent de la tendance moyenne décrite par la droite de régression.
 
@@ -149,7 +149,7 @@ Une option souvent envisagée est de lui attribuer une loi uniforme, par exemple
 
 Une alternative plus souple et plus réaliste consiste à utiliser une loi exponentielle $\sigma \sim \exp(\lambda)$ où $\lambda > 0$ est un paramètre de taux. Cette loi est définie uniquement pour des valeurs positives, ce qui est cohérent avec la nature de $\sigma$, et elle favorise les petites valeurs d’écart-type tout en laissant la possibilité à $\sigma$ d’être plus grande si les données le justifient.
 
-Par défaut, on prend souvent $\lambda = 1$. Avec $\lambda = 1$, la moyenne et l’écart-type de cette loi sont tous deux égaux à $1$, ce qui induit une a priori modeste mais non restrictive (Figure \@ref(fig:fig-prior-sigma)). 
+Par défaut, on prend souvent $\lambda = 1$. Avec $\lambda = 1$, la moyenne et l’écart-type de cette loi sont tous deux égaux à $1$, ce qui induit une loi a priori modeste mais non restrictive (Figure \@ref(fig:fig-prior-sigma)). 
 
 <div class="figure" style="text-align: center">
 <img src="05-regression_files/figure-html/fig-prior-sigma-1.png" alt="Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde." width="90%" />
@@ -158,7 +158,7 @@ Par défaut, on prend souvent $\lambda = 1$. Avec $\lambda = 1$, la moyenne et l
 
 On peut formaliser ce modèle comme suit : 
 \begin{align}
-y_i &\sim \text{Normale}(\mu_i) &\text{[vraisemblance]}\\
+y_i &\sim \text{Normale}(\mu_i, \sigma^2) &\text{[vraisemblance]}\\
 \mu_i &= \beta_0 + \beta_1 \; x_i &\text{[relation linéaire]}\\
 \beta_0, \beta_1 &\sim \text{Normale}(0, 1.5) &\text{[prior sur les paramètres]} \\
 \sigma &\sim \text{Exp}(1) &\text{[prior sur les paramètres]} \\
@@ -210,7 +210,7 @@ summary(lm.brms)
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-<!-- On verra dans la suite comment évaluation des modèles, et vérifier que les hypothèses sous-jacentes sont respectées.   -->
+Ici, les deux modèles donnent quasiment la même chose, ce qui n’a rien de surprenant car les données sont suffisamment informatives pour qu’elles "prennent le dessus sur" le prior. L’intérêt des priors faiblement informatifs ne se voit pas tant dans ce petit exemple que dans d’autres situations : ils évitent les valeurs aberrantes, stabilisent les calculs MCMC et restent utiles quand on a moins de données ou des modèles plus complexes.
 
 ### L'ajustement par maximum de vraisemblance
 
@@ -218,8 +218,8 @@ Et pour finir, on peut comparer avec l'ajustement par maximum de vraisemblance q
 
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/comparaison-methodes-1.png" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%" />
-<p class="caption">(\#fig:comparaison-methodes)Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms, lm et NIMBLE). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.</p>
+<img src="05-regression_files/figure-html/comparaison-methodes-1.png" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms et lm). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%" />
+<p class="caption">(\#fig:comparaison-methodes)Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms et lm). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.</p>
 </div>
 
 Les moyennes a posteriori obtenues avec `brms` sont proches des estimations par maximum de vraisemblance pour les deux paramètres de régression. Les intervalles de crédibilité obtenus avec `brms` et l'intervalle de confiance obtenu par maximum de vraisemblance englobent tous les vraies valeurs des paramètres qui ont servi à simuler les données.  
@@ -250,10 +250,6 @@ pred <- post %>%
     .groups = "drop"
   )
 
-# droite "vraie" (rouge) sur la même grille
-true_line <- grille_x %>%
-  mutate(y = beta0 + beta1 * x)
-
 # extrait les moyennes a posteriori des paramètres
 intercept <- summary(lm.brms)$fixed[1,1]
 slope <- summary(lm.brms)$fixed[2,1]
@@ -263,18 +259,17 @@ ggplot(data, aes(x = x, y = y)) +
   geom_point(alpha = 0.6) +
   geom_ribbon(data = pred, aes(x = x, ymin = lower, ymax = upper), fill = "blue", alpha = 0.2, inherit.aes = FALSE) +
   geom_line(data = pred, aes(x = x, y = mean), color = "blue", size = 1.2) +
-  geom_line(data = true_line, aes(x = x, y = y), color = "red", size = 1.2) +
   labs(x = "x", y = "y") +
   coord_cartesian(xlim = range(grille_x$x)) +
   theme_minimal()
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/brms-fit-plot-1.png" alt="Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%" />
-<p class="caption">(\#fig:brms-fit-plot)Ajustement du modèle linéaire par brms. La droite rouge correspond à la vraie relation utilisée pour simuler les données. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.</p>
+<img src="05-regression_files/figure-html/brms-fit-plot-1.png" alt="Ajustement du modèle linéaire par brms. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%" />
+<p class="caption">(\#fig:brms-fit-plot)Ajustement du modèle linéaire par brms. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.</p>
 </div>
 
-Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre \@ref(glms)), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L'idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.
+Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre \@ref(glms)), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L'idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori des paramètres du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.
 
 Dans `brms`, il suffit de faire : 
 
@@ -313,7 +308,7 @@ bayes_pval
 
 ## La comparaison de modèles
 
-Comme on l'a vu dans le Chapitre \@ref(principes), la statistique bayésienne permet de comparer plusieurs hypothèses entre elles, et de savoir à quel point point une hypothèse est plausible à partir des données que nous avons collectées. 
+Comme on l'a vu dans le Chapitre \@ref(principes), la statistique bayésienne permet de comparer plusieurs hypothèses entre elles, et de savoir à quel point une hypothèse est plausible à partir des données que nous avons collectées. 
 
 <!-- Formellement, cela revient à estimer la probabilité qu’un modèle soit vrai étant donné les données, ce qu’on appelle la probabilité a posteriori du modèle. Une méthode classique pour obtenir ces probabilités repose sur les facteurs de Bayes. Mais ces derniers peuvent être coûteux à calculer, et sont souvent très sensibles aux choix des lois a priori, ce qui limite leur utilisation en pratique. Une autre possibilité consiste à estimer directement les probabilités a posteriori des modèles via un algorithme de type MCMC à sauts réversibles (reversible jump MCMC), relativement simple à mettre en œuvre lorsqu’on souhaite sélectionner un sous-ensemble de covariables explicatives. -->
 
@@ -323,7 +318,7 @@ Une stratégie consiste à construire un modèle unique incluant les variables j
 
 Pour évaluer la capacité prédictive d’un modèle, on peut s’appuyer sur des données déjà utilisées pour l’ajustement (prédiction interne) ou, de manière plus fiable, sur de nouvelles données (prédiction externe). Cette dernière approche nécessite toutefois de diviser les données en un jeu d’apprentissage et un jeu de test. À défaut, il est possible d’estimer les performances prédictives sur les données d’apprentissage elles-mêmes à l’aide d’outils comme le WAIC ou le LOO-CV. 
 
-Le WAIC (Watanabe-Akaike Information Criterion) et le LOO-CV (Leave-One-Out cross-validation) permettent de comparer des modèles en estimant leur capacité à prédire de nouvelles données. Ils combinent l’ajustement aux données observées avec une pénalisation de la complexité du modèle. Une valeur de WAIC/LOO-CV plus faible indique un meilleur modèle. Le WAIC est basé sur une approximation théorique, tandis que le LOO-CV repose sur une validation croisée. Le LOO-CV est généralement plus précis, surtout pour les modèles complexes ou les jeux de données de taille limitée, mais il est aussi plus coûteux en calcul. En pratique, lorsque les modèles sont bien spécifiés et que l’échantillon est grand, WAIC et LOO-CV donnent souvent des résultats très proches.
+Le WAIC (Watanabe-Akaike Information Criterion) et le LOO-CV (Leave-One-Out cross-validation) permettent de comparer des modèles en estimant leur capacité à prédire de nouvelles données. Ils combinent l’ajustement aux données observées avec une pénalisation de la complexité du modèle. Une valeur de WAIC ou de LOO-CV plus faible indique un meilleur modèle. Le WAIC est basé sur une approximation théorique, tandis que le LOO-CV repose sur une validation croisée. Le LOO-CV est généralement plus précis, surtout pour les modèles complexes ou les jeux de données de taille limitée, mais il est aussi plus coûteux en calcul. En pratique, lorsque les modèles sont bien spécifiés et que l’échantillon est grand, WAIC et LOO-CV donnent souvent des résultats très proches pour un même modèle.
 
 Je reviens à l'exemple de la régression linéaire. On aimerait tester l'hypothèse que la variable $x$ explique bien une part importante de la variation dans $y$. Cela revient à comparer les modèles avec et sans cette variable. 
 
@@ -377,7 +372,7 @@ loo_compare(loo0, loo1)
 #> fit0 -80.8       9.1
 ```
 
-On arrive à la même conclusion qu'avec le WAIC. 
+Dans cette sortie `R`, `elpd_diff` donne l’écart de LOO-CV entre chaque modèle et celui qui a la plus grande valeur. Ainsi, le meilleur modèle est sur la première ligne avec un elpd_diff égal à zéro ; ici, c’est le modèle avec la covariable. On arrive donc à la même conclusion qu’avec le WAIC. 
 
 ## En résumé
 
@@ -387,4 +382,4 @@ On arrive à la même conclusion qu'avec le WAIC.
 
 + Les lois a priori faiblement informatives (comme $N(0, 1.5)$ pour les coefficients ou $\text{Exp}(1)$ pour $\sigma$) aident à encadrer les valeurs réalistes tout en laissant au modèle la liberté d’apprendre des données.
 
-+ L’ajustement et la comparaison des modèles peuvent se faire à l’aide de posterior predictive checks et de critères comme le WAIC. Ces outils permettent d’évaluer la qualité du modèle au regard des données, et d’arbitrer entre plusieurs modèles concurrents.
++ La validation et la comparaison des modèles peuvent se faire à l’aide de posterior predictive checks et de critères comme le WAIC. Ces outils permettent d’évaluer la qualité du modèle au regard des données, et d’arbitrer entre plusieurs modèles concurrents.

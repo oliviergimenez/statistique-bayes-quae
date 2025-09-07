@@ -12,6 +12,5 @@ scales
 patchwork
 Rcpp
 brms
-ggforce
 Matrix
 lme4

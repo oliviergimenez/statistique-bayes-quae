@@ -9,7 +9,7 @@ bookdown::bs4_book:
     base_font:
       google: Roboto
   language: fr
-  repo: https://github.com/oliviergimenez/statistique-bayes
+  repo: https://github.com/oliviergimenez/statistique-bayes-quae
 
 bookdown::word_document2:
   toc: true

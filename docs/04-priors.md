@@ -8,7 +8,7 @@ Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique b
 
 En statistique bayésienne, le prior joue un rôle essentiel : il traduit nos connaissances, nos incertitudes ou, au contraire, notre absence d’information sur les paramètres d’un modèle. Bien choisir ses priors est donc une étape clé de toute analyse bayésienne. Pourquoi utiliser un prior ?
 
-- Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on partait de rien. Nous verrons un exemple dans la Section \@ref(informativeprior). 
+- Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on ne partait de rien. Nous verrons un exemple dans la Section \@ref(informativeprior). 
 
 - Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.
 
@@ -33,11 +33,11 @@ En pratique, une stratégie prudente consiste à commencer avec un prior faiblem
 Revenons à notre exemple fil rouge sur la survie des ragondins. Examinons comment différents choix de priors influencent la distribution a posteriori de cette probabilité de survie. Dans la Figure \@ref(fig:priors-comparaison), on a trois priors de plus en plus informatifs (en colonnes), et deux tailles d'échantillon (en lignes).
 
 <div class="figure" style="text-align: center">
-<img src="04-priors_files/figure-html/priors-comparaison-1.png" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori." width="100%" />
-<p class="caption">(\#fig:priors-comparaison)Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait noir représente le prior, le trait rouge la distribution a posteriori.</p>
+<img src="04-priors_files/figure-html/priors-comparaison-1.png" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait rouge représente le prior, le trait noir la distribution a posteriori." width="100%" />
+<p class="caption">(\#fig:priors-comparaison)Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait rouge représente le prior, le trait noir la distribution a posteriori.</p>
 </div>
 
-Avec peu de données (ligne du haut), l’effet du prior est visible : la distribution a posteriori de la survie reste proche du prior, en particulier avec la $\text{Beta}(20,1)$ qui tire l'estimation vers des valeurs élevées. Avec plus de données (ligne du bas), la distribution a posteriori est dominée par la vraisemblance : elle se concentre autour de la proportion observée, quel que soit le prior. On observe ainsi un principe fondamental de l'inférence bayésienne : plus les données sont nombreuses et informatives, moins le prior influence les résultats.
+Avec peu de données (ligne du haut), l’effet du prior est visible : la distribution a posteriori de la survie reste proche du prior, en particulier avec la $\text{Beta}(20,1)$ qui tire l'estimation vers des valeurs élevées. Avec plus de données (ligne du bas), la distribution a posteriori est dominée par la vraisemblance : elle se concentre autour de la proportion observée, à part pour le prior $\text{Beta}(20,1)$ avec lequel la distribution a posteriori est centrée sur 0.5. On observe ainsi un principe fondamental de l'inférence bayésienne : plus les données sont nombreuses et informatives, moins le prior influence les résultats.
 
 <!-- Prior Beta(2, 2) : ici, on suppose une connaissance initiale centrée sur 0.5, avec plus de poids au centre qu’aux extrêmes. Cette légère conviction pousse la postérieure un peu vers le centre, mais l’impact reste limité. Encore une fois, les données ont suffisamment de poids pour atténuer l'effet du prior. -->
 
@@ -50,7 +50,7 @@ Avec peu de données (ligne du haut), l’effet du prior est visible : la distri
 
 <!-- Passons à un prior fortement informatif $\text{Beta}(20,1)$. Ce prior reflète une forte conviction préalable que la survie est élevée (mode ≈ 0.95). Malgré des données suggérant une survie ≈ 0.33, le prior tire fortement l’a posteriori vers le haut (≈ 0.44). C’est un exemple classique où un prior très informatif domine les données, surtout quand celles‑ci restent relativement limitées. -->
 
-On peut formaliser les observations faites à la Figure \@ref(fig:priors-comparaison). Rappelez-vous que lorsque la vraisemblance est $\text{Bin}(n,\theta)$ avec $y$ succès, et que le prior est une loi $\text{Beta}(a,b)$, la loi a posteriori est également bêta (conjugaison), et plus exactement $\text{Beta}(a+y,\;b+n-y)$. Or la moyenne d'une $\text{Beta}(a,b)$ est $\displaystyle \frac{a}{a+b}$, et donc la moyenne de la distribution a posteriori $\text{Beta}(a+y,\;b+n-y)$ est $\displaystyle \frac{a+y}{a+b+n}$ qui peut se réécrire comme une moyenne pondérée entre la moyenne de la distribution a priori $\mu_{prior} = \displaystyle \frac{a}{a+b}$ et la proportion observée $y/n$ qui n'est autre que l’estimateur du maximum de vraisemblance $\hat{\theta}$, avec le poids $w = \displaystyle \frac{n}{a+b+n}$. Autrement dit la moyenne de la distribution a posteriori vaut $(1-w)\mu_{prior} + w \hat{\theta}$. Ainsi, quand l’échantillon de taille $n$ est grand, $w$ tend vers 1, et la moyenne a posteriori se rapproche de l’estimateur du maximum de vraisemblance. À l’inverse, pour un petit échantillon ou un prior très informatif (la somme $a+b$ est grande, voir Figure \@ref(fig:beta-exemples)), $w$ est petit, et le prior tire d'avantage l’estimation. En résumé, quand les données sont limitées, on s'appuie d'avantage sur le prior ; quand elles sont riches, on laisse parler la vraisemblance.
+On peut formaliser les observations faites à la Figure \@ref(fig:priors-comparaison). Rappelez-vous que lorsque la vraisemblance est $\text{Bin}(n,\theta)$ avec $y$ succès, et que le prior est une loi $\text{Beta}(a,b)$, la loi a posteriori est également bêta (conjugaison), et plus exactement $\text{Beta}(a+y,\;b+n-y)$. Or la moyenne d'une $\text{Beta}(a,b)$ est $\displaystyle \frac{a}{a+b}$, et donc la moyenne de la distribution a posteriori $\text{Beta}(a+y,\;b+n-y)$ est $\displaystyle \frac{a+y}{a+b+n}$ qui peut se réécrire comme une moyenne pondérée entre la moyenne de la distribution a priori $\mu_{prior} = \displaystyle \frac{a}{a+b}$ et la proportion observée $y/n$ qui n'est autre que l’estimateur du maximum de vraisemblance $\hat{\theta}$, avec le poids $w = \displaystyle \frac{n}{a+b+n}$. Attention, c’est un poids au sens statistique du terme, un facteur de pondération, pas au sens "kilos de ragondin". Autrement dit la moyenne de la distribution a posteriori vaut $(1-w)\mu_{prior} + w \hat{\theta}$. Ainsi, quand l’échantillon de taille $n$ est grand, $w$ tend vers 1, et la moyenne a posteriori se rapproche de l’estimateur du maximum de vraisemblance. À l’inverse, pour un petit échantillon ou un prior très informatif (la somme $a+b$ est grande, voir Figure \@ref(fig:beta-exemples)), $w$ est petit, et le prior tire l’estimation. En résumé, quand les données sont limitées, on s'appuie davantage sur le prior ; quand elles sont riches, on laisse parler la vraisemblance.
 
 En conclusion, c'est toujours une bonne idée de faire ce genre d'analyse de sensibilité. En comparant les résultats obtenus avec différents priors (non-informatif, peu informatif, informatif), on peut s'assurer que les conclusions ne dépendent pas excessivement des choix a priori. Si c'est le cas, pas de panique, ça veut simplement dire qu'on a peu d'informations sur le paramètre en question, et qu'il faut redoubler de prudence et bien réfléchir au prior utilisé. On y reviendra dans la suite. 
 
@@ -103,13 +103,13 @@ Repartons de notre exemple fil rouge sur l’estimation d’une probabilité de 
 
 Un individu peut ainsi être détecté (1) ou pas (0), et on code par exemple 101 qui signifie : vu la première année, manqué la seconde, puis revu la troisième. Dans le modèle le plus simple, on suppose une probabilité de survie \(\theta\) constante et une probabilité de détection \(p\) constante. La vraisemblance pour l'historique 101 est donc : $\Pr(101)=\theta\,(1-p)\,\theta\,p$. Pour obtenir la vraisemblance complète, on fait ce calcul pour chaque individu et on suppose que tous partagent les mêmes \(\theta\) et \(p\), et qu'ils sont indépendants.
 
-Pour changer des ragondins, intéressons-nous au Cincle plongeur (*Cinclus cinclus*) un oiseau étudié pendant plus de 40 ans par Gilbert Marzolin, un professeur de mathématiques passionné d’ornithologie avec qui j'ai eu la chance de travailler. Nous disposons ici de données de capture–recapture sur 7 ans (1981–1987) pour plus de 200 oiseaux. 
+Pour changer des ragondins, intéressons-nous au Cincle plongeur (*Cinclus cinclus*) un oiseau étudié pendant plus de 40 ans par Gilbert Marzolin, un professeur de mathématiques passionné d’ornithologie avec qui j'ai eu la chance de travailler. Nous disposons ici de données de capture-recapture sur 7 ans (1981–1987) pour plus de 200 oiseaux. 
 
-On va démarrer par un prior non-informatif sur la probabilité de survie, au hasard une $\text{Beta}(1,1)$. Ce sera notre modèle A. Comme prior alternatif, on peut s’appuyer sur des connaissances accumulées pour des espèces similaires. Chez les passereaux, on observe par exemple une relation entre la masse corporelle et la probabilité de survie : en moyenne, les oiseaux plus lourds vivent plus longtemps. Cette relation dite allométrique a été quantifiée par @mccarthy2007 grâce à une régression linéaire (voir Chapitre \@ref(lms)), à partir des données de survie et de masse pour 27 espèces de passereaux européens. En utilisant cette régression, et sachant que le cincle pèse en moyenne 59.8 grammes, on peut prédire sa probabilité de survie annuelle. Le modèle fournit ainsi une estimation de 0.57 avec une erreur standard de 0.075. Ces valeurs nous permettent de définir un prior informatif, sous la forme d’une loi normale centrée en 0.57 et de variance $0.075^2$. Ce sera notre modèle B.
+On va démarrer par un prior non-informatif sur la probabilité de survie, au hasard une $\text{Beta}(1,1)$. Ce sera notre modèle A. Comme prior alternatif, on peut s’appuyer sur des connaissances accumulées pour des espèces similaires. Chez les passereaux, on observe par exemple une relation entre la masse corporelle et la probabilité de survie : en moyenne, les oiseaux plus lourds vivent plus longtemps. Cette relation dite allométrique a été quantifiée par @mccarthy2007 grâce à une régression linéaire (voir Chapitre \@ref(lms)), à partir des données de survie et de masse pour 27 espèces de passereaux européens. En utilisant cette régression sur les passereaux au cas particulier du cincle, et sachant que le cincle pèse en moyenne 59.8 grammes, on peut prédire sa probabilité de survie annuelle. Le modèle fournit ainsi une estimation de 0.57 avec une erreur standard de 0.075. Ces valeurs nous permettent de définir un prior informatif, sous la forme d’une loi normale centrée en 0.57 et de variance $0.075^2$. Ce sera notre modèle B.
 
-On obtient ainsi les résultats suivants : 
+On obtient ainsi les résultats suivants pour le cincle : 
 
-| Modèle | Prior pour \(\theta\) | survie moy. a posteriori | intervalle crédibilité 95% |
+| Modèle | Prior pour \(\theta\) | Survie moy. a posteriori | Intervalle crédibilité 95% |
 |-----|---------|--------------|--------------|
 | A     | Beta(1,1)  | 0.56                      | [0.51 ; 0.61] |
 | B     | N(0.57, 0.075²)| 0.56                      | [0.52 ; 0.61] |
@@ -118,7 +118,7 @@ Avec un jeu de données riche (7 années), l’information contenue dans la vrai
 
 Imaginons maintenant qu'on a des données limitées. Que se passe‑t‑il si l’on ne dispose que des trois premières années par exemple ? On refait l'analyse, et les résultats sont maintenant : 
 
-| Modèle | Prior pour \(\theta\) | survie moy. a posteriori | intervalle crédibilité 95% |
+| Modèle | Prior pour \(\theta\) | Survie moy. a posteriori | Intervalle crédibilité 95% |
 |-----|---------|--------------|--------------|
 | A  | Beta(1,1) | 0.70 | [0.47 ; 0.95] |
 | B  | N(0.57, 0.075²) | 0.60 | [0.48 ; 0.72] |
@@ -126,8 +126,8 @@ Imaginons maintenant qu'on a des données limitées. Que se passe‑t‑il si l�
 Cette fois, le prior informatif fait une vraie différence. On réduit la largeur de l’intervalle de près de 50%, tout en ramenant l’estimation moyenne vers une valeur plus réaliste pour un passereau. On note aussi que l’estimation postérieure du modèle B avec 3 années de données est proche de celle obtenue avec 7 années (Figure \@ref(fig:comparaison-prior-survie)). 
 
 <div class="figure" style="text-align: center">
-<img src="04-priors_files/figure-html/comparaison-prior-survie-1.png" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57)." width="100%" />
-<p class="caption">(\#fig:comparaison-prior-survie)Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse (0.57).</p>
+<img src="04-priors_files/figure-html/comparaison-prior-survie-1.png" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57)." width="100%" />
+<p class="caption">(\#fig:comparaison-prior-survie)Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57).</p>
 </div>
 
 Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain.
@@ -164,15 +164,15 @@ On peut vérifier que cette distribution bêta a bien pour moyenne et écart-typ
 ech_prior <- rbeta(n = 10000, shape1 = 24.3, shape2 = 18.3)
 # on calcule la moyenne empirique des tirages (doit approcher 0.57)
 mean(ech_prior)
-#> [1] 0.5707124
+#> [1] 0.570328
 # on calcule l'écart-type empirique des tirages (doit approcher 0.075)
-sqrt(var(ech_prior))
-#> [1] 0.07465416
+sd(ech_prior)
+#> [1] 0.07613299
 ```
 
 On peut donc adopter un prior \(\text{Beta}(a=24.3,\,b=18.3)\) pour tenir compte de l'information moyenne et sa variabilité obtenue par la relation allométrique survie-masse. 
 
-La méthode du moment matching ne s'applique pas qu'aux probabilités. On peut aussi s'en servir pour construire un prior pour un paramètre réel, par exemple l'effet du poids des ragondins sur leur survie (voir Chapitre \@ref(lms)). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre $\theta$ se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : $\Pr(\theta \in [-0.15,0.25]) = 0.80$. On cherche un prior de type loi normale $\theta \sim N(\mu,\sigma^2)$ qui reflète exactement cette information. 
+La méthode du moment matching ne s'applique pas qu'aux probabilités. On peut aussi s'en servir pour construire un prior pour un paramètre réel, par exemple l'effet de la masse des ragondins sur leur survie (voir Chapitre \@ref(lms)). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre $\theta$ se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : $\Pr(\theta \in [-0.15,0.25]) = 0.80$. On cherche un prior de type loi normale $\theta \sim N(\mu,\sigma^2)$ qui reflète exactement cette information. 
 
 On peut commencer par la moyenne $\mu$. L'intervalle est symétrique, donc on peut déduire directement que la moyenne $\mu$ du prior est le milieu de l'intervalle : $\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05$.
 
@@ -223,7 +223,7 @@ Visuellement, la Figure \@ref(fig:prior-normal-viz) représente la densité d'un
 
 En statistique bayésienne, on utilise souvent des priors non-informatifs. Mais attention, les apparences peuvent être trompeuses, surtout lorsqu'on travaille sur des paramètres définis sur des échelles transformées, comme le logit ou le log dans les modèles linéaires généralisés (Chapitre \@ref(glms)). Prenons un exemple courant où l’on modélise une probabilité $\theta$ sur l’échelle logit via un paramètre $\beta$ tel que $\text{logit}(\theta) = \beta$. 
 
-En pratique, on peut utiliser les simulations pour vérifier que des priors ne réservent pas de mauvaises surprises après transformation, c'est ce qu'on appelle des prior predictive checks. Ca se passe avant même d’ajuster un modèle, et pour ce faire on va :
+En pratique, on peut utiliser les simulations pour vérifier que des priors ne réservent pas de mauvaises surprises après transformation, c'est ce qu'on appelle des prior predictive checks. Ça se passe avant même d’ajuster un modèle, et pour ce faire on va :
 
 1. simuler des valeurs depuis le prior de $\beta$ sur l’échelle logit ;
 2. appliquer la transformation réciproque du logit pour obtenir $\theta$ ;

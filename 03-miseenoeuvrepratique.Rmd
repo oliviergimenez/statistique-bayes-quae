@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans le version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. Il s'agit de deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
+Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. Il s'agit de deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
 
 ## `brms`
 
@@ -51,7 +51,7 @@ bayes.brms <- brm(
 )
 ```
 
-La syntaxe est relativement simple mais nécessite quelques explications. L'argument `y | trials(n) ~ 1` permet de spécifier un modèle dans lequel on a $y$ succès parmi $n$ essais, et on estime une ordonnée à l'origine ou intercept seulement, le `1` après `~`. Pourquoi un intercept ici? Pourquoi pas directement la survie $\theta$. Parce qu'on utilise `family = binomial("logit")` à la ligne d'après pour spécifier à `brms` que la variable réponse suit une loi binomiale. Autrement dit on a un modèle linéaire généralisé (voir le Chapitre \@ref(glms)) avec $\text{logit}(\theta) = \beta$ et on estime $\beta$ l'intercept. Les arguments `iter = 2000`, `warmup = 300` et `chains = 3` stipulent à `brms` d'utiliser 300 itérations pour l’adaptation (burn-in), et les 1700 suivantes pour l’inférence, avec 3 chaînes. 
+La syntaxe est relativement simple mais nécessite quelques explications. L'argument `y | trials(n) ~ 1` permet de spécifier un modèle dans lequel on a $y$ succès parmi $n$ essais, et on estime une ordonnée à l'origine ou intercept seulement, le `1` après `~`. Pourquoi un intercept ici ? Pourquoi pas directement la survie $\theta$. Parce qu'on utilise `family = binomial("logit")` à la ligne d'après pour spécifier à `brms` que la variable réponse suit une loi binomiale. Autrement dit on a un modèle linéaire généralisé (voir le Chapitre \@ref(glms)) avec $\text{logit}(\theta) = \beta$ et on estime $\beta$ l'intercept. Les arguments `iter = 2000`, `warmup = 300` et `chains = 3` stipulent à `brms` d'utiliser 300 itérations pour l’adaptation (burn-in), et les 1700 suivantes pour l’inférence, avec 3 chaînes. 
 <!-- - `seed = 666` : fixe la graine aléatoire pour assurer la reproductibilité. -->
 <!-- - `prior(beta(1, 1), class = "Intercept")` : spécifie une loi bêta(1,1), équivalente à une loi uniforme sur [0,1], sur l'échelle de probabilité. -->
 
@@ -96,7 +96,7 @@ summarise_draws(theta)
 ```
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
-```{r hist-surviebrms, fig.cap = "Histogramme de la distribution a posteriori de la probabilité de survie (\\(\\theta\\)) sur l'échelle logit.", dpi = 600}
+```{r hist-surviebrms, fig.cap = "Histogramme de la distribution a posteriori de la probabilité de survie (\\(\\theta\\))."}
 draws_fit %>%
   ggplot(aes(x = theta)) +
   geom_histogram(color = "white", fill = "steelblue", bins = 30) +
@@ -104,7 +104,7 @@ draws_fit %>%
 ```
 
 Dans `brms`, on peut évaluer la convergence des chaînes MCMC (Figure \@ref(fig:trace-surviebrms)) :
-```{r trace-surviebrms, fig.cap = "Trace plot et densité a posteriori de la probabilité de survie (\\(\\theta\\)).", dpi = 600}
+```{r trace-surviebrms, fig.cap = "Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\\(\\beta\\))."}
 plot(bayes.brms)
 ```
 
@@ -120,7 +120,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
-```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie.", dpi = 600}
+```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie."}
 lambda %>%
   as_tibble() %>%
   ggplot() +
@@ -128,7 +128,7 @@ lambda %>%
   labs(x = "Espérance de vie")
 ```
 
-Il y a tout un tas de paramètres qui sont fixés par défaut dans `brms`, il est important d'en être conscient. Ca concerne les priors en particulier. Dans `brms`, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :
+Il y a tout un tas de paramètres qui sont fixés par défaut dans `brms`, il est important d'en être conscient. Ça concerne les priors en particulier. Dans `brms`, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :
 ```{r}
 prior_summary(bayes.brms)
 ```

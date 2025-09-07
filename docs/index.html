@@ -86,7 +86,7 @@
 </ul>
 
         <div class="book-extra">
-          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes">View book source <i class="fab fa-github"></i></a></p>
+          <p><a id="book-repo" href="https://github.com/oliviergimenez/statistique-bayes-quae">View book source <i class="fab fa-github"></i></a></p>
         </div>
       </nav>
 </div>
@@ -99,24 +99,24 @@
 <!-- <!-- <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" alt="Deploys by Netlify" /> </a> -->
 <p>On retrouve la statistique bayésienne un peu partout en sciences. Par exemple, en épidémiologie pour prédire la circulation des virus, en écologie pour expliquer l’extinction des espèces végétales et animales ou encore en informatique pour filtrer les courriels nuisibles. Si l’utilisation de la statistique bayésienne a explosé au cours des dernières années, c’est grâce au progrès de nos ordinateurs. C’est aussi grâce à la nature même de l’approche qui permet de coller à notre façon d’apprendre, de raisonner et d’accumuler des connaissances.</p>
 <p>Dans ce livre, je vous propose une introduction à la statistique bayésienne. Ce livre est en français parce que c’est plus facile à écrire pour moi, et parce que j’aurais aimé avoir plus d’ouvrages dans ma langue maternelle lorsque j’étais étudiant.</p>
-<p>Je me suis fixé comme objectifs de i) synthétiser les aspects méthodologiques à bien comprendre et ii) fournir les moyens pratiques pour utiliser vous-mêmes la statistique bayésienne. Parce qu’on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique bayésienne. Ce logiciel c’est <code>R</code>, un logiciel libre pour faire des statistiques et de la science des données. Dans ce livre, je présente <code>brms</code>, un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans <code>R</code>. Dans la version enrichie du livre disponible en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/" class="uri">https://oliviergimenez.github.io/statistique-bayes/</a>, je présente aussi <code>NIMBLE</code>, un package qui nécessite de programmer (écrire des boucles par exemple), mais offre en contrepartie une grande flexibilité.</p>
-<p>Plutôt que dans un style académique, j’ai choisi d’écrire un peu comme si nous étions ensemble dans la même pièce ou en visio-conférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent en fait) des abus de language et des approximations mathématiques. Vous ne m’en voudrez pas j’espère.</p>
+<p>Je me suis fixé comme objectifs de i) synthétiser les aspects méthodologiques à bien comprendre et ii) fournir les moyens pratiques pour utiliser vous-mêmes la statistique. Parce qu’on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique bayésienne. Ce logiciel c’est <code>R</code>, un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, <em>Introduction à R et au tidyverse</em> disponible en ligne via <a href="https://juba.github.io/tidyverse" class="uri">https://juba.github.io/tidyverse</a> et le site du projet collaboratif <em>Analyse-R</em>, disponible aussi en ligne à <a href="https://larmarange.github.io/analyse-R/" class="uri">https://larmarange.github.io/analyse-R/</a>. Pour la statistique bayésienne en particulier, je présente <code>brms</code>, un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans <code>R</code>. Dans la version enrichie du livre disponible en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/" class="uri">https://oliviergimenez.github.io/statistique-bayes/</a>, je présente aussi <code>NIMBLE</code>, un package qui nécessite de programmer (écrire des boucles par exemple), mais offre en contrepartie une grande flexibilité.</p>
+<p>Plutôt que dans un style académique, j’ai choisi d’écrire un peu comme si nous étions ensemble dans la même pièce ou en visio-conférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent en fait) des abus de langage et des approximations mathématiques. Vous ne m’en voudrez pas j’espère.</p>
 <div id="pourquoi-sintéresser-à-la-statistique-bayésienne" class="section level2 unnumbered">
 <h2>Pourquoi s’intéresser à la statistique bayésienne ?<a class="anchor" aria-label="anchor" href="#pourquoi-sint%C3%A9resser-%C3%A0-la-statistique-bay%C3%A9sienne"><i class="fas fa-link"></i></a>
 </h2>
 <!-- Contrairement à l'approche fréquentiste, qui considère les paramètres comme des valeurs fixes mais inconnues, l'approche bayésienne les modélise comme des quantités aléatoires, décrites par une distribution de probabilité qui reflète nos incertitudes. -->
-<p>La statistique bayésienne est une approche pour analyser les données et prendre des décisions en présence d’incertitude. Pourquoi adopter cette approche ? Plusieurs raisons peuvent motiver son utilisation :</p>
+<p>La statistique bayésienne est une approche pour analyser les données et prendre des décisions en présence d’incertitude, comme lorsqu’on lance un dé ou qu’on prévoit la météo : on ne peut pas savoir exactement ce qui va se passer, mais on peut estimer les chances des différents résultats. Pourquoi adopter cette approche ? Plusieurs raisons peuvent motiver son utilisation :</p>
 <ul>
 <li>une interprétation naturelle des probabilités : en statistique bayésienne, une probabilité représente un degré de confiance dans une hypothèse ou un paramètre, ce qui correspond bien à notre manière intuitive de raisonner face à l’incertitude ;</li>
 <li>une grande flexibilité : le cadre bayésien s’adapte bien à des données incomplètes, hétérogènes ou rares, ainsi qu’à des modèles complexes (hiérarchiques, non linéaires, dynamiques, etc.) ;</li>
-<li>la possibilité d’intégrer des connaissances préalables : on peut tenir compte de résultats d’études précédentes ou d’avis d’expert.e.s de manière transparente et formalisée ;</li>
+<li>la possibilité d’intégrer des connaissances préalables : on peut capitaliser sur des résultats d’études précédentes ou des avis d’expert.e.s de manière transparente et formalisée ;</li>
 <li>une gestion rigoureuse de l’incertitude : la statistique bayésienne fournit non seulement une estimation des paramètres, mais aussi une mesure directe de l’incertitude associée.</li>
 </ul>
 </div>
 <div id="ce-que-nous-allons-voir-dans-ce-livre" class="section level2 unnumbered">
 <h2>Ce que nous allons voir dans ce livre<a class="anchor" aria-label="anchor" href="#ce-que-nous-allons-voir-dans-ce-livre"><i class="fas fa-link"></i></a>
 </h2>
-<p>J’aimerais vous guider dans l’apprentissage de la statistique bayésienne. J’ai rassemblé le matériel qui m’a paru essentiel pour comprendre et appliquer. L’objectif est que vous soyez à l’aise avec l’approche bayésienne et que vous puissiez l’appliquer à vos propres données. Les objectifs sont de :</p>
+<p>J’aimerais vous guider dans l’apprentissage de la statistique bayésienne. J’ai rassemblé le matériel qui m’a paru essentiel pour la comprendre et l’appliquer. L’objectif est que vous soyez à l’aise avec l’approche bayésienne et que vous puissiez l’appliquer à vos propres données. Les objectifs sont de :</p>
 <ul>
 <li>démystifier la statistique bayésienne et les méthodes de Monte Carlo par chaînes de Markov (MCMC) ;</li>
 <li>comprendre les différences entre approche bayésienne et approche fréquentiste ;</li>
@@ -132,7 +132,7 @@
 <p>Enfin, un dernier chapitre viendra résumer les messages clés du livre et proposer quelques conseils pour appliquer la statistique bayésienne de manière rigoureuse et éclairée.</p>
 </div>
 <div id="comment-lire-ce-livre" class="section level2 unnumbered">
-<h2>Comment lire ce livre?<a class="anchor" aria-label="anchor" href="#comment-lire-ce-livre"><i class="fas fa-link"></i></a>
+<h2>Comment lire ce livre ?<a class="anchor" aria-label="anchor" href="#comment-lire-ce-livre"><i class="fas fa-link"></i></a>
 </h2>
 <p>Je n’ai pas vraiment de conseil à vous donner sur la meilleure manière de lire ce livre. Personnellement, je trouve toujours difficile d’absorber toute l’information contenue dans un bouquin. Vous pouvez lire en continu ou bien grapiller des éléments de-ci de-là.</p>
 <p>Le code <code>R</code> est fourni, je l’ai hébergé sur <a href="https://github.com/oliviergimenez/statistique-bayes" class="uri">https://github.com/oliviergimenez/statistique-bayes</a> et le mettrai à jour. S’exercer permet de mieux comprendre, et de vérifier qu’on a bien compris. Si vous lisez la version électronique disponible à <a href="https://oliviergimenez.github.io/statistique-bayes" class="uri">https://oliviergimenez.github.io/statistique-bayes</a>, vous pouvez copier les lignes de code puis les coller dans <code>R</code> pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles à <a href="https://github.com/oliviergimenez/statistique-bayes" class="uri">https://github.com/oliviergimenez/statistique-bayes</a>.</p>
@@ -144,14 +144,14 @@
 <li><p>Applied Statistical Modelling for Ecologists: A Practical Guide to Bayesian and Likelihood Inference Using R, JAGS, NIMBLE, Stan and TMB <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-kery2024">Kéry and Kellner 2010</a>)</span>. Un manuel pratique pour apprendre à modéliser avec les principaux outils bayésiens dans R (JAGS, NIMBLE, Stan ou TMB), à partir d’exemples écologiques concrets et de comparaisons des résultats. Le site du livre avec les codes est ici <a href="https://www.elsevier.com/books-and-journals/book-companion/9780443137150" class="uri">https://www.elsevier.com/books-and-journals/book-companion/9780443137150</a>.</p></li>
 <li><p>Bayes Rules!: An Introduction to Applied Bayesian Modeling <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-bayesrules2024">Johnson, Ott, and Dogucu 2022</a>)</span>. Un livre très pédagogique pour découvrir les principes et les applications de la statistique bayésienne de manière intuitive et progressive. Le livre est disponible en ligne là <a href="https://www.bayesrulesbook.com/" class="uri">https://www.bayesrulesbook.com/</a>.</p></li>
 <li><p>Doing Bayesian Data Analysis: A Tutorial with R and Bugs <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-kruschke2010">Kruschke 2010</a>)</span>. Un tutoriel approfondi et visuel qui accompagne pas à pas l’apprentissage de la statistique bayésienne avec de nombreux exemples pratiques. Tout est là <a href="https://sites.google.com/site/doingbayesiandataanalysis/" class="uri">https://sites.google.com/site/doingbayesiandataanalysis/</a>.</p></li>
-<li><p>Bayesian Data Analysis <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-gelman2013">Gelman et al. 2013</a>)</span>. L’ouvrage de référence pour celles et ceux qui souhaitent acquérir une compréhension théorique et appliquée solide de la statistique bayésienne. Le site du livre est ici <a href="https://sites.stat.columbia.edu/gelman/book/" class="uri">https://sites.stat.columbia.edu/gelman/book/</a>.</p></li>
+<li><p>Bayesian Data Analysis <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-gelman2013">A. Gelman et al. 2013</a>)</span>. L’ouvrage de référence pour celles et ceux qui souhaitent acquérir une compréhension théorique et appliquée solide de la statistique bayésienne. Le site du livre est ici <a href="https://sites.stat.columbia.edu/gelman/book/" class="uri">https://sites.stat.columbia.edu/gelman/book/</a>.</p></li>
 <li><p>Statistical Rethinking: A Bayesian Course with Examples in R and Stan <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-mcelreath2020">McElreath 2020</a>)</span>. Un livre captivant pour apprendre à construire et interpréter des modèles bayésiens en développant d’abord l’intuition statistique. Tous les détails ici <a href="https://xcelab.net/rm/" class="uri">https://xcelab.net/rm/</a>, je recommande chaudement le cours en vidéos là <a href="https://github.com/rmcelreath/stat_rethinking_2024" class="uri">https://github.com/rmcelreath/stat_rethinking_2024</a>.</p></li>
 </ul>
 </div>
 <div id="comment-jai-écrit-ce-livre" class="section level2 unnumbered">
 <h2>Comment j’ai écrit ce livre?<a class="anchor" aria-label="anchor" href="#comment-jai-%C3%A9crit-ce-livre"><i class="fas fa-link"></i></a>
 </h2>
-<p>J’ai écrit ce livre avec <code>RStudio</code> (<a href="http://www.rstudio.com/ide/" class="uri">http://www.rstudio.com/ide/</a>) en utilisant le package <code>bookdown</code> (<a href="http://bookdown.org/" class="uri">http://bookdown.org/</a>). Le site web est hébergé via des GitHub Pages (<a href="https://pages.github.com/" class="uri">https://pages.github.com/</a>). En français, je recommande l’excellent manuel de Julien Barnier, <em>Introduction à R et au tidyverse</em> disponible en ligne via <a href="https://juba.github.io/tidyverse" class="uri">https://juba.github.io/tidyverse</a> et le site du projet collaboratif <em>Analyse-R</em>, disponible aussi en ligne à <a href="https://larmarange.github.io/analyse-R/" class="uri">https://larmarange.github.io/analyse-R/</a>.</p>
+<p>J’ai écrit ce livre avec <code>RStudio</code> (<a href="http://www.rstudio.com/ide/" class="uri">http://www.rstudio.com/ide/</a>) en utilisant le package <code>bookdown</code> (<a href="http://bookdown.org/" class="uri">http://bookdown.org/</a>). Le site web est hébergé via des GitHub Pages (<a href="https://pages.github.com/" class="uri">https://pages.github.com/</a>).</p>
 <!-- N'hésitez pas à vous ballader sur le site officiel de `R` <https://www.r-project.org/>, vous y trouverez une liste des [questions les plus fréquemment posées (ou FAQs)](https://cran.r-project.org/faqs.html), [des outils de recherche](https://www.r-project.org/search.html) bien utiles, et [les conférences](https://www.r-project.org/conferences/) organisées en lien avec `R` par exemple.  -->
 <p>J’ai utilisé la version R-4.5.0_2025-04-11 de <code>R</code> et les packages suivants :</p>
 <div class="inline-table"><table class="table table-sm">
@@ -232,7 +232,7 @@
 <li><a class="nav-link" href="#introduction">Introduction</a></li>
 <li><a class="nav-link" href="#pourquoi-sint%C3%A9resser-%C3%A0-la-statistique-bay%C3%A9sienne">Pourquoi s’intéresser à la statistique bayésienne ?</a></li>
 <li><a class="nav-link" href="#ce-que-nous-allons-voir-dans-ce-livre">Ce que nous allons voir dans ce livre</a></li>
-<li><a class="nav-link" href="#comment-lire-ce-livre">Comment lire ce livre?</a></li>
+<li><a class="nav-link" href="#comment-lire-ce-livre">Comment lire ce livre ?</a></li>
 <li><a class="nav-link" href="#comment-jai-%C3%A9crit-ce-livre">Comment j’ai écrit ce livre?</a></li>
 <li><a class="nav-link" href="#a-propos-de-lauteur">A propos de l’auteur</a></li>
 <li><a class="nav-link" href="#remerciements">Remerciements</a></li>
@@ -240,8 +240,8 @@
 
       <div class="book-extra">
         <ul class="list-unstyled">
-<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes/blob/master/index.Rmd">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes/edit/master/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+<li><a id="book-source" href="https://github.com/oliviergimenez/statistique-bayes-quae/blob/master/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/oliviergimenez/statistique-bayes-quae/edit/master/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
         </ul>
 </div>
     </nav>
@@ -253,7 +253,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-06-11.</p>
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-09-07.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

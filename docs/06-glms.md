@@ -2,19 +2,19 @@
 
 ## Introduction 
 
-Ce chapitre présente l’application de la statistique bayésienne à des extensions du modèle linéaire vu au chapitre précédent, les modèles linéaires généralisés (GLM) et les modèles linéaire généralisés mixtes (GLMM). On commencera par un GLM qui nous permettra de revisiter notre exemple fil rouge sur la survie des ragondins et les données binaires. Nous utiliserons ensuite un GLMM pour analyser des données de comptage. Nous utiliserons `brms` et comparerons avec l'approche fréquentiste (pour `NIMBLE`, rendez-vous en ligne à <https://oliviergimenez.github.io/statistique-bayes/index.html>).
+Ce chapitre présente l’application de la statistique bayésienne à des extensions du modèle linéaire vu au chapitre précédent, les modèles linéaires généralisés (GLM) et les modèles linéaires généralisés mixtes (GLMM). On commencera par un GLM qui nous permettra de revisiter notre exemple fil rouge sur la survie des ragondins et les données binaires. Nous utiliserons ensuite un GLMM pour analyser des données de comptage. Nous utiliserons `brms` et comparerons avec l'approche fréquentiste (pour `NIMBLE`, rendez-vous en ligne à <https://oliviergimenez.github.io/statistique-bayes/index.html>).
 
-## Modèles linéaires généralisés (GLMs)
+## Modèles linéaires généralisés (GLM)
 
-Dans le Chapitre \@ref(lms), on a introduit la régression linéaire $y_i \sim N(\mu_i,\sigma^2)$ avec $\mu_i = \beta_0 + \beta_1 x_i$ où on modélise la moyenne $\mu$ de la variable réponse $y$ en fonction d'une variable explicative $x$. Ce modèle dit linéaire est bien adapté à une variable réponse continue. Mais que se passe-t-il lorsque la variable réponse est discrète ? Revenons à notre exemple sur le ragondin dans lequel on étudie le nombre d'animaux qui survivent. Si l'on applique la régression linéaire sur ces données, on va obtenir un nombre décimal de ragondins, ce qui est un peu embêtant pour un effectif par définition discret. De plus, si l'on introduit une variable explicative $x_i$ comme le poids pour expliquer les variations dans le nombre de ragondins qui survivent, on peut se retrouver avec une probabilité de survie négative, ou plus grande que un. Pourquoi ? Et bien car rien dans le modèle linéaire ne l'oblige à ne considérer que des valeurs positives. 
+Dans le Chapitre \@ref(lms), on a introduit la régression linéaire $y_i \sim N(\mu_i,\sigma^2)$ avec $\mu_i = \beta_0 + \beta_1 x_i$ où on modélise la moyenne $\mu$ de la variable réponse $y$ en fonction d'une variable explicative $x$. Ce modèle dit linéaire est bien adapté à une variable réponse continue. Mais que se passe-t-il lorsque la variable réponse est discrète ? Revenons à notre exemple sur le ragondin dans lequel on étudie le nombre d'animaux qui survivent. Si l'on applique la régression linéaire sur ces données, on va obtenir un nombre décimal de ragondins, ce qui est un peu embêtant pour un effectif par définition discret. De plus, si l'on introduit une variable explicative $x_i$ comme la masse pour expliquer les variations dans le nombre de ragondins qui survivent, on peut se retrouver avec une probabilité de survie négative, ou plus grande que un. Pourquoi ? Et bien car rien n'oblige le modèle linéaire à ne considérer que des valeurs positives et plus petites que un. 
 
-On a vu au Chapitre \@ref(principes) la solution. On note $z_i = 1$ quand le ragondin $i$ a survécu, et $z_i = 0$ sinon, et on suppose que l'événement de survie est comme une expérience de pile ou face avec une probabilité $\theta$, autrement dit chaque $z_i$ suit une Bernoulli de paramètre $\theta$. Si l'on suppose que les individus sont indépendants et on la même distribution, alors on a que le nombre total de ragondins qui survivent à l'hiver $\displaystyle\sum_{i=1}^n{z_i} = y$ suit une binomiale $y \sim \text{Bin}(n, \theta)$ avec $\theta$ la probabilité de survie.
+On a vu au Chapitre \@ref(principes) la solution. On note $z_i = 1$ quand le ragondin $i$ a survécu, et $z_i = 0$ sinon, et on suppose que l'événement de survie est comme une expérience de pile ou face avec une probabilité $\theta$, autrement dit chaque $z_i$ suit une Bernoulli de paramètre $\theta$. Si l'on suppose que les individus sont indépendants et on la même distribution, alors le nombre total de ragondins qui survivent à l'hiver $\displaystyle\sum_{i=1}^n{z_i} = y$ suit une binomiale $y \sim \text{Bin}(n, \theta)$ avec $\theta$ la probabilité de survie.
 
-On a aussi vu aux Chapitres \@ref(mcmc) et \@ref(logiciels) qu'on pouvait utiliser la fonction logit pour forcer une probabilité à être bien estimée entre 0 et 1. Il s'agit d'écrire que $\text{logit}(\theta_i) = \beta_0 + \beta_1 x_i$, comme expliqué dans la Figure \@ref(fig:logit-link).
+On a aussi vu aux Chapitres \@ref(mcmc) et \@ref(logiciels) qu'on pouvait utiliser la fonction logit pour forcer un paramètre à être bien estimé entre 0 et 1. Il s'agit d'écrire que $\text{logit}(\theta_i) = \beta_0 + \beta_1 x_i$, comme expliqué dans la Figure \@ref(fig:logit-link).
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/logit-link-1.png" alt="À gauche : la fonction logit transforme une probabilité en une valeur continue non bornée qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités." width="90%" />
-<p class="caption">(\#fig:logit-link)À gauche : la fonction logit transforme une probabilité en une valeur continue non bornée qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités.</p>
+<img src="06-glms_files/figure-html/logit-link-1.png" alt="À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités." width="90%" />
+<p class="caption">(\#fig:logit-link)À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités.</p>
 </div>
 
 
@@ -34,21 +34,21 @@ z_i &\sim \text{Bernoulli}(\theta_i) &\text{[vraisemblance]}\\
 <!-- \theta_i &= \text{logit}^{-1}(a + b \; x_i) = \dfrac {e^{a+b \; x_i}} {1+e^{a+b \; x_i}} \\ -->
 <!-- \end{align} -->
 
-Pour illustrer tout ça, on peut reprendre les données ragondins auxquelles on ajoute des données de poids des individus, et pour ce faire, on recrée les données brutes, c'est-à-dire les $z_i$ :
+Pour illustrer tout ça, on peut reprendre les données ragondins auxquelles on ajoute des données de masse des individus, et pour ce faire, on recrée les données brutes, c'est-à-dire les $z_i$ :
 
 ``` r
 # Nombre total de ragondins suivis, survivants
 n <- 57
 y <- 19
 
-# Créer les données individuelles (0 = échec, 1 = succès)
+# Créer les données individuelles (0 = mort, 1 = vivant)
 z <- c(rep(1, y), rep(0, n - y))
 
-# Ajouter une covariable continue (ex : poids)
+# Ajouter une covariable continue (ex : masse)
 set.seed(123)
-poids <- rnorm(n, mean = 5, sd = 1)  # poids simulé en kg
+masse <- rnorm(n, mean = 5, sd = 1)  # masse simulée en kg
 
-df_bern <- data.frame(survie = z, poids = poids)
+df_bern <- data.frame(survie = z, masse = masse)
 ```
 
 On peut maintenant ajuster les deux modèles avec `brms` par exemple (on obtiendrait la même chose avec `NIMBLE`), la régression linéaire et la régression logistique : 
@@ -56,51 +56,52 @@ On peut maintenant ajuster les deux modèles avec `brms` par exemple (on obtiend
 
 ``` r
 # Ajustement de la régression linéaire
-fit_lm <- brm(survie ~ poids, 
+fit_lm <- brm(survie ~ masse, 
               data = df_bern, 
               family = gaussian())
 
 # Ajustement de la régression logistique
-fit_logit <- brm(survie ~ poids, 
+fit_logit <- brm(survie ~ masse, 
                  data = df_bern, 
                  family = bernoulli())
 ```
 
-Au passage, l'interprétation des coefficients de la régression logistique n'est pas facile. On introduit souvent la notion de rapport des chances pour y aider, mais personnellement, ça ne me parle pas plus que ça. Je reviens toujours à une représentation graphique de la relation entre la probabilité de succès (la survie ici) et les variables explicatives, comme dans la Figure \@ref(fig:logit-vs-gaussian). Une autre façon intuitive de s'en sortir est d'utiliser la règle du 4 proposée par Andrew Gelman et ses collègues. L'astuce consiste à diviser la pente de la régression logistique par 4. Cela donne une estimation approximative du changement de probabilité attendu pour une variation d'une unité de la variable explicative, au point où la courbe est la plus pentue. Si la pente est estimée à 0.23 par exemple, alors la pente maximale de la courbe logistique (autour du point d’inflexion) est approximativement de 1/4 = 0.06. Cela signifie qu'une augmentation d’une unité de la variable explicative (ici, le poids du ragondin augmente de 1kg) augmente la probabilité de survie d'environ 6% au point où la pente est la plus forte (on passe d'une probabilité de survie de 0.5 à 0.53), comme illustré dans la Figure \@ref(fig:gelman-rule) :
+Au passage, l'interprétation des coefficients de la régression logistique n'est pas facile. On introduit souvent la notion de rapport des chances pour y aider, mais personnellement, ça ne me parle pas plus que ça. Je reviens toujours à une représentation graphique de la relation entre la probabilité de succès (la survie ici) et les variables explicatives (la masse ici), comme dans la Figure \@ref(fig:logit-vs-gaussian). On observe ici une tendance positive, mais elle est due uniquement au hasard de la simulation (puisque les données ont été générées sans effet de la masse). Une autre façon intuitive de s'en sortir est d'utiliser la règle du 4 proposée par Andrew Gelman et ses collègues. L'astuce consiste à diviser la pente de la régression logistique par 4. Cela donne une estimation approximative du changement de probabilité attendu pour une variation d'une unité de la variable explicative, au point où la courbe est la plus pentue. Si la pente est estimée à 0.23 par exemple, alors la pente maximale de la courbe logistique (autour du point d’inflexion, là où elle change de forme) est approximativement de 0.23/4 = 0.06. Cela signifie qu'une augmentation d’une unité de la variable explicative (ici, la masse du ragondin augmente de 1kg) augmente la probabilité de survie d'environ 6% au point où la pente est la plus forte (on passe d'une probabilité de survie de 0.5 à 0.53), comme illustré dans la Figure \@ref(fig:gelman-rule) :
 
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/gelman-rule-1.png" alt="Illustration de la règle du 4 de Gelman : la pente maximale de la courbe logistique est approchée en divisant le coefficient estimé par 4. Ici, on approxime l'effet du poids du ragondin sur la probabilité de survie autour du point d'inflexion." width="90%" />
-<p class="caption">(\#fig:gelman-rule)Illustration de la règle du 4 de Gelman : la pente maximale de la courbe logistique est approchée en divisant le coefficient estimé par 4. Ici, on approxime l'effet du poids du ragondin sur la probabilité de survie autour du point d'inflexion.</p>
+<img src="06-glms_files/figure-html/gelman-rule-1.png" alt="Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge)." width="90%" />
+<p class="caption">(\#fig:gelman-rule)Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge).</p>
 </div>
 
-Mais je m'égare, revenons au problème de la régression linéaire appliquée à des données binaires. Comme on peut le voir dans la Figure \@ref(fig:logit-vs-gaussian), la régression linéaire consiste à faire passer une droite sans borne dans les données données binaires, ce qui peut conduire à des survies plus petites que 0 ou plus grandes que 1. La régression logistique, en revanche, contraint naturellement les prédictions entre 0 et 1 grâce à la transformation logit, ce qui en fait un choix adapté aux variables de type succès/échec. Au passage, j'ai utilisé la formulation Bernoulli pour introduire une variable explicative mesurée à l'échelle de l'individu, mais si ça n'est pas nécessaire, on peut repasser à la formulation groupée avec la binomiale comme dans les chapitres précédents.
+Mais je m'égare, revenons au problème de la régression linéaire appliquée à des données binaires. Comme on peut le voir dans la Figure \@ref(fig:logit-vs-gaussian), la régression linéaire consiste à faire passer une droite sans borne dans les données binaires, ce qui peut conduire à des survies plus grandes que 1 (et/ou plus petites que 0 même si ça n'est pas le cas ici). La régression logistique, en revanche, contraint naturellement les prédictions entre 0 et 1 grâce à la transformation logit, ce qui en fait un choix adapté aux variables de type succès/échec. Au passage, j'ai utilisé la formulation Bernoulli pour introduire une variable explicative mesurée à l'échelle de l'individu, mais si ça n'est pas nécessaire, on peut repasser à la formulation groupée avec la binomiale comme dans les chapitres précédents.
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/logit-vs-gaussian-1.png" alt="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) peut produire des prédictions négatives ou plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide." width="90%" />
-<p class="caption">(\#fig:logit-vs-gaussian)Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) peut produire des prédictions négatives ou plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide.</p>
+<img src="06-glms_files/figure-html/logit-vs-gaussian-1.png" alt="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide." width="90%" />
+<p class="caption">(\#fig:logit-vs-gaussian)Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide.</p>
 </div>
 
-## Modèles linéaires généralisés mixtes (GLMMs)
+## Modèles linéaires généralisés mixtes (GLMM)
 
 ### Introduction
 
-Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur poids dans différentes populations de différents bassins versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par le poids, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (le poids dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
+Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par la masse, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
 
-Qu'est-ce qu'un effet aléatoire? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. 
+Qu'est-ce qu'un effet aléatoire ? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Ou encore, considérer les sites d'une aire d'étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou l'aire d'étude. 
 
 Au passage, vous verrez utiliser les termes modèles hiérarchiques, multi-niveaux ou à effets aléatoires pour GLMM. Parfois il s'agit de la même chose, parfois il s'agit de GLMM un peu modifiés. Pour éviter les confusions, souvenez-vous que les GLMM sont utilisés pour analyser des données qui viennent avec une structure en groupes.  
 
 ### Exemple
 
-Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects fixes sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points réguliers. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
+Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/protocole-1.png" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. En haut on a le nombre de ragondins, et en bas la température." width="90%" />
-<p class="caption">(\#fig:protocole)Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. En haut on a le nombre de ragondins, et en bas la température.</p>
+<img src="06-glms_files/figure-html/protocole-1.png" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température." width="90%" />
+<p class="caption">(\#fig:protocole)Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température.</p>
 </div>
 
-A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos 10 transects, on a eu des soucis d'échantillonnage sur 3 d'entre eux pour lesquels on n'a pas que faire 2 ou 3 points : 
+
+A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos 10 transects, on a eu des soucis d'échantillonnage sur 3 d'entre eux pour lesquels on n'a pu faire que 2 ou 3 points : 
 
 ``` r
 set.seed(123) # pour la reproductibilité
@@ -108,15 +109,15 @@ transects <- 10 # nombre total de transects
 nb_points <- c(10, 10, 10, 3, 2, 10, 10, 3, 10, 10) # nombre de points par transect
 data <- NULL # objet qui stockera les données simulées
 for (tr in 1:transects){
-  ref <- rnorm(1, 0, .3) # effet aléatoire du transect (N(0,0.5²))
+  ref <- rnorm(1, 0, .3) # effet aléatoire du transect (N(0,0.3²))
   # température simulée le long du transect :
   # point de départ aléatoire entre 18 et 22 °C puis légère pente par segment
-  t <- runif(1, 18, 22) + runif(1, -0.2, 0.2) * 1:20
+  t <- runif(1, 18, 22) + runif(1, -0.2, 0.2) * 1:10
   # intensité attendue (échelle log) : relation linéaire avec la température
   ans <- exp(ref + 0.2 * t)
   # comptage Poisson de ragondins pour chaque point
   an <- rpois(nb_points[tr], ans)
-  # empile les 20 points du transect courant
+  # empile les 10 points du transect courant
   data <- rbind(data, cbind(rep(tr, nb_points[tr]), t[1:nb_points[tr]], an))
 }
 # on met tout dans un data.frame
@@ -135,7 +136,7 @@ head(sim_simple)
 #> 6        1    20.55515        42
 ```
 
-J'ai commenté le code, ce qui devrait en faciliter la lecture. Malgré tout, quelques explications sur les différentes étapes s'imposent. On commence par une boucle `for (tr in 1:transects)` qui simule les données pour chacun des dix transects, un par un. À chaque fois, on tire un effet aléatoire spécifique (`ref`), qui va faire varier un peu l’intercept de la relation entre température et nombre de ragondins selon le transect. Ensuite, on génère une séquence de températures (`t`) avec un point de départ tiré au hasard, et une petite pente qui change légèrement la température d'un point à l’autre. À partir de cette température, on calcule l’intensité attendue du processus de comptage (`ans`) en supposant une relation linéaire, puis on génère les données observées (`an`) en tirant des valeurs dans une loi de Poisson de moyenne ans. Enfin, on regroupe tout dans un tableau (`sim_simple`) pour pouvoir ensuite analyser tout ça. Voici les données qu'on obtient : 
+J'ai commenté le code, ce qui devrait en faciliter la lecture. Malgré tout, quelques explications sur les différentes étapes s'imposent. On commence par une boucle `for (tr in 1:transects)` qui simule les données pour chacun des dix transects, un par un. À chaque fois, on tire un effet aléatoire spécifique (`ref`), qui va faire varier un peu l’intercept de la relation entre température et nombre de ragondins selon le transect. Ensuite, on génère une séquence de températures (`t`) avec un point de départ tiré au hasard, et une petite pente qui change légèrement la température d'un point à l’autre. À partir de cette température, on calcule l’intensité attendue du processus de comptage (`ans`) en supposant une relation linéaire (sur l'échelle log), puis on génère les données observées (`an`) en tirant des valeurs dans une loi de Poisson de moyenne `ans`. Enfin, on regroupe tout dans un tableau (`sim_simple`) pour pouvoir ensuite analyser tout ça. Voici la Figure \@ref(fig:plotsimple) qui illustre les données qu'on obtient : 
 <div class="figure" style="text-align: center">
 <img src="06-glms_files/figure-html/plotsimple-1.png" alt="Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect." width="90%" />
 <p class="caption">(\#fig:plotsimple)Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect.</p>
@@ -190,7 +191,7 @@ summary(fit_complete)
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu'une relation existe alors qu'elle varie juste d’un transect à l’autre, ou au contraire passer à côté d'une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
+Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
 <div class="figure" style="text-align: center">
 <img src="06-glms_files/figure-html/ppcheck-complete-1.png" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%" />
 <p class="caption">(\#fig:ppcheck-complete)Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.</p>
@@ -236,7 +237,7 @@ summary(fit_nopool)
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-Ici j'ai indiqué à `brms` de considérer le transect comme une variable catégorielle, un facteur, c'est le `as.factor(Transect)` dans l'appel à la fonction `brm()`. Par défaut, le premier niveau du facteur (ici le transect 1) est utilisé comme niveau de référence. Cela signifie que l’intercept $\beta_0$ estimé dans le modèle correspond au transect 1, et que les coefficients associés aux autres transects représentent les écarts (sur l'échelle log) par rapport à ce transect 1. Par exemple, on estime $\beta_0$ à 3.9039221, c'est l'intercept pour le transect 1. On a aussi que le décalage pour le transect 2 est estimé à 0.0372134. Alors l'intercept pour le transect 2 est donné par 3.9411355. Ce calcul peut être répété pour chaque transect pour obtenir les intercepts spécifiques, que l’on peut ensuite transformer via l'exponentielle pour retrouver le nombre moyen attendu de ragondins (sur l'échelle d'origine) pour une température moyenne (qui vaut 0 ici puisqu'on a standardisé la variable température) :
+Ici j'ai indiqué à `brms` de considérer le transect comme une variable catégorielle, un facteur, c'est le `as.factor(Transect)` dans l'appel à la fonction `brm()`. Par défaut, le premier niveau du facteur (ici le transect 1) est utilisé comme niveau de référence. Cela signifie que l’intercept $\beta_0$ estimé dans le modèle correspond au transect 1, et que les coefficients associés aux autres transects représentent les écarts (sur l'échelle log) par rapport à ce transect 1. Par exemple, on estime $\beta_0$ à 3.9039221, c'est l'intercept pour le transect 1. On estime aussi le décalage entre le transect 1 et le transect 2 à 0.0372134. Alors l'intercept pour le transect 2 est donné par 3.9411355. Ce calcul peut être répété pour chaque transect pour obtenir les intercepts spécifiques, que l’on peut ensuite transformer via l'exponentielle pour retrouver le nombre moyen attendu de ragondins (sur l'échelle d'origine) pour une température moyenne (qui vaut 0 ici puisqu'on a standardisé la variable température) :
 
 ``` r
 # extraire l'intercept (référence = Transect 1)
@@ -279,7 +280,7 @@ df_intercepts
 #> as.factorTransect10 as.factorTransect10          4.55  94.53
 ```
 
-On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pente, c'est-à-dire l'effet de la température, est la même poru tous les transects. Notez aussi que les valeurs obtenues `Nombre` ici sont des moyennes attendues issues du modèle de Poisson. Ce sont donc des valeurs continues, décimales, bien que les données observées soient des comptages entiers. C'est une caractéristique des modèles de Poisson : la variable à prédire est discrète, mais le modèle s’appuie sur une moyenne continue pour modéliser sa distribution.
+On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pente, c'est-à-dire l'effet de la température, est la même pour tous les transects. Notez aussi que les valeurs obtenues `Nombre` ici sont des moyennes attendues issues du modèle de Poisson. Ce sont donc des valeurs continues, décimales, bien que les données observées soient des comptages entiers. C'est une caractéristique des modèles de Poisson : la variable à prédire est discrète, mais le modèle s’appuie sur une moyenne continue pour modéliser sa distribution.
 
 La qualité de l'ajustement est meilleure comme on le voit dans la Figure \@ref(fig:ppcheck-nopool) : 
 <div class="figure" style="text-align: center">
@@ -300,7 +301,7 @@ Revenons à notre objectif : évaluer l’effet de la température sur l’abond
 
 On construit un GLMM dans lequel on autorise chaque transect à avoir un intercept propre - c’est-à-dire une abondance moyenne spécifique - mais on suppose que ces intercepts ne sont pas totalement indépendants. On les considère plutôt comme des variations aléatoires autour d’un intercept moyen $\beta_0$, issues d’une même distribution normale. Cela revient à dire que nos transects $\beta_{0j}$ (où $j$ varie de 1 à 10) sont tirés d’une population plus large de transects possibles, dans laquelle l’abondance moyenne varie d'un transect à l’autre. On modélise cette variabilité spatiale à l’aide d’un effet aléatoire, noté ici $\beta_{0j} \sim N(\beta_0,\sigma)$, où $\sigma$ est la variation entre transects.
 
-Autrement dit, chaque intercept par transect $\beta_{0j}$ peut s'écrire comme un ajustement $b_j$ autour de l’intercept global $\beta_{0j} = \beta_0 + b_j$ avec $b_{j} \sim N(0,\sigma)$ où $\beta_0$ représente l’intercept moyen (pour un transect "typique") et $\sigma$ quantifie la variabilité entre transects. Par exemple, si l’intercept moyen est $\beta_0 = 2$, mais que le transect 4 a un intercept de $\beta_{04} = 3$, on dira que cet effet spécifique $b_4 = 1$ correspond à une abondance plus élevée que la moyenne.
+Autrement dit, chaque intercept par transect $\beta_{0j}$ peut s'écrire comme une déviation $b_j$ autour de l’intercept global $\beta_{0j} = \beta_0 + b_j$ avec $b_{j} \sim N(0,\sigma)$ où $\beta_0$ représente l’intercept moyen (pour un transect "typique") et $\sigma$ quantifie la variabilité entre transects. Par exemple, si l’intercept moyen est $\beta_0 = 2$, mais que le transect 4 a un intercept de $\beta_{04} = 3$, on dira que cet effet spécifique $b_4 = 1$ correspond à une abondance plus élevée que la moyenne.
 
 Cette modélisation hiérarchique permet de capturer l’hétérogénéité spatiale tout en partageant l'information entre groupes, ce qui est particulièrement utile lorsque certains transects comportent peu d’observations. On peut aussi voir le modèle partial pooling (3 paramètres estimés dans l'exemple ragondin : $\beta_0, \beta_1, \sigma$) comme un compromis entre le modèle complete pooling (2 paramètres estimés dans l'exemple ragondin : $\beta_0, \beta_1$) et le modèle no pooling (11 paramètres estimés dans l'exemple ragondin : 10 intercept et 1 pente $\beta_1$). 
 
@@ -311,11 +312,11 @@ Si on formalise un peu ça, le GLMM correspondant s'écrit :
   \text{log}(\theta_i) &= \beta_{0j} + \beta_1 \; \text{temp}_{i} &\text{[relation linéaire]} \\
   \beta_{0j} &\sim \text{Normale}(\beta_0, \sigma) &\text{[effet aléatoire]} \\
   \beta_0 &\sim \text{Normale}(0, 1.5) &\text{[prior sur l'intercept moyen]} \\
-  \sigma &\sim \text{Exp}(1) &\text{[prior pour l'erreur standard]} \\
+  \sigma &\sim \text{Exp}(1) &\text{[prior pour l'erreur standard de l'effet aléatoire]} \\
   \beta_1 &\sim \text{Normale}(0, 1.5) &\text{[prior pour la pente]} \\
 \end{align}
 
-#### Bayésien avec `brms`
+#### Ajustement du modèle en bayésien avec `brms`
 
 On ajuste d'abord le GLMM avec partial pooling avec `brms` : 
 
@@ -327,7 +328,7 @@ fit_partial <- brm(Ragondins ~ Temp + (1 | Transect), # relation nombre de ragon
                     family = poisson("log")) # distribution de Poisson, lien log
 ```
 
-Dans la syntaxe, l'effet aléatoire sur l'intercept est spécifié avec `(1 | Transect)`, où le `1` signifie qu'on travaille sur l'intercept, et qu'il y a un intercept par (c'est le `|`) `Transect`. Si on voulait ajouter un effet aléatoire sur la pente, on écrirait `(1 + Temp | Transect)`.   
+Dans la syntaxe, l'effet aléatoire sur l'intercept est spécifié avec `(1 | Transect)`, où le `1` signifie qu'on travaille sur l'intercept, et qu'il y a un intercept par (c'est le `|`) transect. Si on voulait ajouter un effet aléatoire sur la pente, on écrirait `(1 + Temp | Transect)`.   
 
 Les résultats sont : 
 
@@ -355,17 +356,17 @@ summary(fit_partial)
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-Ce résumé fournit les estimations a posteriori des effets fixes ainsi que des écarts-types des effets aléatoires. La ligne `sd(Intercept)` donne l'estimation de $\sigma$, proche du 0.3 utilisé pour simuler les données (l'intervalle de crédibilité contient la vraie valeur). Les lignes `Intercept` et `Temp` donne les estimations de $\beta_0$ et $\beta_1$ sur l'échelle log. On verra un peu plus tard comment vérifier que ces estimations sont proches des valeurs utilisées pour simuler les données.
+Ce résumé fournit les estimations a posteriori des effets fixes ainsi que des écarts-types des effets aléatoires. La ligne `sd(Intercept)` donne l'estimation de $\sigma$, proche du 0.3 utilisé pour simuler les données (l'intervalle de crédibilité contient la vraie valeur). Les lignes `Intercept` et `Temp` donnent les estimations de $\beta_0$ et $\beta_1$ sur l'échelle log. On verra un peu plus tard comment vérifier que ces estimations sont proches des valeurs utilisées pour simuler les données.
 
-On peut aussi jeter un coup d'oeil aux traces et densités des paramètres (Figure \@ref(fig:model-diagnostics)) : 
+On peut aussi jeter un coup d'oeil aux densités et traces des paramètres (Figure \@ref(fig:model-diagnostics)) : 
 
 ``` r
 plot(fit_partial)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/model-diagnostics-1.png" alt="Vérification de la convergence des chaînes MCMC." width="90%" />
-<p class="caption">(\#fig:model-diagnostics)Vérification de la convergence des chaînes MCMC.</p>
+<img src="06-glms_files/figure-html/model-diagnostics-1.png" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling." width="90%" />
+<p class="caption">(\#fig:model-diagnostics)Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.</p>
 </div>
 
 On peut alors mettre à jour la Figure \@ref(fig:pooling-ragondins) avec la Figure \@ref(fig:partial-ragondins) :
@@ -395,7 +396,7 @@ $$
 Dans `R`, vous pouvez utiliser le code suivant : 
 
 ``` r
-# on récupère les valuers simulées dans les distributions a posteriori des paramètres
+# on récupère les valeurs simulées dans les distributions a posteriori des paramètres
 post <- as_draws_matrix(fit_partial)
 sbzero <- post[, "b_Intercept"]
 sbun <- post[, "b_Temp"]
@@ -409,7 +410,7 @@ bun   <- sbun / sg # beta1 réel
 bzero <- sbzero - sbun * mu / sg # beta0 réel
 ```
 
-On peut alors visualiser les coefficients sur l’échelle originale et comparer à la valeur utiliser pour simuler les données comme dans les Figures \@ref(fig:hist-b0-reel) et \@ref(fig:hist-b1-reel) : 
+On peut alors visualiser les coefficients sur l’échelle originale et comparer à la valeur utilisée pour simuler les données comme dans les Figures \@ref(fig:hist-b0-reel) et \@ref(fig:hist-b1-reel) : 
 
 ``` r
 tibble(b0 = bzero) %>%
@@ -478,7 +479,7 @@ tibble(
 En conclusion, le modèle incluant la température offre un meilleur ajustement aux données selon le critère WAIC. Et fort heureusement puisqu'on a simulé selon ce modèle ! 
 
 
-#### Fréquentiste avec `lme4`
+#### Ajustement du modèle en fréquentiste avec `lme4`
 
 Pour clôre ce chapitre, je vous propose de faire la même analyse avec le package `lme4` en fréquentiste. 
 
@@ -488,7 +489,7 @@ On charge le dit package :
 library(lme4)
 ```
 
-Puis on applique le GLMM, notez que la syntaxe de `brms` est inspirée de celle utiliée dans `lme4` : 
+Puis on applique le GLMM, notez que la syntaxe de `brms` est inspirée de celle utilisée dans `lme4` : 
 
 ``` r
 fit_lme4 <- glmer(
@@ -536,11 +537,11 @@ Comment lire les sorties ?
 
 | Élément | Signification |
 |---------|---------------|
-| `(Intercept)` | Moyenne de ragondins pour un transect moyen, à Temp = 0 °C (échelle log). |
+| `(Intercept)` | Moyenne de ragondins pour un transect moyen, à Temp moyenne (échelle log). |
 | `Temp` | Effet linéaire de la température. |
 | `Random effects` | Écart‑type (`Std.Dev`) de l’intercept aléatoire. |
 
-On peut noter que les estimations des paramètres obtenus sont très proches des estimations obtenues avec `brms` et `NIMBLE`. 
+On peut noter que les estimations des paramètres obtenus sont très proches des estimations obtenues avec `brms`. 
 
 
 <!-- On peut aussi visualiser l'effet de la température à la Figure \@ref(fig:viz-lme4) : -->
@@ -558,5 +559,5 @@ On peut noter que les estimations des paramètres obtenus sont très proches des
 
 + Les modèles linéaires généralisés mixtes (GLMM) permettent d’estimer simultanément des effets fixes (valables pour toute la population), et des effets aléatoires (propres à chaque groupe, mais supposés tirés d’une distribution commune).
 
-+ Dans un modèle à *complete pooling*, on ignore la structure en groupes : on suppose que toutes les données suivent exactement la même relation avec les variables explicatives. Cela peut mener à des conclusions biaisées si les groupes diffèrent réellement. Dans un modèle à *no pooling*, on estime une relation distincte pour chaque groupe, sans partage d’information. Cela produit des estimations très variables, surtout si certains groupes sont petits. Les modèles à *partial pooling*, ou GLMM, ou modèles hiérarchiques, représentent un compromis entre ces deux extrêmes : les groupes ont leurs propres paramètres, mais ceux-ci sont liés via une distribution commune. Cela permet d’améliorer la stabilité des estimations tout en respectant les différences entre groupes.
++ Dans un modèle à *complete pooling*, on ignore la structure en groupes : on suppose que toutes les données suivent exactement la même relation avec les variables explicatives. Cela peut mener à des conclusions biaisées si les groupes diffèrent réellement. Dans un modèle à *no pooling*, on estime une relation distincte pour chaque groupe, sans partage d’information. Cela produit des estimations très variables, surtout si certains groupes ont des tailles d'échantillon faibles. Les modèles à *partial pooling*, ou GLMM, ou modèles hiérarchiques, représentent un compromis entre ces deux extrêmes : les groupes ont leurs propres paramètres, mais ceux-ci sont liés via une distribution commune. Cela permet d’améliorer la stabilité des estimations tout en respectant les différences entre groupes.
 

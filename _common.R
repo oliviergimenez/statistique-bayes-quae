@@ -1,11 +1,11 @@
 knitr::opts_chunk$set(
   comment = "#>",
   collapse = TRUE,
-  cache = TRUE,
+  cache = FALSE,
   warning = FALSE,
   message = FALSE,
   echo = TRUE,
-  dpi = 300,
+  dpi = 600,
   cache.lazy = FALSE,
   tidy = "styler",
   out.width = "90%",
