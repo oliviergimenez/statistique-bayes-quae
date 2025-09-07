@@ -27,7 +27,7 @@ den <- integrate(num, 0, 1)$value
 
 Nous obtenons alors une approximation numérique de la distribution a posteriori de la survie hivernale comme dans la Figure \@ref(fig:posterior-numerique-plot) :
 
-```{r posterior-numerique-plot, fig.cap = "Approximation numérique de la distribution a posteriori de la survie hivernale."}
+```{r posterior-numerique-plot, fig.cap = "Approximation numérique de la distribution a posteriori de la survie hivernale.", dpi = 600}
 # Crée une grille de valeurs possibles pour la probabilité de survie (entre 0 et 1)
 grid <- seq(0, 1, 0.01)
 
@@ -48,7 +48,7 @@ posterior %>%
 
 Quelle est la qualité de cette approximation numérique ? Idéalement, on voudrait comparer l'approximation à la véritable distribution postérieure. Ça tombe bien, on l'a obtenue dans le Chapitre \@ref(principes), il s'agit d'une distribution bêta de paramètres 20 et 39. On peut se rendre compte dans la Figure \@ref(fig:posterior-comparaison) que les deux courbes se superposent parfaitement. 
 
-```{r posterior-comparaison, echo = FALSE, fig.cap = "Comparaison entre la postérieure exacte (couleur rouge brique) et l’approximation numérique (couleur crème)."}
+```{r posterior-comparaison, echo = FALSE, fig.cap = "Comparaison entre la postérieure exacte (couleur rouge brique) et l’approximation numérique (couleur crème).", dpi = 600}
 a <- 1; b <- 1
 y <- 19; n <- 57
 explicit_posterior <- dbeta(grid, y + a, n - y + b)
@@ -249,7 +249,7 @@ tail(theta.post)
 ```
 
 On peut maintenant visualiser l’évolution des valeurs de la chaîne grâce à un "trace plot" ou graphique de la trace (on va garder l'expression anglaise), c’est-à-dire une courbe qui montre les valeurs simulées de $\theta$ au fil des itérations, c'est la Figure \@ref(fig:traceplot) :
-```{r traceplot, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des itérations."}
+```{r traceplot, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des itérations.", dpi = 600}
 
 df <- data.frame(x = 1:steps, y = theta.post)
 
@@ -297,7 +297,7 @@ theta.post2 <- metropolis(steps = 100, inits = 0.2) # départ à 0.2
 Notez qu'on parle souvent de "lancer plusieurs chaînes" MCMC afin de diagnostiquer la convergence. Il s’agit en réalité de réalisations indépendantes de la même chaîne de Markov, comme si on lançait plusieurs fois une pièce avec une distribution un peu plus compliquée qu'une Bernoulli.
 
 On trace ensuite les deux chaînes ensemble comme dans la Figure \@ref(fig:traceplot2) :
-```{r traceplot2, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune."}
+```{r traceplot2, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune.", dpi = 600}
 df2 <- data.frame(x = 1:steps, y = theta.post2)          # données formatées pour ggplot
 ggplot() +
   geom_line(data = df, aes(x = x, y = y), size = 1.5, color = wesanderson::wes_palettes$Zissou1[1]) +
@@ -310,7 +310,7 @@ ggplot() +
 Notez que nous n'obtenons pas exactement les mêmes résultats car l'algorithme est stochastique. On observe l'évolution parallèle de deux chaînes lancées avec des valeurs initiales différentes. Si les deux chaînes se rejoignent rapidement et oscillent autour des mêmes valeurs, cela indique une bonne convergence vers la distribution stationnaire souhaitée. C’est une étape clé des diagnostics de convergence MCMC que l'on verra dans la suite de ce chapitre. 
 
 Pour observer la convergence sur une plus longue période, on lance une chaîne avec 1000 itérations. Cela permet d’obtenir un trace plot plus “lisse” qui montre la stabilité de la chaîne, comme dans la Figure \@ref(fig:traceplot3) :
-```{r traceplot3, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des 1000 itérations."}
+```{r traceplot3, echo = FALSE, fig.cap = "Trace plot des valeurs simulées de la probabilité de survie \\(\\theta\\) au fil des 1000 itérations.", dpi = 600}
 steps <- 1000 # on augmente le nombre d'itérations
 set.seed(666) # on garde la reproductibilité
 theta.post <- metropolis(steps = steps, # on relance la fonction avec 5000 étapes
@@ -345,7 +345,7 @@ En pratique, on ignore les premières valeurs de la chaîne de Markov et on n’
 
 La méthode la plus simple pour déterminer la durée de la période de burn-in est d’inspecter les trace plots. Reprenons notre exemple et observons dans la Figure \@ref(fig:burnin) un trace plot pour une chaîne démarrant à la valeur 0.99 :
 
-```{r burnin, echo = FALSE, fig.cap = "Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible."}
+```{r burnin, echo = FALSE, fig.cap = "Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible.", dpi = 600}
 steps <- 1000
 theta.post <- metropolis(steps = steps, inits = 0.99)
 df <- data.frame(x = 1:steps, y = theta.post)
@@ -365,7 +365,7 @@ Examiner un trace plot d'une seule chaîne est utile, mais on lance généraleme
 
 Revenons à notre exemple : nous exécutons deux chaînes de Markov avec des valeurs initiales de 0.2 et 0.8, en faisant varier le nombre d'itérations de 100 à 1000 toutes les 50 itérations, et nous calculons la statistique BGR en utilisant la moitié des itérations comme période de burn-in (Figure \@ref(fig:bgr)).
 
-```{r bgr, echo=FALSE, fig.cap = "Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence."}
+```{r bgr, echo=FALSE, fig.cap = "Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence.", dpi = 600}
 set.seed(1234)
 simul.bgr <- function(steps, inits){
   nb.replicates <- length(inits)
@@ -406,7 +406,7 @@ Quelle longueur de chaîne est nécessaire pour obtenir des estimations fiables 
 
 Ici encore, les trace plots permettent de diagnostiquer des problèmes d’autocorrélation. Revenons à l’exemple de survie. La Figure \@ref(fig:trace-away) ci-dessous montre les trace plots (3000 itérations) pour différentes valeurs de l’écart-type (paramètre `away`) de la loi normale de proposition utilisée pour générer les valeurs candidates :
 
-```{r trace-away, echo = FALSE, fig.cap = "Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations."}
+```{r trace-away, echo = FALSE, fig.cap = "Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations.", dpi = 600}
 n_steps <- 3000
 set.seed(666)
 
@@ -439,7 +439,7 @@ ggplot(d, aes(x = iter, y = accepted_traj)) +
 Les petits et grands déplacements visibles dans les panneaux de gauche et de droite entraînent une forte corrélation entre les observations successives de la chaîne de Markov, tandis qu’un écart-type égal à 1 (au centre) permet une exploration efficace de l’espace des paramètres. Ce mouvement dans l’espace des paramètres est appelé "mixing". Le mixing est considéré comme mauvais lorsque la chaîne fait de trop petits ou de trop grands sauts, et bon dans le cas contraire.
 
 En complément des trace plots, les graphiques de la fonction d’autocorrélation (ACF) offrent un moyen pratique de visualiser la force de l’autocorrélation dans un échantillon donné. Les ACF montrent la corrélation entre les valeurs échantillonnées successivement, séparées par un nombre croissant d’itérations, appelé lag (décalage). On obtient dans la Figure \@ref(fig:acf) ces graphiques de fonction d’autocorrélation pour différentes valeurs de l’écart-type de la distribution de proposition grâce à la fonction `forecast::ggAcf()` :
-```{r acf, echo = FALSE, fig.cap = "Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué."}
+```{r acf, echo = FALSE, fig.cap = "Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué.", dpi = 600}
 library(forecast)
 plot1 <- ggAcf(d$accepted_traj[d$proposal_sd == "Écart-type = 0.1"][-c(1:300)]) + ggtitle("Écart-type = 0.1")
 plot2 <- ggAcf(d$accepted_traj[d$proposal_sd == "Écart-type = 1"][-c(1:300)]) + ggtitle("Écart-type = 1")

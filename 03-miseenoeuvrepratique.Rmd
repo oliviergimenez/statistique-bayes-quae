@@ -96,7 +96,7 @@ summarise_draws(theta)
 ```
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
-```{r hist-surviebrms, fig.cap = "Histogramme de la distribution a posteriori de la probabilité de survie (\\(\\theta\\))."}
+```{r hist-surviebrms, fig.cap = "Histogramme de la distribution a posteriori de la probabilité de survie (\\(\\theta\\)).", dpi = 600}
 draws_fit %>%
   ggplot(aes(x = theta)) +
   geom_histogram(color = "white", fill = "steelblue", bins = 30) +
@@ -104,7 +104,7 @@ draws_fit %>%
 ```
 
 Dans `brms`, on peut évaluer la convergence des chaînes MCMC (Figure \@ref(fig:trace-surviebrms)) :
-```{r trace-surviebrms, fig.cap = "Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\\(\\beta\\))."}
+```{r trace-surviebrms, fig.cap = "Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\\(\\beta\\)).", dpi = 600}
 plot(bayes.brms)
 ```
 
@@ -120,7 +120,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
-```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie."}
+```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie.", dpi = 600}
 lambda %>%
   as_tibble() %>%
   ggplot() +

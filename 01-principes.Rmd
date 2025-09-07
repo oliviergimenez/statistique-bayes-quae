@@ -52,7 +52,7 @@ Enfin, il y a le dénominateur $\Pr(\text{données})$, parfois appelée vraisemb
 
 Prenons un exemple concret pour fixer les idées. Je travaille sur le ragondin (*Myocastor coypus*) (Figure \@ref(fig:ragondinos)), un rongeur semi-aquatique originaire d’Amérique du Sud, introduit en Europe pour l’élevage de fourrure. Il est aujourd’hui considéré comme une espèce invasive, en raison des dégâts qu’il occasionne dans les milieux humides (érosion des berges, destruction de la végétation) et de son rôle possible dans la transmission à l'humain de la leptospirose, une infection bactérienne potentiellement sévère, transmise par l'eau. Grâce à sa forte fécondité et à sa bonne adaptation aux climats tempérés, le ragondin a proliféré rapidement.
 
-```{r ragondinos, fig.cap = "Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet.", echo = FALSE}
+```{r ragondinos, fig.cap = "Cliché de ragondins (Myocastor coypus) pris sur le bassin versant du Lez dans les environs de Montpellier. Crédits : Yann Raulet.", echo = FALSE, dpi = 600}
 knitr::include_graphics("images/ragondin2.jpg")
 ```
 
@@ -73,7 +73,7 @@ Deuxièmement, nous supposons que tous les individus ont la même probabilité d
 
 Sous ces deux hypothèses, le nombre $y$ d’animaux encore vivants à la fin de l’hiver suit une loi binomiale, avec $\theta$ comme probabilité de succès (survie), et $n$ comme nombre d’essais (individus suivis). On notera $y \sim \text{Bin}(n, \theta)$. La loi binomiale est en fait la somme de plusieurs épreuves de Bernoulli indépendantes, comme dans l’exemple classique du pile ou face. À chaque lancé, ici le relâché d'un ragondin équipé d’un GPS en début d'hiver, on suppose une probabilité $\theta$ de succès, c’est-à-dire de survivre à l’hiver, et d'échec, c'est-à-dire de mourir de froid. Si toutes ces épreuves sont indépendantes et ont la même probabilité de succès (nos hypothèses), alors le nombre de succès ou de ragondins vivants en sortie d'hiver suit une loi binomiale (voir aussi le Chapitre \@ref(glms)). Je donne des exemples de tirages Bernoulli et binomiaux dans la Figure \@ref(fig:bernoulli-binomiale). 
 
-```{r bernoulli-binomiale, echo=FALSE, fig.cap=" Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \\(\\theta\\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \\(\\theta\\).", fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+```{r bernoulli-binomiale, echo=FALSE, fig.cap=" Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \\(\\theta\\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \\(\\theta\\).", fig.width=12, fig.height=6, message=FALSE, warning=FALSE, dpi = 600}
 
 library(tidyverse)
 library(patchwork)
@@ -159,7 +159,7 @@ où le premier argument `x = 0` est pour aucun ragondin vivant. À l’inverse, 
 
 On peut représenter cette vraisemblance dans `R` comme dans la Figure \@ref(fig:survie-vraisemblance-mle) :
 
-```{r survie-vraisemblance-mle, echo = FALSE, fig.cap = "Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge."}
+```{r survie-vraisemblance-mle, echo = FALSE, fig.cap = "Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge.", dpi = 600}
 y <- 19
 n <- 57
 grille <- seq(0, 1, 0.01)
@@ -227,7 +227,7 @@ $$
 $$
 Vous pouvez oublier ces équations si vous n'êtes pas à l'aise avec. Essayons plutôt de visualiser cette distribution comme dans la Figure \@ref(fig:beta-exemples):
 
-```{r beta-exemples, echo = FALSE, fig.cap = "Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné."}
+```{r beta-exemples, echo = FALSE, fig.cap = "Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné.", dpi = 600}
 
 library(tidyverse)
 
@@ -338,7 +338,7 @@ $$
 
 Autrement dit, on retrouve donc une loi bêta, avec des paramètres mis à jour $a + y$ et $b + n - y$. On dit que la loi binomiale et la loi bêta sont conjuguées : lorsque l'on utilise une loi bêta comme distribution a priori pour un paramètre de probabilité dans un modèle binomial, la loi a posteriori obtenue est également une loi bêta. Si on utilise une loi uniforme a priori (i.e. Beta(1,1)), on obtient que la distribution a posteriori de la survie hivernale est une $\text{Beta}(1+19, 1+57-19) = \text{Beta}(20, 39)$. Au passage, la distribution a posteriori est connue, ce qui facilite grandement les calculs et leur interprétation. Par exemple, on sait que la moyenne de la $\text{Beta}(a, b)$ est $\displaystyle \frac{a}{a+b}$, soit  $\frac{20}{59} \approx 0.339$. On peut comparer cette valeur à l'estimateur du maximum de vraisemblance $19/57 \approx 0.333$. On peut également visualiser la distribution a posteriori comme dans la Figure \@ref(fig:posterior-survie), puisqu'on connait l'équation de la densité d'une loi Bêta :
 
-```{r posterior-survie, echo = FALSE, fig.cap = "Distribution a priori uniforme (rouge) et distribution a posteriori (noire) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance."}
+```{r posterior-survie, echo = FALSE, fig.cap = "Distribution a priori uniforme (rouge) et distribution a posteriori (noire) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance.", dpi = 600}
 df_post <- data.frame(
   theta = x,
   prior = dbeta(x, 1, 1),

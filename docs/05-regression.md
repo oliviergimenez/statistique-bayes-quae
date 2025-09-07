@@ -135,7 +135,7 @@ ggplot(lines_df, aes(x = x, y = y, group = line)) +
 <p class="caption">(\#fig:fig-prior-regression-vague)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).</p>
 </div>
 
-On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). On fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
+On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). Dans la Figure \@ref(fig:fig-prior-regression), on fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
 <div class="figure" style="text-align: center">
 <img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%" />
 <p class="caption">(\#fig:fig-prior-regression)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).</p>

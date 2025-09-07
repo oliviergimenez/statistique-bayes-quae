@@ -12,7 +12,7 @@ On a vu au Chapitre \@ref(principes) la solution. On note $z_i = 1$ quand le rag
 
 On a aussi vu aux Chapitres \@ref(mcmc) et \@ref(logiciels) qu'on pouvait utiliser la fonction logit pour forcer un paramètre à être bien estimé entre 0 et 1. Il s'agit d'écrire que $\text{logit}(\theta_i) = \beta_0 + \beta_1 x_i$, comme expliqué dans la Figure \@ref(fig:logit-link).
 
-```{r logit-link, fig.cap="À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités.", echo=FALSE, message=FALSE, warning=FALSE}
+```{r logit-link, fig.cap="À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités.", echo=FALSE, message=FALSE, warning=FALSE, dpi = 600}
 
 library(ggplot2)
 library(dplyr)
@@ -151,7 +151,7 @@ fit_logit <- brm(survie ~ masse,
                  refresh = 0)
 ```
 
-```{r gelman-rule, fig.cap="Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge).", echo=FALSE}
+```{r gelman-rule, fig.cap="Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge).", echo=FALSE, dpi = 600}
 # Extraire les coefficients postérieurs moyens
 post <- fixef(fit_logit)
 intercept <- post["Intercept", "Estimate"]
@@ -177,7 +177,7 @@ ggplot(df_pred, aes(x = masse, y = proba)) +
 
 Mais je m'égare, revenons au problème de la régression linéaire appliquée à des données binaires. Comme on peut le voir dans la Figure \@ref(fig:logit-vs-gaussian), la régression linéaire consiste à faire passer une droite sans borne dans les données binaires, ce qui peut conduire à des survies plus grandes que 1 (et/ou plus petites que 0 même si ça n'est pas le cas ici). La régression logistique, en revanche, contraint naturellement les prédictions entre 0 et 1 grâce à la transformation logit, ce qui en fait un choix adapté aux variables de type succès/échec. Au passage, j'ai utilisé la formulation Bernoulli pour introduire une variable explicative mesurée à l'échelle de l'individu, mais si ça n'est pas nécessaire, on peut repasser à la formulation groupée avec la binomiale comme dans les chapitres précédents.
 
-```{r logit-vs-gaussian, fig.cap="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide.", echo=FALSE}
+```{r logit-vs-gaussian, fig.cap="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide.", echo=FALSE, dpi = 600}
 # Créer une séquence de masse pour prédiction
 newdata <- data.frame(masse = seq(0, 25, length.out = 100))
 
@@ -235,7 +235,7 @@ Au passage, vous verrez utiliser les termes modèles hiérarchiques, multi-nivea
 
 Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
 
-```{r protocole, fig.cap="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température.", echo = FALSE}
+```{r protocole, fig.cap="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température.", echo = FALSE, dpi = 600}
 library(ggplot2)
 library(dplyr)
 library(patchwork)
@@ -341,7 +341,7 @@ head(sim_simple)
 ```
 
 J'ai commenté le code, ce qui devrait en faciliter la lecture. Malgré tout, quelques explications sur les différentes étapes s'imposent. On commence par une boucle `for (tr in 1:transects)` qui simule les données pour chacun des dix transects, un par un. À chaque fois, on tire un effet aléatoire spécifique (`ref`), qui va faire varier un peu l’intercept de la relation entre température et nombre de ragondins selon le transect. Ensuite, on génère une séquence de températures (`t`) avec un point de départ tiré au hasard, et une petite pente qui change légèrement la température d'un point à l’autre. À partir de cette température, on calcule l’intensité attendue du processus de comptage (`ans`) en supposant une relation linéaire (sur l'échelle log), puis on génère les données observées (`an`) en tirant des valeurs dans une loi de Poisson de moyenne `ans`. Enfin, on regroupe tout dans un tableau (`sim_simple`) pour pouvoir ensuite analyser tout ça. Voici la Figure \@ref(fig:plotsimple) qui illustre les données qu'on obtient : 
-```{r plotsimple, echo=FALSE, fig.cap="Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect.", fig.align='center'}
+```{r plotsimple, echo=FALSE, fig.cap="Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect.", fig.align='center', dpi = 600}
 sim_simple %>%
   ggplot(aes(x = Temperature, y = Ragondins, colour = factor(Transect))) +
   geom_line() +
@@ -399,7 +399,7 @@ summary(fit_complete)
 ```
 
 Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
-```{r ppcheck-complete, fig.cap="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE}
+```{r ppcheck-complete, fig.cap="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE, dpi = 600}
 brms::pp_check(fit_complete)
 ```
 
@@ -461,13 +461,13 @@ df_intercepts
 On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pente, c'est-à-dire l'effet de la température, est la même pour tous les transects. Notez aussi que les valeurs obtenues `Nombre` ici sont des moyennes attendues issues du modèle de Poisson. Ce sont donc des valeurs continues, décimales, bien que les données observées soient des comptages entiers. C'est une caractéristique des modèles de Poisson : la variable à prédire est discrète, mais le modèle s’appuie sur une moyenne continue pour modéliser sa distribution.
 
 La qualité de l'ajustement est meilleure comme on le voit dans la Figure \@ref(fig:ppcheck-nopool) : 
-```{r ppcheck-nopool, fig.cap="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE}
+```{r ppcheck-nopool, fig.cap="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE, dpi = 600}
 brms::pp_check(fit_nopool)
 ```
 
 Ce modèle "no pooling" fait mieux que le modèle "complete pooling", comme on peut le voir dans la Figure \@ref(fig:pooling-ragondins), mais il reste insatisfaisant. L'approche "no pooling" consiste à ajuster un modèle indépendant pour chaque transect, sans partager d'information entre ces groupes. Cela pose deux problèmes : d'une part, on ne peut pas généraliser les résultats obtenus à d'autres transects que ceux observés ; d'autre part, on ignore des informations potentiellement utiles en supposant que chaque transect n’a rien à apprendre des autres. Cette stratégie devient particulièrement inefficace lorsque chaque groupe comporte peu d'observations.
 
-```{r pooling-ragondins, fig.cap="Comparaison entre les modèles complete pooling (noir) et no pooling (rouge) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, tandis que le complete pooling suppose une relation commune.", echo=FALSE}
+```{r pooling-ragondins, fig.cap="Comparaison entre les modèles complete pooling (noir) et no pooling (rouge) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, tandis que le complete pooling suppose une relation commune.", echo=FALSE, dpi = 600}
 # Données pour prédire : séquence de températures par transect
 # grid <- expand.grid(
 #   Temp = seq(min(sim_simple$Temp), max(sim_simple$Temp), length.out = 100),
@@ -569,12 +569,12 @@ summary(fit_partial)
 Ce résumé fournit les estimations a posteriori des effets fixes ainsi que des écarts-types des effets aléatoires. La ligne `sd(Intercept)` donne l'estimation de $\sigma$, proche du 0.3 utilisé pour simuler les données (l'intervalle de crédibilité contient la vraie valeur). Les lignes `Intercept` et `Temp` donnent les estimations de $\beta_0$ et $\beta_1$ sur l'échelle log. On verra un peu plus tard comment vérifier que ces estimations sont proches des valeurs utilisées pour simuler les données.
 
 On peut aussi jeter un coup d'oeil aux densités et traces des paramètres (Figure \@ref(fig:model-diagnostics)) : 
-```{r model-diagnostics, fig.cap="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling."}
+```{r model-diagnostics, fig.cap="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.", dpi = 600}
 plot(fit_partial)
 ```
 
 On peut alors mettre à jour la Figure \@ref(fig:pooling-ragondins) avec la Figure \@ref(fig:partial-ragondins) :
-```{r partial-ragondins, fig.cap="Comparaison entre les modèles complete pooling (noir), no pooling (rouge) et partial pooling (bleu) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, le complete pooling suppose une relation commune, tandis que le partial pooling fournit un compromis grâce à l'effet aléatoire transect.", echo=FALSE}
+```{r partial-ragondins, fig.cap="Comparaison entre les modèles complete pooling (noir), no pooling (rouge) et partial pooling (bleu) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, le complete pooling suppose une relation commune, tandis que le partial pooling fournit un compromis grâce à l'effet aléatoire transect.", echo=FALSE, dpi = 600}
 # données pour prédire : séquence de températures par transect
 # grid <- expand.grid(
 #   Temp = seq(min(sim_simple$Temp), max(sim_simple$Temp), length.out = 100),
@@ -619,7 +619,7 @@ ggplot(sim_simple, aes(x = Temp, y = Ragondins)) +
 On voit que l'ajustement fourni par le partial pooling est très similaire au no pooling, et bien meilleur que le complete pooling. Il y a une petite différence pour les transects avec peu de points d'échantillonnage, les transects 4, 5 et 8, pour lesquels le partial pooling se rapproche du complete pooling. En l'absence de plus d'information (de données) pour ces transects, il est plutôt raisonnable que les estimations se rapprochent de la moyenne donnée par le modèle avec complete pooling plutôt que vers des valeurs extrêmes, atypiques. Rappelez-vous que dans un GLMM, les niveaux de l'effet aléatoire sont caractéristiques d'une population avec une moyenne commune. C'est ce partage d'information entre les transects avec 10 points d'échantillonnage et ceux avec 2 ou 3 points, on parle de "borrowing strength" qui permet d'atténuer, de tamponner, on parle de "shrinkage", la tendance à sur-ajuster du modèle avec no pooling ou à effet fixe, et en ce sens on parle parfois de "regularization". 
 
 La qualité de l'ajustement est validée comme on le voit dans la Figure \@ref(fig:ppcheck-partial) : 
-```{r ppcheck-partial, fig.cap="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE}
+```{r ppcheck-partial, fig.cap="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE, dpi = 600}
 brms::pp_check(fit_partial)
 ```
 
@@ -650,7 +650,7 @@ bzero <- sbzero - sbun * mu / sg # beta0 réel
 ```
 
 On peut alors visualiser les coefficients sur l’échelle originale et comparer à la valeur utilisée pour simuler les données comme dans les Figures \@ref(fig:hist-b0-reel) et \@ref(fig:hist-b1-reel) : 
-```{r hist-b0-reel, fig.cap = "Distribution a posteriori de l'intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0).", message = FALSE, warning = FALSE}
+```{r hist-b0-reel, fig.cap = "Distribution a posteriori de l'intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0).", message = FALSE, warning = FALSE, dpi = 600}
 tibble(b0 = bzero) %>%
   ggplot(aes(x = b0)) +
   geom_histogram(color = "white", fill = "skyblue", bins = 30) +
@@ -662,7 +662,7 @@ tibble(b0 = bzero) %>%
   theme_minimal()
 ```
 
-```{r hist-b1-reel, fig.cap = "Distribution a posteriori de l'effet de la température (échelle réelle). La ligne rouge indique la vraie valeur (0.2).", message = FALSE, warning = FALSE}
+```{r hist-b1-reel, fig.cap = "Distribution a posteriori de l'effet de la température (échelle réelle). La ligne rouge indique la vraie valeur (0.2).", message = FALSE, warning = FALSE, dpi = 600}
 tibble(b1 = bun) %>%
   ggplot(aes(x = b1)) +
   geom_histogram(color = "white", fill = "skyblue", bins = 30) +

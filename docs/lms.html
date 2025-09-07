@@ -217,7 +217,7 @@ Figure 5.2: Histogrammes des distributions a posteriori (colonne de gauche) et t
 Figure 5.3: Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).
 </p>
 </div>
-On voit dans la Figure <a href="lms.html#fig:fig-prior-regression-vague">5.3</a> qu’on obtient des valeurs aberrantes pour les <span class="math inline">\(y_i\)</span>, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un “prior predictive check”, comme au Chapitre <a href="prior.html#prior">4</a>. On fait la même chose avec notre prior faiblement informatif <span class="math inline">\(N(0,1.5)\)</span> :
+On voit dans la Figure <a href="lms.html#fig:fig-prior-regression-vague">5.3</a> qu’on obtient des valeurs aberrantes pour les <span class="math inline">\(y_i\)</span>, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un “prior predictive check”, comme au Chapitre <a href="prior.html#prior">4</a>. Dans la Figure <a href="lms.html#fig:fig-prior-regression">5.4</a>, on fait la même chose avec notre prior faiblement informatif <span class="math inline">\(N(0,1.5)\)</span> :
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:fig-prior-regression"></span>
 <img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%"><p class="caption">
@@ -354,7 +354,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span><span class="va">y_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculer la statistique de test sur les données simulées (moyenne ici)</span></span>
-<span><span class="va">T_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html">rowMeans</a></span><span class="op">(</span><span class="va">y_rep</span><span class="op">)</span></span>
+<span><span class="va">T_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span><span class="op">(</span><span class="va">y_rep</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculer la statistique observée</span></span>
 <span><span class="va">T_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
