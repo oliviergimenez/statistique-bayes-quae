@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.70      0.27    -1.24    -0.17 1.00     1922     2264
+#> Intercept    -0.69      0.29    -1.26    -0.13 1.00     1722     2758
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -79,7 +79,7 @@ Cette commande affiche un tableau récapitulatif des estimations postérieures p
 - Le diagnostic de convergence `Rhat`.
 - `Bulk_ESS` est la taille effective d'échantillon (`Tail_ESS` est une autre mesure de la taille effective d'échantillon qu'on n'utilisera pas ici). 
 
-La moyenne a posteriori vaut -0.7 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
+La moyenne a posteriori vaut -0.69 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
 
 ``` r
 draws_fit <- as_draws_matrix(bayes.brms)
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3355561
+#> [1] 0.3373272
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1151873 0.2938212 0.3340493 0.3764673 0.5685851
+#> 0.1419045 0.2930944 0.3352913 0.3787585 0.5976081
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,7 +109,7 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.336  0.334 0.0598 0.0611 0.240 0.434  1.00    1922.    2264.
+#> 1 Intercept 0.337  0.335 0.0628 0.0634 0.239 0.444  1.00    1722.    2758.
 ```
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
@@ -150,7 +150,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.927  0.912 0.156 0.153 0.700  1.20 1.000    1922.    2264.
+#> 1 Intercept 0.933  0.915 0.166 0.157 0.699  1.23  1.00    1722.    2758.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -211,7 +211,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.67      0.28    -1.22    -0.13 1.00     1921     2381
+#> Intercept    -0.69      0.28    -1.27    -0.15 1.00     1527     2255
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential

@@ -93,7 +93,7 @@ Comment utilise-t-on l’intégration Monte Carlo dans un contexte bayésien ? L
 sample_from_posterior <- rbeta(1000, 20, 39) 
 # calcul de la moyenne par intégration Monte Carlo
 mean(sample_from_posterior) 
-#> [1] 0.3420455
+#> [1] 0.3351009
 ```
 
 On peut vérifier que la moyenne obtenue est proche de l’espérance théorique d’une distribution bêta :
@@ -110,7 +110,7 @@ Un autre résumé numérique utile est l’intervalle de crédibilité à l’in
 ``` r
 quantile(sample_from_posterior, probs = c(2.5/100, 97.5/100))
 #>      2.5%     97.5% 
-#> 0.2281953 0.4682892
+#> 0.2231019 0.4601576
 ```
 
 En passant, il y a une différence entre l'intervalle de crédibilité en statistique bayésienne et l'intervalle de confiance de la statistique fréquentiste. Un intervalle de confiance à 95% signifie que si l’on répétait l’expérience un très grand nombre de fois (équiper des ragondins de GPS et constater le nombre de survivants à l'hiver), environ 95% des intervalles construits de cette manière contiendraient la vraie valeur $\theta$ du paramètre. Mais on ne peut pas dire que la probabilité que le paramètre soit dans un intervalle donné est de 95%. Un intervalle de crédibilité à 95%, en revanche, signifie qu'il y a 95% de probabilité que le paramètre se trouve dans cet intervalle. L'interprétation de l'intervalle de crédibilité est un peu plus intuitive que celle de l'intervalle de confiance. 

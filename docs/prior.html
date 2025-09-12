@@ -275,10 +275,10 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span><span class="va">ech_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10000</span>, shape1 <span class="op">=</span> <span class="fl">24.3</span>, shape2 <span class="op">=</span> <span class="fl">18.3</span><span class="op">)</span></span>
 <span><span class="co"># on calcule la moyenne empirique des tirages (doit approcher 0.57)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5692527</span></span>
+<span><span class="co">#&gt; [1] 0.5717173</span></span>
 <span><span class="co"># on calcule l'écart-type empirique des tirages (doit approcher 0.075)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.07517179</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.07501034</span></span></code></pre></div>
 <p>On peut donc adopter un prior <span class="math inline">\(\text{Beta}(a=24.3,\,b=18.3)\)</span> pour tenir compte de l’information moyenne et sa variabilité obtenue par la relation allométrique survie-masse.</p>
 <p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet de la masse des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
 <p>On peut commencer par la moyenne <span class="math inline">\(\mu\)</span>. L’intervalle est symétrique, donc on peut déduire directement que la moyenne <span class="math inline">\(\mu\)</span> du prior est le milieu de l’intervalle : <span class="math inline">\(\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05\)</span>.</p>

@@ -144,7 +144,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept    -0.70      0.27    -1.24    -0.17 1.00     1922     2264</span></span>
+<span><span class="co">#&gt; Intercept    -0.69      0.29    -1.26    -0.13 1.00     1722     2758</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
@@ -161,7 +161,7 @@
 <li>
 <code>Bulk_ESS</code> est la taille effective d’échantillon (<code>Tail_ESS</code> est une autre mesure de la taille effective d’échantillon qu’on n’utilisera pas ici).</li>
 </ul>
-<p>La moyenne a posteriori vaut -0.7 bien loin de la proportion de ragondins qui ont survécu à l’hiver (<span class="math inline">\(19/57 \approx 0.33\)</span>). Comme toujours dans <code>R</code> et l’implémentation des modèles linéaires généralisés (voir Chapitre <a href="glms.html#glms">6</a>), les estimations des paramètres sont données sur l’échelle de la fonction de lien. Ici l’intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d’abord les valeurs générées dans la distribution a posteriori de l’intercept <span class="math inline">\(\beta\)</span> avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">brms::as_draws_matrix()</a></code> :</p>
+<p>La moyenne a posteriori vaut -0.69 bien loin de la proportion de ragondins qui ont survécu à l’hiver (<span class="math inline">\(19/57 \approx 0.33\)</span>). Comme toujours dans <code>R</code> et l’implémentation des modèles linéaires généralisés (voir Chapitre <a href="glms.html#glms">6</a>), les estimations des paramètres sont données sur l’échelle de la fonction de lien. Ici l’intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d’abord les valeurs générées dans la distribution a posteriori de l’intercept <span class="math inline">\(\beta\)</span> avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">brms::as_draws_matrix()</a></code> :</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">draws_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">as_draws_matrix</a></span><span class="op">(</span><span class="va">bayes.brms</span><span class="op">)</span></span></code></pre></div>
 <p>Puis on applique la fonction logistique réciproque <code><a href="https://rdrr.io/r/stats/Logistic.html">plogis()</a></code> sur chacune de ces valeurs pour obtenir tout un tas de valeurs simulées dans la distribution a posteriori de la survie <span class="math inline">\(\theta\)</span> :</p>
@@ -171,17 +171,17 @@
 <p>On obtient ainsi une estimation directe de la moyenne a posteriori de la probabilité de survie, accompagnée de son intervalle de crédibilité à 95% :</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.3355561</span></span>
+<span><span class="co">#&gt; [1] 0.3373272</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">theta</span>, probas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>,<span class="fl">97.5</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        0%       25%       50%       75%      100% </span></span>
-<span><span class="co">#&gt; 0.1151873 0.2938212 0.3340493 0.3764673 0.5685851</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.1419045 0.2930944 0.3352913 0.3787585 0.5976081</span></span></code></pre></div>
 <p>Ou plus directement avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_summary.html">posterior::summarise_draws()</a></code> :</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">summarise_draws</span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
 <span><span class="co">#&gt;   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Intercept 0.336  0.334 0.0598 0.0611 0.240 0.434  1.00    1922.    2264.</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Intercept 0.337  0.335 0.0628 0.0634 0.239 0.444  1.00    1722.    2758.</span></span></code></pre></div>
 <p>Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d’utiliser (Figure <a href="logiciels.html#fig:hist-surviebrms">3.1</a>) :</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">draws_fit</span> <span class="op">%&gt;%</span></span>
@@ -214,7 +214,7 @@ Au passage, pour déterminer de la longueur de la période de pré-chauffage ou 
 <span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
 <span><span class="co">#&gt;   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Intercept 0.927  0.912 0.156 0.153 0.700  1.20 1.000    1922.    2264.</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Intercept 0.933  0.915 0.166 0.157 0.699  1.23  1.00    1722.    2758.</span></span></code></pre></div>
 <p>L’espérance de vie est d’un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure <a href="logiciels.html#fig:hist-life">3.3</a>) :</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">%&gt;%</span></span>
@@ -258,7 +258,7 @@ Figure 3.3: Histogramme de la distribution a posteriori de l’espérance de vie
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept    -0.67      0.28    -1.22    -0.13 1.00     1921     2381</span></span>
+<span><span class="co">#&gt; Intercept    -0.69      0.28    -1.27    -0.15 1.00     1527     2255</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
