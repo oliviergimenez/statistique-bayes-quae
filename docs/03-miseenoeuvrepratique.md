@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. Il s'agit de deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
+Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. `NIMBLE` et `brms` sont deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
 
 ## `brms`
 
-`brms` signifie **B**ayesian **R**egression **M**odels using **S**tan. Ce package permet de formuler et d’estimer des modèles de régression (voir la section suivante et les Chapitres \@ref(lms) et \@ref(glms)) de manière intuitive grâce à une syntaxe proche de celle du package `lme4` (la référence `R` pour les modèles mixtes), tout en s’appuyant sur `Stan`. Le package est en constant développement, rendez-vous à <https://paul-buerkner.github.io/brms/>. Vous pouvez obtenir de l'aide via <https://discourse.mc-stan.org/>. 
+`brms` signifie **B**ayesian **R**egression **M**odels using **S**tan. Ce package permet de formuler et d’estimer des modèles de régression (voir la section suivante et les Chapitres \@ref(lms) et \@ref(glms)) de manière intuitive grâce à une syntaxe proche de celle du package `lme4` (la référence `R` pour les modèles mixtes), tout en s’appuyant sur `Stan`, un logiciel de référence en statistique bayésienne. Le package est en constant développement, rendez-vous à <https://paul-buerkner.github.io/brms/>. Vous pouvez obtenir de l'aide via <https://discourse.mc-stan.org/>. 
 
 Pour utiliser `brms`, on commence par préparer les données :
 
@@ -45,7 +45,7 @@ bayes.brms <- brm(
 )
 ```
 
-La syntaxe est relativement simple mais nécessite quelques explications. L'argument `y | trials(n) ~ 1` permet de spécifier un modèle dans lequel on a $y$ succès parmi $n$ essais, et on estime une ordonnée à l'origine ou intercept seulement, le `1` après `~`. Pourquoi un intercept ici ? Pourquoi pas directement la survie $\theta$. Parce qu'on utilise `family = binomial("logit")` à la ligne d'après pour spécifier à `brms` que la variable réponse suit une loi binomiale. Autrement dit on a un modèle linéaire généralisé (voir le Chapitre \@ref(glms)) avec $\text{logit}(\theta) = \beta$ et on estime $\beta$ l'intercept. Les arguments `iter = 2000`, `warmup = 300` et `chains = 3` stipulent à `brms` d'utiliser 300 itérations pour l’adaptation (burn-in), et les 1700 suivantes pour l’inférence, avec 3 chaînes. 
+La syntaxe est relativement simple mais nécessite quelques explications. L'argument `y | trials(n) ~ 1` permet de spécifier un modèle dans lequel on a $y$ succès parmi $n$ essais, et on estime une ordonnée à l'origine ou intercept seulement, le `1` après `~`. Pourquoi un intercept ici ? Pourquoi pas directement la survie $\theta$ ? Parce qu'on utilise `family = binomial("logit")` à la ligne d'après pour spécifier à `brms` que la variable réponse suit une loi binomiale. Autrement dit on a un modèle linéaire généralisé (voir le Chapitre \@ref(glms)) avec $\text{logit}(\theta) = \beta$ et on estime $\beta$ l'intercept. Les arguments `iter = 2000`, `warmup = 300` et `chains = 3` stipulent à `brms` d'utiliser 300 itérations pour l’adaptation (burn-in), et les 1700 suivantes pour l’inférence, avec 3 chaînes. 
 <!-- - `seed = 666` : fixe la graine aléatoire pour assurer la reproductibilité. -->
 <!-- - `prior(beta(1, 1), class = "Intercept")` : spécifie une loi bêta(1,1), équivalente à une loi uniforme sur [0,1], sur l'échelle de probabilité. -->
 
@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.69      0.27    -1.23    -0.17 1.00     2026     3173
+#> Intercept    -0.70      0.27    -1.24    -0.17 1.00     1922     2264
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -74,12 +74,12 @@ summary(bayes.brms)
 Cette commande affiche un tableau récapitulatif des estimations postérieures pour chaque paramètre du modèle. On y trouve :
 
 - `Estimate` est la moyenne a posteriori.
-- `Est.Error` est l'écart-type de cette estimation.
+- `Est.Error` est l'écart-type de la distribution a posteriori.
 - `l-95% CI` et `u-95% CI` sont les bornes de l'intervalle de crédibilité à 95%.
 - Le diagnostic de convergence `Rhat`.
-- Et `Bulk_ESS` la taille effective d'échantillon (`Tail_ESS` est une autre mesure de la taille effective d'échantillon qu'on n'utilisera pas ici). 
+- `Bulk_ESS` est la taille effective d'échantillon (`Tail_ESS` est une autre mesure de la taille effective d'échantillon qu'on n'utilisera pas ici). 
 
-La moyenne a posteriori vaut -0.6909922 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
+La moyenne a posteriori vaut -0.7 bien loin de la proportion de ragondins qui ont survécu à l'hiver ($19/57 \approx 0.33$). Comme toujours dans `R` et l'implémentation des modèles linéaires généralisés (voir Chapitre \@ref(glms)), les estimations des paramètres sont données sur l'échelle de la fonction de lien. Ici l'intercept estimé est exprimé sur l’échelle logit. Pour le convertir en probabilité de survie (entre 0 et 1), on extrait d'abord les valeurs générées dans la distribution a posteriori de l'intercept $\beta$ avec la fonction `brms::as_draws_matrix()` : 
 
 ``` r
 draws_fit <- as_draws_matrix(bayes.brms)
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3365088
+#> [1] 0.3355561
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1549516 0.2940945 0.3349076 0.3760429 0.5583806
+#> 0.1151873 0.2938212 0.3340493 0.3764673 0.5685851
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,7 +109,7 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.337  0.335 0.0600 0.0608 0.240 0.439  1.00    2026.    3173.
+#> 1 Intercept 0.336  0.334 0.0598 0.0611 0.240 0.434  1.00    1922.    2264.
 ```
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
@@ -150,7 +150,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.930  0.914 0.157 0.152 0.701  1.22  1.00    2026.    3173.
+#> 1 Intercept 0.927  0.912 0.156 0.153 0.700  1.20 1.000    1922.    2264.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -175,7 +175,7 @@ prior_summary(bayes.brms)
 #> Intercept ~ student_t(3, 0, 2.5)
 ```
 
-Le package `brms` utilise comme a priori faiblement informatif une loi de Student à 3 degrés de liberté, centrée en 0, avec un écart-type de 2.5. Les 3 degrés de liberté donnent une distribution avec des queues plus épaisses qu'une normale, permettant une certaine robustesse aux valeurs extrêmes. Le centre en 0 traduit une absence d'a priori fort sur la valeur de l’intercept. La largeur 2.5 autorise une variation raisonnablement large de l'intercept sans être complètement non-informatif.
+Le package `brms` utilise comme a priori faiblement informatif une loi de Student à 3 degrés de liberté, centrée en 0, avec un écart-type de 2.5. Les 3 degrés de liberté donnent une distribution avec des queues plus épaisses qu'une normale, ce qui donne une certaine robustesse aux valeurs extrêmes. Le centre en 0 traduit une absence d'a priori fort sur la valeur de l’intercept. La largeur 2.5 autorise une variation raisonnablement large de l'intercept sans être complètement non-informatif.
 
 Dans certains cas, il est pertinent de définir soi-même un prior, par exemple pour refléter des connaissances issues de la littérature ou pour contraindre d'avantage l’estimation (prior informatif). Ici, on propose un prior normal centré en 0 avec un écart-type de 1.5 sur l’intercept, on en reparlera au Chapitre \@ref(prior) :
 
@@ -211,7 +211,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.68      0.27    -1.21    -0.17 1.00     1907     2329
+#> Intercept    -0.67      0.28    -1.22    -0.13 1.00     1921     2381
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential

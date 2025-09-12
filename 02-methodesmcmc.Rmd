@@ -13,7 +13,7 @@ y <- 19 # nombre d'individus ayant survécu à l'hiver
 n <- 57 # nombre d'individus suivis au début de l'hiver
 ```
 
-Appliquons le théorème de Bayes de manière plus directe que dans le Chapitre \@ref(principes), dans lequel on a mis de côté le dénominateur $\Pr(\text{données})$. Voyons s'il est possible de faire avec. Comme on l'a vu, ce dénominateur est donné par $\displaystyle \Pr(\text{y}) = \int{\Pr(\text{données} \mid \theta) \Pr(\theta) \, d\theta}$. On va donc devoir calculer cette intégrale. Commençons par écrire une fonction `R` qui calcule le produit de la vraisemblance par le prior, c’est-à-dire le numérateur dans le théorème de Bayes $\Pr(\text{données} \mid \theta) \times \Pr(\theta)$ :
+Appliquons le théorème de Bayes de manière plus directe que dans le Chapitre \@ref(principes), dans lequel on a mis de côté le dénominateur $\Pr(\text{données})$. Voyons s'il est possible de faire avec. Comme on l'a vu, ce dénominateur est donné par $\displaystyle \Pr(\text{y}) = \int{\Pr(\text{données} \mid \theta) \Pr(\theta) \, d\theta}$. On va donc devoir calculer cette intégrale. Commençons par écrire une fonction `R` qui calcule le produit de la vraisemblance (binomiale) par le prior (Beta(1,1)), c’est-à-dire le numérateur dans le théorème de Bayes $\Pr(\text{données} \mid \theta) \times \Pr(\theta)$ :
 
 ```{r bayes-numerator, message=FALSE}
 num <- function(theta) dbinom(y, n, theta) * dbeta(theta, 1, 1)
@@ -74,7 +74,7 @@ La distribution postérieure exacte (couleur rouge brique) et l'approximation nu
 
 Dans notre exemple, nous avons un seul paramètre à estimer : la survie hivernale. Cela signifie qu’il s’agit d’une intégrale unidimensionnelle au dénominateur, ce qui est assez facile avec les techniques de quadrature et la fonction `R` `integrate()`.
 
-Mais que se passe-t-il si nous avons plusieurs paramètres ? Par exemple, imaginez que vous vouliez ajuster un modèle de régression avec une probabilité de survie qui dépend d'une variable explicative, par exemple la masse des ragondins. L'effet de cette variable est capturé par le paramètre de régression $\beta_0$ (l'ordonnée à l'origine), $\beta_1$ la pente associée, et on a aussi l'erreur résiduelle avec l'écart-type $\sigma$ (voir Chapitre \@ref(glms)). Le théorème de Bayes donne alors la distribution postérieure jointe de ces paramètres, c'est-à-dire des trois paramètres ensemble :
+Mais que se passe-t-il si nous avons plusieurs paramètres ? Par exemple, imaginez que vous vouliez ajuster un modèle de régression avec une probabilité de survie qui dépend d'une variable explicative, par exemple la masse des ragondins. L'effet de cette variable est capturé par le paramètre de régression $\beta_0$ (l'ordonnée à l'origine), $\beta_1$ la pente associée, et on a aussi l'erreur résiduelle avec l'écart-type $\sigma$ (voir Chapitre \@ref(lms)). Le théorème de Bayes donne alors la distribution postérieure jointe de ces paramètres, c'est-à-dire des trois paramètres ensemble :
 
 $$ \displaystyle \Pr(\beta_0, \beta_1, \sigma \mid \text{y}) = \frac{ \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \times \Pr(\beta_0, \beta_1, \sigma)}{\displaystyle \iiint \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \Pr(\beta_0, \beta_1, \sigma) \, d\beta_0 \, d\beta_1 \, d\sigma} $$
 
@@ -141,7 +141,7 @@ round(temps, 2) # produit matriciel après 20 étapes
 
 Chaque ligne de la matrice converge vers la même distribution $(0.82, 0.18)$ au fur et à mesure que le nombre d’étapes augmente. La convergence se produit quel que soit l’état de départ : on a alors une probabilité de 0.82 d’avoir du soleil et de 0.18 d’avoir de la pluie.
 
-Revenons aux méthodes MCMC. L’idée centrale est que l’on peut construire une chaîne de Markov dont la distribution stationnaire est justement la distribution a posteriori de nos paramètres.
+Revenons aux méthodes MCMC. L’idée centrale est que l'on peut construire une chaîne de Markov dont la distribution stationnaire est justement la distribution a posteriori de nos paramètres. Retenez bien cette idée, elle est centrale. 
 
 En combinant Monte Carlo et chaînes de Markov, les méthodes MCMC nous permettent de générer un échantillon de valeurs dont la distribution converge vers la distribution a posteriori (chaîne de Markov), et d’utiliser cet échantillon pour calculer des résumés numériques a posteriori (Monte Carlo), comme la moyenne ou les intervalles de crédibilité.
 
@@ -201,9 +201,9 @@ theta.post[1] <- inits # on enregistre cette valeur comme première position de 
 accept[1] <- 1 # la valeur initiale est acceptée par défaut
 ```
 
-Pourquoi une valeur de départ ? Une chaîne de Markov doit bien commencer quelque part : ici, on choisit arbitrairement 0.5 comme valeur initiale de la probabilité de survie. La seule contrainte est que cette valeur soit compatible avec le prior, on ne va pas prendre une survie de négative ou de 15. On place cette valeur dans le premier élément du vecteur `theta.post`, et on indique dans `accept[1] <- 1` que cette première valeur est acceptée par construction, puisque c’est notre point de départ.
+Pourquoi une valeur de départ ? Une chaîne de Markov doit bien commencer quelque part : ici, on choisit arbitrairement 0.5 comme valeur initiale de la probabilité de survie. La seule contrainte est que cette valeur soit compatible avec le prior, on ne va pas prendre une survie négative ou de 15. On place cette valeur dans le premier élément du vecteur `theta.post`, et on indique dans `accept[1] <- 1` que cette première valeur est acceptée par construction, puisque c’est notre point de départ.
 
-Puis, on écrit une fonction pour proposer une valeur candidate à partir de la valeur courante. Pour garantir que la nouvelle valeur proposée reste comprise entre 0 et 1 (puisqu’il s’agit ici d’une probabilité), on effectue les calculs sur l’échelle logit :
+Puis, on écrit une fonction pour proposer une valeur candidate à partir de la valeur courante :
 ```{r}
 move <- function(x, away = 1){ 
   logitx <- log(x / (1 - x)) # transformation logit : transforme x de (0,1) vers (-∞,+∞)
@@ -261,7 +261,7 @@ ggplot(df, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
-Que nous apprend ce trace plot ? L’axe horizontal représente les itérations (ou temps dans la chaîne de Markov). L’axe vertical montre les valeurs simulées de la probabilité de survie à chaque étape. Dans la figure, on observe que la chaîne reste parfois plusieurs itérations consécutives à la même valeur. Cela se produit lorsque la valeur candidate proposée par l’algorithme est rejetée — la chaîne conserve alors la valeur précédente. À d'autres moments, on voit des sauts vers de nouvelles valeurs, qui correspondent aux propositions acceptées.
+Que nous apprend ce trace plot ? L’axe horizontal représente les itérations (ou temps dans la chaîne de Markov). L’axe vertical montre les valeurs simulées de la probabilité de survie à chaque étape. Dans la figure, on observe que la chaîne reste parfois plusieurs itérations consécutives à la même valeur. Cela se produit lorsque la valeur candidate proposée par l’algorithme est rejetée — la chaîne conserve alors la valeur précédente (ou courante plus précisément). À d'autres moments, on voit des sauts vers de nouvelles valeurs, qui correspondent aux propositions acceptées.
 
 On peut ensuite encapsuler l'algorithme dans une fonction réutilisable, ce qui permet de lancer facilement plusieurs chaînes :
 ```{r}
@@ -329,7 +329,7 @@ ggplot(df, aes(x = x, y = y)) +
 
 <!-- ![](images/mcmc-betabin.gif) -->
 
-Avec un grand nombre d'itérations, chaque chaîne devrait se stabiliser autour de sa distribution stationnaire. Visuellement, on recherche une zone dense, homogène et bien explorée, ressemblant à une pelouse bien tondue. 
+Avec un grand nombre d'itérations, chaque chaîne devrait se stabiliser autour de sa distribution stationnaire. Visuellement, on recherche une zone dense, homogène et bien explorée, ressemblant à une pelouse bien tondue (c'est une image). 
 
 Une fois la distribution stationnaire atteinte, vous pouvez considérer les valeurs simulées de la chaîne de Markov comme un échantillon de la distribution a posteriori et obtenir des résumés numériques des paramètres (moyenne a posteriori, intervalle de crédibilité). 
 
@@ -359,9 +359,9 @@ df %>%
   scale_y_continuous(expand = c(0,0))
 ```
 
-La chaîne démarre à 0.99 et se stabilise rapidement, les valeurs oscillant autour de 0.3 à partir de la 100ème itération. On peut choisir la zone ombrée comme période de burn-in et éliminer les 100 premières valeurs. Par prudence, on pourrait utiliser 250 voire 500 itérations comme burn-in. 
+La chaîne démarre à 0.99 et se stabilise rapidement, les valeurs oscillant autour de 0.3 à partir de la 100ème itération. On peut choisir la zone ombrée comme période de burn-in et éliminer les 100 premières valeurs. Par prudence, on pourrait utiliser 250 voire 500 itérations comme burn-in, si ça ne coûte pas trop cher en temps de calcul évidemment. 
 
-Examiner un trace plot d'une seule chaîne est utile, mais on lance généralement plusieurs chaînes avec des valeurs initiales différentes pour vérifier que toutes atteignent la même distribution stationnaire. Cette approche est formalisée par la statistique de Brooks-Gelman-Rubin (BGR), notée \( \hat{R} \), qui mesure le ratio entre la variabilité totale (entre-chaînes + intra-chaîne) et la variabilité intra-chaîne. Elle est proche du test \( F \) dans une analyse de variance (ici à un facteur dont les modalités sont les chaînes). Une valeur inférieure à 1.1 indique une convergence probable.
+Examiner un trace plot d'une seule chaîne est utile, mais on lance généralement plusieurs chaînes avec des valeurs initiales différentes pour vérifier que toutes atteignent la même distribution stationnaire. Cette approche est formalisée par la statistique de Brooks-Gelman-Rubin (BGR), notée \( \hat{R} \), qui mesure le ratio entre la variabilité totale (entre les chaînes, plus à l'intérieur de chaque chaîne) et la variabilité intra-chaîne. Elle est proche du test \( F \) dans une analyse de variance (ici à un facteur dont les modalités seraient les chaînes). Une valeur inférieure à 1.1 indique une convergence probable.
 
 Revenons à notre exemple : nous exécutons deux chaînes de Markov avec des valeurs initiales de 0.2 et 0.8, en faisant varier le nombre d'itérations de 100 à 1000 toutes les 50 itérations, et nous calculons la statistique BGR en utilisant la moitié des itérations comme période de burn-in (Figure \@ref(fig:bgr)).
 
@@ -470,17 +470,17 @@ tibble("Écart-type" = c(0.1, 1, 10),
        "n.eff" = round(c(neff1, neff2, neff3)))
 ```
 
-Comme on pouvait s’y attendre, la valeur de `n.eff` est inférieure au nombre total d’itérations MCMC (2000) en raison de l’autocorrélation. Ce n’est que lorsque l’écart-type de la distribution de proposition est égal à 1 que le mixing est bon ($\geq 100$), ce qui permet d’obtenir une taille d’échantillon effective satisfaisante.
+Comme on pouvait s’y attendre, la valeur de `n.eff` est inférieure au nombre total d’itérations MCMC (3000) en raison de l’autocorrélation. Ce n’est que lorsque l’écart-type de la distribution de proposition est égal à 1 que le mixing est bon (`n.eff` $\geq 100$), ce qui permet d'obtenir une taille d’échantillon effective satisfaisante.
 
 ### Et si vous avez des problèmes de convergence ?
 
 Lorsque vous diagnostiquez la convergence d’une chaîne MCMC, vous rencontrerez (très) souvent des difficultés. Cette section propose quelques conseils pratiques qui, je l’espère, vous seront utiles.
 
-Lorsque le mixing est mauvais et que la taille effective de l’échantillon est faible, il peut suffire d’augmenter la période de burn-in et/ou d'augmenter le nombre de simulations. L’utilisation de priors plus informatifs peut également faciliter la convergence des chaînes de Markov, en aidant l’algorithme MCMC à explorer plus efficacement l’espace des paramètres. Dans le même esprit, choisir de meilleures valeurs initiales pour démarrer la chaîne peut aussi améliorer les choses. Une stratégie utile consiste à utiliser les estimations d’un modèle plus simple pour lequel vos chaînes MCMC convergent déjà.
+Lorsque le mixing est mauvais et que la taille effective de l’échantillon est faible, il peut suffire d’augmenter la période de burn-in et/ou d'augmenter le nombre de simulations. L’utilisation de priors plus informatifs peut également faciliter la convergence des chaînes de Markov, en aidant l'algorithme MCMC à explorer plus efficacement l’espace des paramètres (Chapitre \@ref(prior)). Dans le même esprit, choisir de meilleures valeurs initiales pour démarrer la chaîne peut aussi améliorer les choses. Une stratégie utile consiste à utiliser les estimations d’un modèle plus simple pour lequel vos chaînes MCMC convergent déjà.
 
 Si les problèmes de convergence persistent, il y a souvent un problème avec le modèle lui-même. Un bug dans le code ? Une faute de frappe ? Une erreur dans les équations ? Comme souvent en programmation, le meilleur moyen d’identifier le problème est de réduire la complexité du modèle et de repartir d’un modèle plus simple, jusqu’à ce que vous trouviez ce qui ne va pas.
 
-Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et le type de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les chapitres suivants. 
+Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et le type de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les Chapitres \@ref(lms) et \@ref(glms). 
 
 ## En résumé
 

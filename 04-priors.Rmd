@@ -10,7 +10,7 @@ En statistique bayésienne, le prior joue un rôle essentiel : il traduit nos co
 
 - Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on ne partait de rien. Nous verrons un exemple dans la Section \@ref(informativeprior). 
 
-- Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.
+- Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle d'un effet aléatoire). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.
 
 - Pour encadrer les modèles complexes : dans les modèles mixtes, ou en présence de paramètres difficilement estimables, les priors permettent de borner l’espace des solutions à des valeurs plausibles et d’éviter des estimations aberrantes. Par exemple, dans un modèle mixte (voir Chapitre \@ref(glms)) où l'on estime la variance entre groupes ou modalités d’un effet, l'absence de prior peut entraîner des valeurs irréalistes ou des instabilités numériques. Un prior faiblement informatif peut aider dans cette situation.
 
@@ -199,7 +199,7 @@ ggplot(df, aes(x = x, y = Moyenne, color = Données)) +
         legend.position = "top") # remplacer top par none si on ne veut pas la légende
 ```
 
-Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain.
+Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain, pour peu évidemment que la question (relativement simple) reste l'estimation d'une seule survie.
 
 ```{r informative-vs-vague, eval=FALSE, fig.align='center', fig.cap="Comparaison des distributions postérieures : prior vague (bleu) vs. prior informatif (rouge) pour trois années de données.", include=FALSE, out.width='90%'}
 knitr::include_graphics('images/informativeprior.png', dpi = 600)

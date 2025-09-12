@@ -2,7 +2,7 @@
 
 ## Ce qu'on a vu
 
-J'espère avec ce livre avoir démystifié (un peu) la statistique bayésienne et les méthodes MCMC. J'espère aussi vous avoir donné les clés pour comprendre la différence entre les approches fréquentiste et bayésienne, à mieux lire la section « Méthodes » des articles recourant à l'inférence bayésienne, et à acquérir une certaine autonomie dans la conduite d’analyses bayésiennes.
+J'espère avec ce livre avoir démystifié (un peu) la statistique bayésienne et les méthodes MCMC. J'espère aussi vous avoir donné les clés pour comprendre la différence entre les approches fréquentiste et bayésienne, à mieux lire la section « Méthodes » des articles recourant à la statistique bayésienne, et à acquérir une certaine autonomie dans la conduite d’analyses bayésiennes.
 
 Tout au long du livre, nous avons abordé plusieurs étapes essentielles. Nous avons commencé par explorer les motivations qui justifient le recours à l’approche bayésienne. Nous avons ensuite introduit le théorème de Bayes et discuté de son interprétation. Nous avons découvert les méthodes de Monte Carlo par chaînes de Markov (MCMC), puis manipulé `brms` pour ajuster des modèles complexes (et `NIMBLE` dans la version enrichie de ce livre, disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/index.html>). Une attention particulière a été portée au rôle des distributions a priori, qu’elles soient non informatives ou informatives, ainsi qu’à l’utilisation de ces approches dans des études de cas autour des GLM et GLMM.
 
@@ -18,7 +18,7 @@ Avant de terminer, je voudrais vous laisser avec quelques conseils inspirés de 
 
 Tout d’abord, prenez le temps de formuler clairement votre question. Cela paraît évident, mais cette étape est essentielle pour rester sur la bonne voie et faire les bons choix, par exemple celui de n'utiliser qu’un sous-ensemble des données pour répondre à une question spécifique.
 
-Ensuite, réfléchissez d’abord à votre modèle, à le formaliser soit avec des équations, soit en le dessinant, soit avec des mots. Quelle est la nature de vos données, et donc, si vous êtes dans un cadre de régression, quelle famille de distributions utiliser comme on l'a vu dans les Chapitres \@ref(lms) (normale) et \@ref(glms) (bernoulli/binomiale et Poisson). Ne vous précipitez pas sur le clavier. Vérifiez que vous le comprenez en l'expliquant par exemple à un.e collègue. 
+Ensuite, réfléchissez d’abord à votre modèle, à le formaliser soit avec des équations, soit en le dessinant, soit avec des mots. Quelle est la nature de vos données, et donc, si vous êtes dans un cadre de régression, quelle famille de distributions utiliser comme on l'a vu dans les Chapitres \@ref(lms) (normale) et \@ref(glms) (bernoulli/binomiale et Poisson) ? Ne vous précipitez pas sur le clavier. Vérifiez que vous le comprenez en l'expliquant par exemple à un.e collègue. 
 
 A ce sujet, pensez à faire des simulations. Simuler des données à partir de votre modèle permet souvent de mieux le comprendre, comme dans les Chapitres \@ref(lms) et \@ref(glms). C’est une excellente manière de tester vos hypothèses et de diagnostiquer d’éventuels problèmes.
 
@@ -32,6 +32,6 @@ Pour approfondir ces aspects pratiques, je recommande la lecture des articles «
 
 ## En conclusion
 
-En résumé, adoptez une approche pragmatique. Le choix de l’approche statistique (fréquentiste ou bayésienne) dépend de vos objectifs, qu'il s'agisse de la rapidité, de la complexité du modèle ou du type d’incertitude que vous souhaitez quantifier. Discutez de vos options avec des collègues plus expérimenté.e.s si besoin. Le bayésien n’est pas un dogme : c’est un outil puissant parmi d’autres dans votre boîte à outils.
+Adoptez une approche pragmatique. Le choix de l’approche statistique (fréquentiste ou bayésienne) dépend de vos objectifs, qu'il s'agisse de la rapidité, de la complexité du modèle ou du type d’incertitude que vous souhaitez quantifier. Discutez de vos options avec des collègues plus expérimenté.e.s si besoin. Le bayésien n’est pas un dogme : c’est un outil puissant parmi d’autres dans votre boîte à outils.
 
 Merci pour votre attention. N'hésitez pas à m'écrire si vous avez des questions ou si vous voudriez voir un aspect particulier développé dans une nouvelle édition de cet ouvrage. Et bonne découverte de la statistique bayésienne ! 

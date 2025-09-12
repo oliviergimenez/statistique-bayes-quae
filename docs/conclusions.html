@@ -97,7 +97,7 @@
 <h2>
 <span class="header-section-number">6.5</span> Ce qu’on a vu<a class="anchor" aria-label="anchor" href="#ce-quon-a-vu"><i class="fas fa-link"></i></a>
 </h2>
-<p>J’espère avec ce livre avoir démystifié (un peu) la statistique bayésienne et les méthodes MCMC. J’espère aussi vous avoir donné les clés pour comprendre la différence entre les approches fréquentiste et bayésienne, à mieux lire la section « Méthodes » des articles recourant à l’inférence bayésienne, et à acquérir une certaine autonomie dans la conduite d’analyses bayésiennes.</p>
+<p>J’espère avec ce livre avoir démystifié (un peu) la statistique bayésienne et les méthodes MCMC. J’espère aussi vous avoir donné les clés pour comprendre la différence entre les approches fréquentiste et bayésienne, à mieux lire la section « Méthodes » des articles recourant à la statistique bayésienne, et à acquérir une certaine autonomie dans la conduite d’analyses bayésiennes.</p>
 <p>Tout au long du livre, nous avons abordé plusieurs étapes essentielles. Nous avons commencé par explorer les motivations qui justifient le recours à l’approche bayésienne. Nous avons ensuite introduit le théorème de Bayes et discuté de son interprétation. Nous avons découvert les méthodes de Monte Carlo par chaînes de Markov (MCMC), puis manipulé <code>brms</code> pour ajuster des modèles complexes (et <code>NIMBLE</code> dans la version enrichie de ce livre, disponible en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/index.html" class="uri">https://oliviergimenez.github.io/statistique-bayes/index.html</a>). Une attention particulière a été portée au rôle des distributions a priori, qu’elles soient non informatives ou informatives, ainsi qu’à l’utilisation de ces approches dans des études de cas autour des GLM et GLMM.</p>
 </div>
 <div id="la-statistique-bayésienne-en-résumé" class="section level2" number="6.6">
@@ -113,7 +113,7 @@
 </h2>
 <p>Avant de terminer, je voudrais vous laisser avec quelques conseils inspirés de ma propre expérience. Ces conseils ne sont pas forcément spécifiques à la statistique bayésienne, et ils valent ce qu’ils valent.</p>
 <p>Tout d’abord, prenez le temps de formuler clairement votre question. Cela paraît évident, mais cette étape est essentielle pour rester sur la bonne voie et faire les bons choix, par exemple celui de n’utiliser qu’un sous-ensemble des données pour répondre à une question spécifique.</p>
-<p>Ensuite, réfléchissez d’abord à votre modèle, à le formaliser soit avec des équations, soit en le dessinant, soit avec des mots. Quelle est la nature de vos données, et donc, si vous êtes dans un cadre de régression, quelle famille de distributions utiliser comme on l’a vu dans les Chapitres <a href="lms.html#lms">5</a> (normale) et <a href="glms.html#glms">6</a> (bernoulli/binomiale et Poisson). Ne vous précipitez pas sur le clavier. Vérifiez que vous le comprenez en l’expliquant par exemple à un.e collègue.</p>
+<p>Ensuite, réfléchissez d’abord à votre modèle, à le formaliser soit avec des équations, soit en le dessinant, soit avec des mots. Quelle est la nature de vos données, et donc, si vous êtes dans un cadre de régression, quelle famille de distributions utiliser comme on l’a vu dans les Chapitres <a href="lms.html#lms">5</a> (normale) et <a href="glms.html#glms">6</a> (bernoulli/binomiale et Poisson) ? Ne vous précipitez pas sur le clavier. Vérifiez que vous le comprenez en l’expliquant par exemple à un.e collègue.</p>
 <p>A ce sujet, pensez à faire des simulations. Simuler des données à partir de votre modèle permet souvent de mieux le comprendre, comme dans les Chapitres <a href="lms.html#lms">5</a> et <a href="glms.html#glms">6</a>. C’est une excellente manière de tester vos hypothèses et de diagnostiquer d’éventuels problèmes.</p>
 <p>Choisissez l’environnement <code>R</code> dans lequel vous êtes à l’aise ; j’ai illustré <code>brms</code> (Chapitre <a href="mcmc.html#mcmc">2</a>) mais d’autres solutions existent (par exemple <code>NIMBLE</code> comme expliqué dans la version enrichie de ce livre disponible en ligne à <a href="https://oliviergimenez.github.io/statistique-bayes/" class="uri">https://oliviergimenez.github.io/statistique-bayes/</a>).</p>
 <p>Lors de l’ajustement du modèle, commencez simple. Un modèle avec tous les paramètres constants est une bonne base. Cela permet de s’assurer que les données sont bien lues et formatées, qu’il n’y a pas de données aberrantes (un zéro en trop, une virgule mal placée) ou que les a priori ne génèrent pas des comportements atypiques (voir Chapitre <a href="prior.html#prior">4</a>). Cette approche est particulièrement importante pour la statistique bayésienne pour s’assurer des bonnes performances et de la convergence de l’algorithme MCMC (Chapitre <a href="mcmc.html#mcmc">2</a>), tout en se faisant une idée du temps nécessaire à faire tourner l’analyse. Une fois que tous les voyants sont au vert, ajoutez de la complexité progressivement, des effets aléatoires par exemple (Chapitre <a href="glms.html#glms">6</a>), jusqu’à parvenir à la structure de modèle qui vous semble la plus adaptée pour répondre à votre question. Cela sous-entend sûrement que vous devrez faire plusieurs itérations des différentes étapes d’ajustement, de comparaison et de validation de vos modèles (Chapitres <a href="lms.html#lms">5</a> et <a href="glms.html#glms">6</a>).</p>
@@ -124,7 +124,7 @@
 <h2>
 <span class="header-section-number">6.8</span> En conclusion<a class="anchor" aria-label="anchor" href="#en-conclusion"><i class="fas fa-link"></i></a>
 </h2>
-<p>En résumé, adoptez une approche pragmatique. Le choix de l’approche statistique (fréquentiste ou bayésienne) dépend de vos objectifs, qu’il s’agisse de la rapidité, de la complexité du modèle ou du type d’incertitude que vous souhaitez quantifier. Discutez de vos options avec des collègues plus expérimenté.e.s si besoin. Le bayésien n’est pas un dogme : c’est un outil puissant parmi d’autres dans votre boîte à outils.</p>
+<p>Adoptez une approche pragmatique. Le choix de l’approche statistique (fréquentiste ou bayésienne) dépend de vos objectifs, qu’il s’agisse de la rapidité, de la complexité du modèle ou du type d’incertitude que vous souhaitez quantifier. Discutez de vos options avec des collègues plus expérimenté.e.s si besoin. Le bayésien n’est pas un dogme : c’est un outil puissant parmi d’autres dans votre boîte à outils.</p>
 <p>Merci pour votre attention. N’hésitez pas à m’écrire si vous avez des questions ou si vous voudriez voir un aspect particulier développé dans une nouvelle édition de cet ouvrage. Et bonne découverte de la statistique bayésienne !</p>
 
 </div>
@@ -157,7 +157,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-09-07.</p>
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-09-12.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

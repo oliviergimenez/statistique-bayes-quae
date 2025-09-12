@@ -10,7 +10,7 @@ En statistique bayésienne, le prior joue un rôle essentiel : il traduit nos co
 
 - Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on ne partait de rien. Nous verrons un exemple dans la Section \@ref(informativeprior). 
 
-- Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.
+- Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle d'un effet aléatoire). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.
 
 - Pour encadrer les modèles complexes : dans les modèles mixtes, ou en présence de paramètres difficilement estimables, les priors permettent de borner l’espace des solutions à des valeurs plausibles et d’éviter des estimations aberrantes. Par exemple, dans un modèle mixte (voir Chapitre \@ref(glms)) où l'on estime la variance entre groupes ou modalités d’un effet, l'absence de prior peut entraîner des valeurs irréalistes ou des instabilités numériques. Un prior faiblement informatif peut aider dans cette situation.
 
@@ -130,7 +130,7 @@ Cette fois, le prior informatif fait une vraie différence. On réduit la largeu
 <p class="caption">(\#fig:comparaison-prior-survie)Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57).</p>
 </div>
 
-Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain.
+Cet exemple montre que les données issues de la littérature (ici une relation allométrique masse–survie obtenue via une méta-analyse) peuvent être utilisées pour construire un prior informatif pertinent, capable d’améliorer sensiblement la précision des estimations, en particulier lorsque les données sont limitées. Cette approche offre une alternative peu coûteuse à l'allongement des protocoles de terrain, pour peu évidemment que la question (relativement simple) reste l'estimation d'une seule survie.
 
 
 
@@ -164,10 +164,10 @@ On peut vérifier que cette distribution bêta a bien pour moyenne et écart-typ
 ech_prior <- rbeta(n = 10000, shape1 = 24.3, shape2 = 18.3)
 # on calcule la moyenne empirique des tirages (doit approcher 0.57)
 mean(ech_prior)
-#> [1] 0.5699209
+#> [1] 0.5692527
 # on calcule l'écart-type empirique des tirages (doit approcher 0.075)
 sd(ech_prior)
-#> [1] 0.07436308
+#> [1] 0.07517179
 ```
 
 On peut donc adopter un prior \(\text{Beta}(a=24.3,\,b=18.3)\) pour tenir compte de l'information moyenne et sa variabilité obtenue par la relation allométrique survie-masse. 

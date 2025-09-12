@@ -1,7 +1,7 @@
 --- 
 title: "Statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2025-09-07"
+date: "2025-09-12"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -78,7 +78,7 @@ Dans le Chapitre \@ref(lms), nous verrons comment faire une régression linéair
 
 Le Chapitre \@ref(glms) nous emmènera vers les modèles linéaires généralisés, avec ou sans effets aléatoires - des modèles très utilisés en pratique. On s'appuiera sur la simulation de données, un outil précieux pour bien comprendre ce que fait un modèle. Je vous montrerai comment faire ces analyses avec `brms` (et avec `NIMBLE` dans la version enrichie en ligne) et on comparera à l'analyse fréquentiste.
 
-Enfin, un dernier chapitre viendra résumer les messages clés du livre et proposer quelques conseils pour appliquer la statistique bayésienne de manière rigoureuse et éclairée.
+Enfin, un dernier chapitre viendra résumer les messages clés du livre et proposer quelques conseils pour appliquer la statistique bayésienne.
 
 ## Comment lire ce livre ? {-}
 
