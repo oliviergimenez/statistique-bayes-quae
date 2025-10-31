@@ -76,7 +76,7 @@ Deuxièmement, nous supposons que tous les individus ont la même probabilité d
 Sous ces deux hypothèses, le nombre $y$ d’animaux encore vivants à la fin de l’hiver suit une loi binomiale, avec $\theta$ comme probabilité de succès (survie), et $n$ comme nombre d’essais (individus suivis). On notera $y \sim \text{Bin}(n, \theta)$. La loi binomiale est en fait la somme de plusieurs épreuves de Bernoulli indépendantes, comme dans l’exemple classique du pile ou face. À chaque lancé, ici le relâché d'un ragondin équipé d’un GPS en début d'hiver, on suppose une probabilité $\theta$ de succès, c’est-à-dire de survivre à l’hiver, et d'échec, c'est-à-dire de mourir de froid. Si toutes ces épreuves sont indépendantes et ont la même probabilité de succès (nos hypothèses), alors le nombre de succès ou de ragondins vivants en sortie d'hiver suit une loi binomiale (voir aussi le Chapitre \@ref(glms)). Je donne des exemples de tirages Bernoulli et binomiaux dans la Figure \@ref(fig:bernoulli-binomiale). 
 
 <div class="figure" style="text-align: center">
-<img src="01-principes_files/figure-html/bernoulli-binomiale-1.png" alt=" Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\)." width="90%" />
+<img src="01-principes_files/figure-html/bernoulli-binomiale-1.svg" alt=" Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\)." width="90%" />
 <p class="caption">(\#fig:bernoulli-binomiale) Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\).</p>
 </div>
 
@@ -101,7 +101,7 @@ où le premier argument `x = 0` est pour aucun ragondin vivant. À l’inverse, 
 On peut représenter cette vraisemblance dans `R` comme dans la Figure \@ref(fig:survie-vraisemblance-mle) :
 
 <div class="figure" style="text-align: center">
-<img src="01-principes_files/figure-html/survie-vraisemblance-mle-1.png" alt="Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge." width="90%" />
+<img src="01-principes_files/figure-html/survie-vraisemblance-mle-1.svg" alt="Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge." width="90%" />
 <p class="caption">(\#fig:survie-vraisemblance-mle)Fonction de vraisemblance pour la probabilité de survie hivernale du ragondin, calculée à partir de $y=19$ survivants sur $n=57$ individus suivis par GPS. Le maximum de vraisemblance est indiqué par une ligne pointillée rouge.</p>
 </div>
 
@@ -158,7 +158,7 @@ $$
 Vous pouvez oublier ces équations si vous n'êtes pas à l'aise avec. Essayons plutôt de visualiser cette distribution comme dans la Figure \@ref(fig:beta-exemples):
 
 <div class="figure" style="text-align: center">
-<img src="01-principes_files/figure-html/beta-exemples-1.png" alt="Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné." width="90%" />
+<img src="01-principes_files/figure-html/beta-exemples-1.svg" alt="Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné." width="90%" />
 <p class="caption">(\#fig:beta-exemples)Exemples de lois bêta pour différentes valeurs des paramètres $a$ et $b$. Dans chaque panneau, les zones ombrées illustrent la probabilité d'observer une valeur dans un intervalle donné.</p>
 </div>
 
@@ -184,7 +184,7 @@ $$
 Autrement dit, on retrouve une loi bêta, avec des paramètres mis à jour $a + y$ et $b + n - y$. On dit que la loi binomiale et la loi bêta sont conjuguées : lorsque l'on utilise une loi bêta comme distribution a priori pour un paramètre de probabilité dans un modèle binomial, la loi a posteriori obtenue est également une loi bêta. Si on utilise une loi uniforme a priori (i.e. Beta(1,1)), on obtient que la distribution a posteriori de la survie hivernale est une $\text{Beta}(1+19, 1+57-19) = \text{Beta}(20, 39)$. Au passage, la distribution a posteriori est connue, ce qui facilite grandement les calculs et leur interprétation. Par exemple, on sait que la moyenne de la $\text{Beta}(a, b)$ est $\displaystyle \frac{a}{a+b}$, soit  $\frac{20}{59} \approx 0.339$. On peut comparer cette valeur à l'estimateur du maximum de vraisemblance $19/57 \approx 0.333$. On peut également visualiser la distribution a posteriori comme dans la Figure \@ref(fig:posterior-survie), puisqu'on connait l'équation de la densité d'une loi Bêta :
 
 <div class="figure" style="text-align: center">
-<img src="01-principes_files/figure-html/posterior-survie-1.png" alt="Distribution a priori uniforme (rouge) et distribution a posteriori (noire) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance." width="90%" />
+<img src="01-principes_files/figure-html/posterior-survie-1.svg" alt="Distribution a priori uniforme (rouge) et distribution a posteriori (noire) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance." width="90%" />
 <p class="caption">(\#fig:posterior-survie)Distribution a priori uniforme (rouge) et distribution a posteriori (noire) de la probabilité de survie hivernale du ragondin. La ligne bleue pointillée correspond à l'estimateur du maximum de vraisemblance.</p>
 </div>
 

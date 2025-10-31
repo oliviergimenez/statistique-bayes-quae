@@ -126,7 +126,7 @@
 <p>Revenons à notre exemple fil rouge sur la survie des ragondins. Examinons comment différents choix de priors influencent la distribution a posteriori de cette probabilité de survie. Dans la Figure <a href="prior.html#fig:priors-comparaison">4.1</a>, on a trois priors de plus en plus informatifs (en colonnes), et deux tailles d’échantillon (en lignes).</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:priors-comparaison"></span>
-<img src="04-priors_files/figure-html/priors-comparaison-1.png" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait rouge représente le prior, le trait noir la distribution a posteriori." width="100%"><p class="caption">
+<img src="04-priors_files/figure-html/priors-comparaison-1.svg" alt="Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait rouge représente le prior, le trait noir la distribution a posteriori." width="100%"><p class="caption">
 Figure 4.1: Effet combiné du prior et de la taille d’échantillon sur la distribution a posteriori avec une vraisemblance binomiale. En colonnes : trois lois bêta a priori Beta(1,1), Beta(5,5) et Beta(20,1). En lignes : petit (n = 6, y = 2) et grand (n = 57, y = 19) échantillon (facteur 10). Le trait rouge représente le prior, le trait noir la distribution a posteriori.
 </p>
 </div>
@@ -245,7 +245,7 @@ Figure 4.1: Effet combiné du prior et de la taille d’échantillon sur la dist
 <p>Cette fois, le prior informatif fait une vraie différence. On réduit la largeur de l’intervalle de près de 50%, tout en ramenant l’estimation moyenne vers une valeur plus réaliste pour un passereau. On note aussi que l’estimation postérieure du modèle B avec 3 années de données est proche de celle obtenue avec 7 années (Figure <a href="prior.html#fig:comparaison-prior-survie">4.2</a>).</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:comparaison-prior-survie"></span>
-<img src="04-priors_files/figure-html/comparaison-prior-survie-1.png" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57)." width="100%"><p class="caption">
+<img src="04-priors_files/figure-html/comparaison-prior-survie-1.svg" alt="Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57)." width="100%"><p class="caption">
 Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plongeur selon le type de prior et la durée de l’étude. Chaque point représente la moyenne a posteriori, avec son intervalle de crédibilité à 95%. La ligne grise indique la valeur de survie issue de la méta-analyse pour les passereaux (0.57).
 </p>
 </div>
@@ -275,10 +275,10 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span><span class="va">ech_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10000</span>, shape1 <span class="op">=</span> <span class="fl">24.3</span>, shape2 <span class="op">=</span> <span class="fl">18.3</span><span class="op">)</span></span>
 <span><span class="co"># on calcule la moyenne empirique des tirages (doit approcher 0.57)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5717173</span></span>
+<span><span class="co">#&gt; [1] 0.5715369</span></span>
 <span><span class="co"># on calcule l'écart-type empirique des tirages (doit approcher 0.075)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.07501034</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.07467856</span></span></code></pre></div>
 <p>On peut donc adopter un prior <span class="math inline">\(\text{Beta}(a=24.3,\,b=18.3)\)</span> pour tenir compte de l’information moyenne et sa variabilité obtenue par la relation allométrique survie-masse.</p>
 <p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet de la masse des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
 <p>On peut commencer par la moyenne <span class="math inline">\(\mu\)</span>. L’intervalle est symétrique, donc on peut déduire directement que la moyenne <span class="math inline">\(\mu\)</span> du prior est le milieu de l’intervalle : <span class="math inline">\(\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05\)</span>.</p>
@@ -315,7 +315,7 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <p>Visuellement, la Figure <a href="prior.html#fig:prior-normal-viz">4.3</a> représente la densité d’une loi normale avec une moyenne <span class="math inline">\(\mu=0.05\)</span> et un écart-type <span class="math inline">\(\sigma=0.156\)</span>. L’intervalle en bleu clair correspond à l’intervalle crédible central à 80%, c’est-à-dire l’intervalle [−0.15; 0.25] qui contient 80% de la masse de probabilité. Les lignes pointillées grises indiquent les bornes de cet intervalle, tandis que la ligne en pointillés noirs marque la position de la moyenne. On observe que, grâce à la symétrie de la loi normale, l’intervalle est centré autour de la moyenne, et que 10% de la masse est située de chaque côté en dehors de cet intervalle.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:prior-normal-viz"></span>
-<img src="04-priors_files/figure-html/prior-normal-viz-1.png" alt="Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25." width="100%"><p class="caption">
+<img src="04-priors_files/figure-html/prior-normal-viz-1.svg" alt="Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25." width="100%"><p class="caption">
 Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0.156. L’intervalle ombré correspond à l’intervalle de crédibilité à 80 %, entre –0.15 et 0.25.
 </p>
 </div>
@@ -344,7 +344,7 @@ Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0
 <p>Ici la distribution induite sur <span class="math inline">\(\theta\)</span> est uniforme, couvrant surtout la plage de valeurs entre 0.05 et 0.95 comme on peut le voir dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de droite), ce qui reflète mieux un manque d’information sur <span class="math inline">\(\theta\)</span>. Ce deuxième choix est le bon, on parle de priors faiblement informatifs (ou weakly informative).</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:prior-combined-ggplot"></span>
-<img src="04-priors_files/figure-html/prior-combined-ggplot-1.png" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \)." width="100%"><p class="caption">
+<img src="04-priors_files/figure-html/prior-combined-ggplot-1.svg" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \)." width="100%"><p class="caption">
 Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="math inline">\(\theta = \text{logit}^{-1}(\beta)\)</span> après transformation par la fonction logit réciproque de <span class="math inline">\(\beta \sim N(0, 10^2)\)</span> et <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>.
 </p>
 </div>
@@ -437,7 +437,7 @@ Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-09-12.</p>
+    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-10-31.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

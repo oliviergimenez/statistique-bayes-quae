@@ -51,14 +51,14 @@ posterior %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/posterior-numerique-plot-1.png" alt="Approximation numérique de la distribution a posteriori de la survie hivernale." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/posterior-numerique-plot-1.svg" alt="Approximation numérique de la distribution a posteriori de la survie hivernale." width="90%" />
 <p class="caption">(\#fig:posterior-numerique-plot)Approximation numérique de la distribution a posteriori de la survie hivernale.</p>
 </div>
 
 Quelle est la qualité de cette approximation numérique ? Idéalement, on voudrait comparer l'approximation à la véritable distribution postérieure. Ça tombe bien, on l'a obtenue dans le Chapitre \@ref(principes), il s'agit d'une distribution bêta de paramètres 20 et 39. On peut se rendre compte dans la Figure \@ref(fig:posterior-comparaison) que les deux courbes se superposent parfaitement. 
 
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/posterior-comparaison-1.png" alt="Comparaison entre la postérieure exacte (couleur rouge brique) et l’approximation numérique (couleur crème)." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/posterior-comparaison-1.svg" alt="Comparaison entre la postérieure exacte (couleur rouge brique) et l’approximation numérique (couleur crème)." width="90%" />
 <p class="caption">(\#fig:posterior-comparaison)Comparaison entre la postérieure exacte (couleur rouge brique) et l’approximation numérique (couleur crème).</p>
 </div>
 
@@ -93,7 +93,7 @@ Comment utilise-t-on l’intégration Monte Carlo dans un contexte bayésien ? L
 sample_from_posterior <- rbeta(1000, 20, 39) 
 # calcul de la moyenne par intégration Monte Carlo
 mean(sample_from_posterior) 
-#> [1] 0.3351009
+#> [1] 0.3363289
 ```
 
 On peut vérifier que la moyenne obtenue est proche de l’espérance théorique d’une distribution bêta :
@@ -110,7 +110,7 @@ Un autre résumé numérique utile est l’intervalle de crédibilité à l’in
 ``` r
 quantile(sample_from_posterior, probs = c(2.5/100, 97.5/100))
 #>      2.5%     97.5% 
-#> 0.2231019 0.4601576
+#> 0.2242675 0.4576897
 ```
 
 En passant, il y a une différence entre l'intervalle de crédibilité en statistique bayésienne et l'intervalle de confiance de la statistique fréquentiste. Un intervalle de confiance à 95% signifie que si l’on répétait l’expérience un très grand nombre de fois (équiper des ragondins de GPS et constater le nombre de survivants à l'hiver), environ 95% des intervalles construits de cette manière contiendraient la vraie valeur $\theta$ du paramètre. Mais on ne peut pas dire que la probabilité que le paramètre soit dans un intervalle donné est de 95%. Un intervalle de crédibilité à 95%, en revanche, signifie qu'il y a 95% de probabilité que le paramètre se trouve dans cet intervalle. L'interprétation de l'intervalle de crédibilité est un peu plus intuitive que celle de l'intervalle de confiance. 
@@ -261,7 +261,7 @@ tail(theta.post)
 
 On peut maintenant visualiser l’évolution des valeurs de la chaîne grâce à un "trace plot" ou graphique de la trace (on va garder l'expression anglaise), c’est-à-dire une courbe qui montre les valeurs simulées de $\theta$ au fil des itérations, c'est la Figure \@ref(fig:traceplot) :
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/traceplot-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/traceplot-1.svg" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations." width="90%" />
 <p class="caption">(\#fig:traceplot)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations.</p>
 </div>
 
@@ -304,7 +304,7 @@ Notez qu'on parle souvent de "lancer plusieurs chaînes" MCMC afin de diagnostiq
 
 On trace ensuite les deux chaînes ensemble comme dans la Figure \@ref(fig:traceplot2) :
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/traceplot2-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/traceplot2-1.svg" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune." width="90%" />
 <p class="caption">(\#fig:traceplot2)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune.</p>
 </div>
 
@@ -312,7 +312,7 @@ Notez que nous n'obtenons pas exactement les mêmes résultats car l'algorithme 
 
 Pour observer la convergence sur une plus longue période, on lance une chaîne avec 1000 itérations. Cela permet d’obtenir un trace plot plus “lisse” qui montre la stabilité de la chaîne, comme dans la Figure \@ref(fig:traceplot3) :
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/traceplot3-1.png" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/traceplot3-1.svg" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations." width="90%" />
 <p class="caption">(\#fig:traceplot3)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations.</p>
 </div>
 
@@ -337,7 +337,7 @@ En pratique, on ignore les premières valeurs de la chaîne de Markov et on n’
 La méthode la plus simple pour déterminer la durée de la période de burn-in est d’inspecter les trace plots. Reprenons notre exemple et observons dans la Figure \@ref(fig:burnin) un trace plot pour une chaîne démarrant à la valeur 0.99 :
 
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/burnin-1.png" alt="Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/burnin-1.svg" alt="Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible." width="90%" />
 <p class="caption">(\#fig:burnin)Trace plot pour une chaîne démarrant à 0.99. La zone ombrée illustre une période de burn-in possible.</p>
 </div>
 
@@ -348,7 +348,7 @@ Examiner un trace plot d'une seule chaîne est utile, mais on lance généraleme
 Revenons à notre exemple : nous exécutons deux chaînes de Markov avec des valeurs initiales de 0.2 et 0.8, en faisant varier le nombre d'itérations de 100 à 1000 toutes les 50 itérations, et nous calculons la statistique BGR en utilisant la moitié des itérations comme période de burn-in (Figure \@ref(fig:bgr)).
 
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/bgr-1.png" alt="Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/bgr-1.svg" alt="Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence." width="90%" />
 <p class="caption">(\#fig:bgr)Valeur de la statistique de Brooks-Gelman-Rubin (BGR) en fonction du nombre d’itérations. Une valeur proche de 1 suggère la convergence.</p>
 </div>
 
@@ -363,7 +363,7 @@ Quelle longueur de chaîne est nécessaire pour obtenir des estimations fiables 
 Ici encore, les trace plots permettent de diagnostiquer des problèmes d’autocorrélation. Revenons à l’exemple de survie. La Figure \@ref(fig:trace-away) ci-dessous montre les trace plots (3000 itérations) pour différentes valeurs de l’écart-type (paramètre `away`) de la loi normale de proposition utilisée pour générer les valeurs candidates :
 
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/trace-away-1.png" alt="Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/trace-away-1.svg" alt="Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations." width="90%" />
 <p class="caption">(\#fig:trace-away)Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations.</p>
 </div>
 
@@ -371,7 +371,7 @@ Les petits et grands déplacements visibles dans les panneaux de gauche et de dr
 
 En complément des trace plots, les graphiques de la fonction d’autocorrélation (ACF) offrent un moyen pratique de visualiser la force de l’autocorrélation dans un échantillon donné. Les ACF montrent la corrélation entre les valeurs échantillonnées successivement, séparées par un nombre croissant d’itérations, appelé lag (décalage). On obtient dans la Figure \@ref(fig:acf) ces graphiques de fonction d’autocorrélation pour différentes valeurs de l’écart-type de la distribution de proposition grâce à la fonction `forecast::ggAcf()` :
 <div class="figure" style="text-align: center">
-<img src="02-methodesmcmc_files/figure-html/acf-1.png" alt="Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué." width="90%" />
+<img src="02-methodesmcmc_files/figure-html/acf-1.svg" alt="Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué." width="90%" />
 <p class="caption">(\#fig:acf)Fonctions d'autocorrélation (ACF) pour différentes valeurs de l'écart-type de la proposition. Une faible autocorrélation est un signe de bon mixing. Un burn-in de 300 itérations est appliqué.</p>
 </div>
 

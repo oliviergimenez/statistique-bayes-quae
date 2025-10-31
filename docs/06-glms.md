@@ -13,7 +13,7 @@ On a vu au Chapitre \@ref(principes) la solution. On note $z_i = 1$ quand le rag
 On a aussi vu aux Chapitres \@ref(mcmc) et \@ref(logiciels) qu'on pouvait utiliser la fonction logit pour forcer un paramètre à être bien estimé entre 0 et 1. Il s'agit d'écrire que $\text{logit}(\theta_i) = \beta_0 + \beta_1 x_i$, comme expliqué dans la Figure \@ref(fig:logit-link).
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/logit-link-1.png" alt="À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités." width="90%" />
+<img src="06-glms_files/figure-html/logit-link-1.svg" alt="À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités." width="90%" />
 <p class="caption">(\#fig:logit-link)À gauche : la fonction logit transforme une probabilité p en une valeur continue non bornée logit(p) qui vit entre moins l'infini et plus l'infini. À droite : la fonction logit inverse transforme une combinaison linéaire de prédicteurs (valeur linéaire sur la figure) en probabilité qui vit entre 0 et 1. La fonction logit est utilisée dans la régression logistique (GLM avec distribution binomiale) pour transformer une probabilité (entre 0 et 1) en une variable continue définie sur l'ensemble des réels. Puis, la fonction logit inverse permet ensuite de revenir à l’échelle des probabilités.</p>
 </div>
 
@@ -70,14 +70,14 @@ Au passage, l'interprétation des coefficients de la régression logistique n'es
 
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/gelman-rule-1.png" alt="Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge)." width="90%" />
+<img src="06-glms_files/figure-html/gelman-rule-1.svg" alt="Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge)." width="90%" />
 <p class="caption">(\#fig:gelman-rule)Illustration de la règle du 4 de Gelman. Ici, on approxime l’effet de la masse du ragondin sur la probabilité de survie (la courbe logistique en noir) autour du point d’inflexion par une droite dont la pente est donnée par le coefficient estimé divisé par 4 (la droite en tirets rouge).</p>
 </div>
 
 Mais je m'égare, revenons au problème de la régression linéaire appliquée à des données binaires. Comme on peut le voir dans la Figure \@ref(fig:logit-vs-gaussian), la régression linéaire consiste à faire passer une droite sans borne dans les données binaires, ce qui peut conduire à des survies plus grandes que 1 (et/ou plus petites que 0 même si ça n'est pas le cas ici). La régression logistique, en revanche, contraint naturellement les prédictions entre 0 et 1 grâce à la transformation logit, ce qui en fait un choix adapté aux variables de type succès/échec. Au passage, j'ai utilisé la formulation Bernoulli pour introduire une variable explicative mesurée à l'échelle de l'individu, mais si ça n'est pas nécessaire, on peut repasser à la formulation groupée avec la binomiale comme dans les chapitres précédents.
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/logit-vs-gaussian-1.png" alt="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide." width="90%" />
+<img src="06-glms_files/figure-html/logit-vs-gaussian-1.svg" alt="Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide." width="90%" />
 <p class="caption">(\#fig:logit-vs-gaussian)Comparaison entre une régression linéaire et une régression logistique ajustées sur des données binaires. La régression linéaire (en bleu) produit des prédictions plus grandes que 1 (embêtant pour une probabilité de survie), tandis que la régression logistique (en rouge) garantit une estimation de probabilité valide.</p>
 </div>
 
@@ -96,7 +96,7 @@ Au passage, vous verrez les termes modèles hiérarchiques, multi-niveaux ou à 
 Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/protocole-1.png" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température." width="90%" />
+<img src="06-glms_files/figure-html/protocole-1.svg" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température." width="90%" />
 <p class="caption">(\#fig:protocole)Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température.</p>
 </div>
 
@@ -138,7 +138,7 @@ head(sim_simple)
 
 J'ai commenté le code, ce qui devrait en faciliter la lecture. Malgré tout, quelques explications sur les différentes étapes s'imposent. On commence par une boucle `for (tr in 1:transects)` qui simule les données pour chacun des dix transects, un par un. À chaque fois, on tire un effet aléatoire spécifique (`ref`), qui va faire varier un peu l’intercept de la relation entre température et nombre de ragondins selon le transect. Ensuite, on génère une séquence de températures (`t`) avec un point de départ tiré au hasard, et une petite pente qui change légèrement la température d'un point à l’autre. À partir de cette température, on calcule l’intensité attendue du processus de comptage (`ans`) en supposant une relation linéaire (sur l'échelle log), puis on génère les données observées (`an`) en tirant des valeurs dans une loi de Poisson de moyenne `ans`. Enfin, on regroupe tout dans un tableau (`sim_simple`) pour pouvoir ensuite analyser tout ça. Voici la Figure \@ref(fig:plotsimple) qui illustre les données qu'on obtient : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/plotsimple-1.png" alt="Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect." width="90%" />
+<img src="06-glms_files/figure-html/plotsimple-1.svg" alt="Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect." width="90%" />
 <p class="caption">(\#fig:plotsimple)Relation entre le nombre de ragondins et la température par transect, avec plusieurs points de comptage (10 pour tous, sauf les transects 4, 5 et 8 pour lesquels on a 3, 2 et 3 points) par transect.</p>
 </div>
 
@@ -193,7 +193,7 @@ summary(fit_complete)
 
 Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-complete-1.png" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%" />
+<img src="06-glms_files/figure-html/ppcheck-complete-1.svg" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%" />
 <p class="caption">(\#fig:ppcheck-complete)Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.</p>
 </div>
 
@@ -284,14 +284,14 @@ On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pent
 
 La qualité de l'ajustement est meilleure comme on le voit dans la Figure \@ref(fig:ppcheck-nopool) : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-nopool-1.png" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
+<img src="06-glms_files/figure-html/ppcheck-nopool-1.svg" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
 <p class="caption">(\#fig:ppcheck-nopool)Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
 </div>
 
 Ce modèle "no pooling" fait mieux que le modèle "complete pooling", comme on peut le voir dans la Figure \@ref(fig:pooling-ragondins), mais il reste insatisfaisant. L'approche "no pooling" consiste à ajuster un modèle indépendant pour chaque transect, sans partager d'information entre ces groupes. Cela pose deux problèmes : d'une part, on ne peut pas généraliser les résultats obtenus à d'autres transects que ceux observés ; d'autre part, on ignore des informations potentiellement utiles en supposant que chaque transect n’a rien à apprendre des autres. Cette stratégie devient particulièrement inefficace lorsque chaque groupe comporte peu d'observations.
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/pooling-ragondins-1.png" alt="Comparaison entre les modèles complete pooling (noir) et no pooling (rouge) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, tandis que le complete pooling suppose une relation commune." width="90%" />
+<img src="06-glms_files/figure-html/pooling-ragondins-1.svg" alt="Comparaison entre les modèles complete pooling (noir) et no pooling (rouge) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, tandis que le complete pooling suppose une relation commune." width="90%" />
 <p class="caption">(\#fig:pooling-ragondins)Comparaison entre les modèles complete pooling (noir) et no pooling (rouge) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, tandis que le complete pooling suppose une relation commune.</p>
 </div>
 
@@ -365,13 +365,13 @@ plot(fit_partial)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/model-diagnostics-1.png" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling." width="90%" />
+<img src="06-glms_files/figure-html/model-diagnostics-1.svg" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling." width="90%" />
 <p class="caption">(\#fig:model-diagnostics)Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.</p>
 </div>
 
 On peut alors mettre à jour la Figure \@ref(fig:pooling-ragondins) avec la Figure \@ref(fig:partial-ragondins) :
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/partial-ragondins-1.png" alt="Comparaison entre les modèles complete pooling (noir), no pooling (rouge) et partial pooling (bleu) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, le complete pooling suppose une relation commune, tandis que le partial pooling fournit un compromis grâce à l'effet aléatoire transect." width="90%" />
+<img src="06-glms_files/figure-html/partial-ragondins-1.svg" alt="Comparaison entre les modèles complete pooling (noir), no pooling (rouge) et partial pooling (bleu) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, le complete pooling suppose une relation commune, tandis que le partial pooling fournit un compromis grâce à l'effet aléatoire transect." width="90%" />
 <p class="caption">(\#fig:partial-ragondins)Comparaison entre les modèles complete pooling (noir), no pooling (rouge) et partial pooling (bleu) pour prédire le nombre de ragondins en fonction de la température, par transect. Le modèle no pooling ajuste une courbe indépendante pour chaque transect, le complete pooling suppose une relation commune, tandis que le partial pooling fournit un compromis grâce à l'effet aléatoire transect.</p>
 </div>
 
@@ -379,7 +379,7 @@ On voit que l'ajustement fourni par le partial pooling est très similaire au no
 
 La qualité de l'ajustement est validée comme on le voit dans la Figure \@ref(fig:ppcheck-partial) : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-partial-1.png" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
+<img src="06-glms_files/figure-html/ppcheck-partial-1.svg" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
 <p class="caption">(\#fig:ppcheck-partial)Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
 </div>
 
@@ -425,7 +425,7 @@ tibble(b0 = bzero) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/hist-b0-reel-1.png" alt="Distribution a posteriori de l'intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0)." width="90%" />
+<img src="06-glms_files/figure-html/hist-b0-reel-1.svg" alt="Distribution a posteriori de l'intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0)." width="90%" />
 <p class="caption">(\#fig:hist-b0-reel)Distribution a posteriori de l'intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0).</p>
 </div>
 
@@ -443,7 +443,7 @@ tibble(b1 = bun) %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/hist-b1-reel-1.png" alt="Distribution a posteriori de l'effet de la température (échelle réelle). La ligne rouge indique la vraie valeur (0.2)." width="90%" />
+<img src="06-glms_files/figure-html/hist-b1-reel-1.svg" alt="Distribution a posteriori de l'effet de la température (échelle réelle). La ligne rouge indique la vraie valeur (0.2)." width="90%" />
 <p class="caption">(\#fig:hist-b1-reel)Distribution a posteriori de l'effet de la température (échelle réelle). La ligne rouge indique la vraie valeur (0.2).</p>
 </div>
 

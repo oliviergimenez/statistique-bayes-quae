@@ -48,7 +48,7 @@ data <- data.frame(y = y, x = x)
 
 La Figure \@ref(fig:donnees-simulees) ci-dessous montre les données simulées, ainsi que la droite de régression correspondant au modèle utilisé pour les générer : 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/donnees-simulees-1.png" alt="Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression." width="90%" />
+<img src="05-regression_files/figure-html/donnees-simulees-1.svg" alt="Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression." width="90%" />
 <p class="caption">(\#fig:donnees-simulees)Données simulées (n = 100) selon le modèle \(y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\), avec \(\beta_0 = 0.1\), \(\beta_1 = 1\) et \(\sigma = 1\). La droite rouge correspond à la droite de régression.</p>
 </div>
 
@@ -98,7 +98,7 @@ plot(lm.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-posterior-regression-1.png" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire." width="90%" />
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.svg" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire." width="90%" />
 <p class="caption">(\#fig:fig-posterior-regression)Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire.</p>
 </div>
 
@@ -131,13 +131,13 @@ ggplot(lines_df, aes(x = x, y = y, group = line)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-prior-regression-vague-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100)." width="90%" />
+<img src="05-regression_files/figure-html/fig-prior-regression-vague-1.svg" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100)." width="90%" />
 <p class="caption">(\#fig:fig-prior-regression-vague)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 100).</p>
 </div>
 
 On voit dans la Figure \@ref(fig:fig-prior-regression-vague) qu'on obtient des valeurs aberrantes pour les $y_i$, avec des ragondins de plus de 400 kilogrammes, et des valeurs (très) négatives pour la masse. On vient de faire un "prior predictive check", comme au Chapitre \@ref(prior). Dans la Figure \@ref(fig:fig-prior-regression), on fait la même chose avec notre prior faiblement informatif $N(0,1.5)$ : 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-prior-regression-1.png" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%" />
+<img src="05-regression_files/figure-html/fig-prior-regression-1.svg" alt="Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5)." width="90%" />
 <p class="caption">(\#fig:fig-prior-regression)Simulation de droites de régression issues des distributions a priori. Chaque ligne correspond à un tirage des paramètres : intercept et pente ~ N(0, 1.5).</p>
 </div>
 
@@ -152,7 +152,7 @@ Une alternative plus souple et plus réaliste consiste à utiliser une loi expon
 Par défaut, on prend souvent $\lambda = 1$. Avec $\lambda = 1$, la moyenne et l’écart-type de cette loi sont tous deux égaux à $1$, ce qui induit une loi a priori modeste mais non restrictive (Figure \@ref(fig:fig-prior-sigma)). 
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-prior-sigma-1.png" alt="Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde." width="90%" />
+<img src="05-regression_files/figure-html/fig-prior-sigma-1.svg" alt="Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde." width="90%" />
 <p class="caption">(\#fig:fig-prior-sigma)Comparaison entre deux lois a priori pour l’écart-type \(\sigma\) : une loi uniforme \(\text{U}(0,5)\), qui donne la même densité entre 0 et 5, et une loi exponentielle \(\text{Exp}(1)\), qui favorise les petites valeurs tout en conservant une queue plus lourde.</p>
 </div>
 
@@ -218,7 +218,7 @@ Et pour finir, on peut comparer avec l'ajustement par maximum de vraisemblance q
 
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/comparaison-methodes-1.png" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms et lm). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%" />
+<img src="05-regression_files/figure-html/comparaison-methodes-1.svg" alt="Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms et lm). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données." width="90%" />
 <p class="caption">(\#fig:comparaison-methodes)Comparaison des estimations des paramètres du modèle (intercept ou ordonnée à l'origine et pente) selon les différentes méthodes (brms et lm). Les points donnent les moyennes a posteriori pour brms, et l'estimation du maximum de vraisemblance pour lm. On donne également les intervalles de crédibilité (pour brms) et de confiance (pour lm) à 95%. La ligne en tirets noirs indique la vraie valeur utilisée pour simuler les données.</p>
 </div>
 
@@ -265,7 +265,7 @@ ggplot(data, aes(x = x, y = y)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/brms-fit-plot-1.png" alt="Ajustement du modèle linéaire par brms. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%" />
+<img src="05-regression_files/figure-html/brms-fit-plot-1.svg" alt="Ajustement du modèle linéaire par brms. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %." width="90%" />
 <p class="caption">(\#fig:brms-fit-plot)Ajustement du modèle linéaire par brms. La droite bleue est la régression estimée, obtenue en fixant l'ordonnée à l'origine et la pente à leur moyenne a posteriori, entourée de son intervalle de crédibilité à 95 %.</p>
 </div>
 
@@ -278,7 +278,7 @@ pp_check(lm.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/ppcheck-brms-1.png" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%" />
+<img src="05-regression_files/figure-html/ppcheck-brms-1.svg" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%" />
 <p class="caption">(\#fig:ppcheck-brms)Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.</p>
 </div>
 

@@ -28,10 +28,22 @@ description: "Introduction à la statistique bayésienne avec R"
 
 ```{r include=FALSE}
 # configuration globale des chunks
-knitr::opts_chunk$set(dpi = 600,
-                      warning = FALSE,
-                      message = FALSE,
-                      cache = FALSE)
+# knitr::opts_chunk$set(dpi = 600,
+#                       warning = FALSE,
+#                       message = FALSE,
+#                       cache = FALSE)
+
+knitr::opts_chunk$set(
+  dev       = "svglite",   # le device SVG
+  fig.ext   = "svg",       # extension des fichiers
+  fig.path  = "svg/",  # dossier + préfixe de sortie
+  fig.width = 7,           # en pouces
+  fig.height= 5,
+  dpi       = 300,         # ignoré pour le vectoriel (utile si un calque est rasterisé)
+  dev.args  = list(
+    bg = "transparent"    # ou "white" si l’éditeur préfère
+  )
+)
 ```
 
 # Introduction {-}

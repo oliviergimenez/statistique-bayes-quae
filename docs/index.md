@@ -1,7 +1,7 @@
 --- 
 title: "Statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2025-09-12"
+date: "2025-10-31"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
