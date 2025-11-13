@@ -310,6 +310,10 @@ p2 <- ggplot() +
 
 # Assemblage vertical
 p1 / p2
+
+# Save svg
+ggplot2::ggsave("envoi-final-quae/figures-svg/33.svg",
+                device = svglite::svglite, width = 11, height = 6, bg = "transparent")
 ```
 
 
@@ -515,6 +519,8 @@ ggplot(sim_simple, aes(x = Temp, y = Ragondins)) +
   scale_color_manual(values = c("No pooling" = "red", "Complete pooling" = "black")) +
   theme_minimal()
 
+ggplot2::ggsave("envoi-final-quae/figures-svg/37.svg",
+                device = svglite::svglite, width = 12, height = 6, bg = "transparent")
 ```
 
 ### L'approche GLMM
@@ -614,6 +620,10 @@ ggplot(sim_simple, aes(x = Temp, y = Ragondins)) +
        color = "Modèle") +
   scale_color_manual(values = c("No pooling" = "red", "Complete pooling" = "black", "Partial pooling" = "blue")) +
   theme_minimal()
+
+# Save svg
+ggplot2::ggsave("envoi-final-quae/figures-svg/39.svg",
+                device = svglite::svglite, width = 12, height = 6, bg = "transparent")
 ```
 
 On voit que l'ajustement fourni par le partial pooling est très similaire au no pooling, et bien meilleur que le complete pooling. Il y a une petite différence pour les transects avec peu de points d'échantillonnage, les transects 4, 5 et 8, pour lesquels le partial pooling se rapproche du complete pooling. En l'absence de plus d'information (de données) pour ces transects, il est plutôt raisonnable que les estimations se rapprochent de la moyenne donnée par le modèle avec complete pooling plutôt que vers des valeurs extrêmes, atypiques. Rappelez-vous que dans un GLMM, les niveaux de l'effet aléatoire sont caractéristiques d'une population avec une moyenne commune. C'est ce partage d'information entre les transects avec 10 points d'échantillonnage et ceux avec 2 ou 3 points, on parle de "borrowing strength" qui permet d'atténuer, de tamponner, on parle de "shrinkage", la tendance à sur-ajuster du modèle avec no pooling ou à effet fixe, et en ce sens on parle parfois de "regularization". 

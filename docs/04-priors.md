@@ -164,10 +164,10 @@ On peut vérifier que cette distribution bêta a bien pour moyenne et écart-typ
 ech_prior <- rbeta(n = 10000, shape1 = 24.3, shape2 = 18.3)
 # on calcule la moyenne empirique des tirages (doit approcher 0.57)
 mean(ech_prior)
-#> [1] 0.5715369
+#> [1] 0.5708341
 # on calcule l'écart-type empirique des tirages (doit approcher 0.075)
 sd(ech_prior)
-#> [1] 0.07467856
+#> [1] 0.07491089
 ```
 
 On peut donc adopter un prior \(\text{Beta}(a=24.3,\,b=18.3)\) pour tenir compte de l'information moyenne et sa variabilité obtenue par la relation allométrique survie-masse. 

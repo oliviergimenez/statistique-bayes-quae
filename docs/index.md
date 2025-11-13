@@ -1,7 +1,7 @@
 --- 
 title: "Statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2025-10-31"
+date: "2025-11-14"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -45,6 +45,8 @@ Dans ce livre, je vous propose une introduction à la statistique bayésienne. C
 Je me suis fixé comme objectifs de i) synthétiser les aspects méthodologiques à bien comprendre et ii) fournir les moyens pratiques pour utiliser vous-mêmes la statistique.  Parce qu'on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique bayésienne. Ce logiciel c'est `R`, un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, *Introduction à R et au tidyverse* disponible en ligne via <https://juba.github.io/tidyverse> et le site du projet collaboratif *Analyse-R*, disponible aussi en ligne à <https://larmarange.github.io/analyse-R/>. Pour la statistique bayésienne en particulier, je présente `brms`, un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans `R`. Dans la version enrichie du livre disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présente aussi `NIMBLE`, un package qui nécessite de programmer (écrire des boucles par exemple), mais offre en contrepartie une grande flexibilité.
 
 Plutôt que dans un style académique, j'ai choisi d'écrire un peu comme si nous étions ensemble dans la même pièce ou en visio-conférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent en fait) des abus de langage et des approximations mathématiques. Vous ne m'en voudrez pas j'espère.
+
+<img src="images/cover.png" width="100%" style="display: block; margin: auto;" />
 
 ## Pourquoi s'intéresser à la statistique bayésienne ? {-}
 

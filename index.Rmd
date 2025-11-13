@@ -64,6 +64,10 @@ Je me suis fixé comme objectifs de i) synthétiser les aspects méthodologiques
 
 Plutôt que dans un style académique, j'ai choisi d'écrire un peu comme si nous étions ensemble dans la même pièce ou en visio-conférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent en fait) des abus de langage et des approximations mathématiques. Vous ne m'en voudrez pas j'espère.
 
+```{r echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("images/cover.png")
+```
+
 ## Pourquoi s'intéresser à la statistique bayésienne ? {-}
 
 <!-- Contrairement à l'approche fréquentiste, qui considère les paramètres comme des valeurs fixes mais inconnues, l'approche bayésienne les modélise comme des quantités aléatoires, décrites par une distribution de probabilité qui reflète nos incertitudes. -->
