@@ -6,3 +6,5 @@
 Vous trouverez ici tout le matériel concernant le livre [**Statistique bayésienne avec R**](https://oliviergimenez.github.io/statistique-bayes-quae/) écrit par Olivier Gimenez.
 
 Ce livre est sous licence [Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+<img width="639" height="906" alt="cover" src="https://github.com/user-attachments/assets/57bff5c8-8afd-4ca6-bb01-f0f49cf3ea46" />
