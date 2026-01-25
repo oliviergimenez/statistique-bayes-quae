@@ -85,15 +85,15 @@ Mais je m'égare, revenons au problème de la régression linéaire appliquée �
 
 ### Introduction
 
-Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par la masse, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
+Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins-versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par la masse, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
 
-Qu'est-ce qu'un effet aléatoire ? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d'une aire d'étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou l'aire d'étude. 
+Qu'est-ce qu'un effet aléatoire ? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d'une aire d'étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou à l'aire d'étude. 
 
 Au passage, vous verrez les termes modèles hiérarchiques, multi-niveaux ou à effets aléatoires utilisés pour désigner un GLMM dans la littérature scientifique. Parfois il s'agit de la même chose, parfois il s'agit de GLMM un peu modifiés. Pour éviter les confusions, souvenez-vous que les GLMM sont utilisés pour analyser des données qui viennent avec une structure en groupes.  
 
 ### Exemple
 
-Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
+Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin-versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à dix points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
 
 <div class="figure" style="text-align: center">
 <img src="06-glms_files/figure-html/protocole-1.svg" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température." width="90%" />
@@ -101,7 +101,7 @@ Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à 
 </div>
 
 
-A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos 10 transects, on a eu des soucis d'échantillonnage sur 3 d'entre eux pour lesquels on n'a pu faire que 2 ou 3 points : 
+A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos dix transects, on a eu des soucis d'échantillonnage sur trois d'entre eux pour lesquels on n'a pu faire que deux ou trois points : 
 
 ``` r
 set.seed(123) # pour la reproductibilité
@@ -149,7 +149,7 @@ On souhaite analyser ces données. On n'a pas à faire à des données binaires 
 \begin{align}
    \text{y}_i &\sim \text{Poisson(}\theta_i) &\text{[vraisemblance]}\\
   \text{log}(\theta_i) &= \beta_{0} + \beta_1 \; \text{temp}_{i} &\text{[relation linéaire]} \\
-  \text{}\theta_i &= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &\text{[relation transformée]} \\
+  \theta_i &= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &\text{[relation transformée]} \\
   \beta_0, \beta_1 &\sim \text{Normale}(0, 1.5) &\text{[prior sur les paramètres]} \\
 \end{align}
 
@@ -193,11 +193,11 @@ summary(fit_complete)
 
 Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-complete-1.svg" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%" />
-<p class="caption">(\#fig:ppcheck-complete)Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.</p>
+<img src="06-glms_files/figure-html/ppcheck-complete-1.svg" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%" />
+<p class="caption">(\#fig:ppcheck-complete)Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.</p>
 </div>
 
-Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais la même pente : 
+Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais avec la même pente : 
 
 
 ``` r
@@ -284,8 +284,8 @@ On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pent
 
 La qualité de l'ajustement est meilleure comme on le voit dans la Figure \@ref(fig:ppcheck-nopool) : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-nopool-1.svg" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
-<p class="caption">(\#fig:ppcheck-nopool)Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
+<img src="06-glms_files/figure-html/ppcheck-nopool-1.svg" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
+<p class="caption">(\#fig:ppcheck-nopool)Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
 </div>
 
 Ce modèle "no pooling" fait mieux que le modèle "complete pooling", comme on peut le voir dans la Figure \@ref(fig:pooling-ragondins), mais il reste insatisfaisant. L'approche "no pooling" consiste à ajuster un modèle indépendant pour chaque transect, sans partager d'information entre ces groupes. Cela pose deux problèmes : d'une part, on ne peut pas généraliser les résultats obtenus à d'autres transects que ceux observés ; d'autre part, on ignore des informations potentiellement utiles en supposant que chaque transect n’a rien à apprendre des autres. Cette stratégie devient particulièrement inefficace lorsque chaque groupe comporte peu d'observations.
@@ -365,8 +365,8 @@ plot(fit_partial)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/model-diagnostics-1.svg" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling." width="90%" />
-<p class="caption">(\#fig:model-diagnostics)Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.</p>
+<img src="06-glms_files/figure-html/model-diagnostics-1.svg" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling. Dans les histogrammes (colonne de gauche), l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots (colonne de droite), l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération." width="90%" />
+<p class="caption">(\#fig:model-diagnostics)Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling. Dans les histogrammes (colonne de gauche), l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots (colonne de droite), l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.</p>
 </div>
 
 On peut alors mettre à jour la Figure \@ref(fig:pooling-ragondins) avec la Figure \@ref(fig:partial-ragondins) :
@@ -379,8 +379,8 @@ On voit que l'ajustement fourni par le partial pooling est très similaire au no
 
 La qualité de l'ajustement est validée comme on le voit dans la Figure \@ref(fig:ppcheck-partial) : 
 <div class="figure" style="text-align: center">
-<img src="06-glms_files/figure-html/ppcheck-partial-1.svg" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
-<p class="caption">(\#fig:ppcheck-partial)Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
+<img src="06-glms_files/figure-html/ppcheck-partial-1.svg" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%" />
+<p class="caption">(\#fig:ppcheck-partial)Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).</p>
 </div>
 
 Lorsqu'on ajuste un modèle sur une variable standardisée, comme ici la température centrée-réduite, les coefficients estimés ($\beta_0, \beta_1$) s'interprètent sur cette échelle modifiée : $\beta_1$ représente l'effet d'un écart-type de température, et $\beta_0$ correspond à la valeur attendue quand la température standardisée est 0, c'est-à-dire à la température moyenne. On a souvent envie d'exprimer les effets sur des unités compréhensibles, ici les degrés celsius, plutôt qu'en écart-type de température, qui est plus abstrait. Pour revenir à une interprétation sur l'échelle réelle (en degré celsius donc), les coefficients estimés sur la température centrée-réduite peuvent être transformés pour revenir à l'échelle réelle à l'aide des formules suivantes :
@@ -483,7 +483,7 @@ En conclusion, le modèle incluant la température offre un meilleur ajustement 
 
 Pour clôre ce chapitre, je vous propose de faire la même analyse avec le package `lme4` en fréquentiste. 
 
-On charge le dit package : 
+On charge ledit package : 
 
 ``` r
 library(lme4)

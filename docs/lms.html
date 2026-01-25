@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapitre 5 La régression | Statistique bayésienne avec R</title>
+<title>Chapitre 5 La régression | Introduction à la statistique bayésienne avec R</title>
 <meta name="author" content="Olivier Gimenez">
 <meta name="description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
 <meta name="generator" content="bookdown 0.43 with bs4_book()">
-<meta property="og:title" content="Chapitre 5 La régression | Statistique bayésienne avec R">
+<meta property="og:title" content="Chapitre 5 La régression | Introduction à la statistique bayésienne avec R">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/lms.html">
 <meta property="og:description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapitre 5 La régression | Statistique bayésienne avec R">
+<meta name="twitter:title" content="Chapitre 5 La régression | Introduction à la statistique bayésienne avec R">
 <meta name="twitter:description" content="5.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à la régression linéaire. On prendra un exemple qui nous permettra d’aller un peu plus loin que notre exemple fil...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -62,7 +62,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">Statistique bayésienne avec R</a>
+        <a href="index.html" title="">Introduction à la statistique bayésienne avec R</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -163,24 +163,24 @@ Figure 5.1: Données simulées (n = 100) selon le modèle <span class="math inli
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept     0.06      0.06    -0.05     0.17 1.00     4138     3110</span></span>
-<span><span class="co">#&gt; x             1.10      0.06     0.99     1.21 1.00     3735     3192</span></span>
+<span><span class="co">#&gt; Intercept     0.06      0.06    -0.05     0.17 1.00     4366     3028</span></span>
+<span><span class="co">#&gt; x             1.10      0.06     0.99     1.21 1.00     4188     3147</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Further Distributional Parameters:</span></span>
 <span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.66 1.00     3951     2849</span></span>
+<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.65 1.00     4090     3050</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
 <span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
-<p>Par défaut, <code>brms</code> a utilisé 4 chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l’inférence a posteriori. Dans les sorties, <code>Intercept</code>, <code>x</code> et <code>sigma</code> correspondent respectivement aux paramètres <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> et <span class="math inline">\(\sigma\)</span> du modèle. Le <span class="math inline">\(\hat{R}\)</span> pour les 3 paramètres vaut 1, et les tailles d’échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données.</p>
+<p>Par défaut, <code>brms</code> a utilisé quatre chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l’inférence a posteriori. Dans les sorties, <code>Intercept</code>, <code>x</code> et <code>sigma</code> correspondent respectivement aux paramètres <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> et <span class="math inline">\(\sigma\)</span> du modèle. Le <span class="math inline">\(\hat{R}\)</span> pour les 3 paramètres vaut 1, et les tailles d’échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données.</p>
 <p>On vérifie que le mixing est bon (Figure <a href="lms.html#fig:fig-posterior-regression">5.2</a>) :</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:fig-posterior-regression"></span>
-<img src="05-regression_files/figure-html/fig-posterior-regression-1.svg" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire." width="90%"><p class="caption">
-Figure 5.2: Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire.
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.svg" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire. Dans les histogrammes, l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots, l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération." width="90%"><p class="caption">
+Figure 5.2: Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire. Dans les histogrammes, l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots, l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.
 </p>
 </div>
 </div>
@@ -267,12 +267,12 @@ y_i &amp;\sim \text{Normale}(\mu_i, \sigma^2) &amp;\text{[vraisemblance]}\\
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept     0.06      0.06    -0.06     0.18 1.00     3648     2815</span></span>
-<span><span class="co">#&gt; x             1.10      0.06     0.99     1.20 1.00     3778     2918</span></span>
+<span><span class="co">#&gt; Intercept     0.06      0.06    -0.05     0.18 1.00     3562     2765</span></span>
+<span><span class="co">#&gt; x             1.10      0.06     0.99     1.21 1.00     3870     2731</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Further Distributional Parameters:</span></span>
 <span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.66 1.00     3555     2593</span></span>
+<span><span class="co">#&gt; sigma     0.57      0.04     0.49     0.66 1.00     3540     2633</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
@@ -343,8 +343,8 @@ Figure 5.7: Ajustement du modèle linéaire par brms. La droite bleue est la ré
 <code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ppcheck-brms"></span>
-<img src="05-regression_files/figure-html/ppcheck-brms-1.svg" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%"><p class="caption">
-Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.
+<img src="05-regression_files/figure-html/ppcheck-brms-1.svg" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée." width="90%"><p class="caption">
+Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée.
 </p>
 </div>
 <p>La fonction <code><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check()</a></code> génère des graphiques de posterior predictive checks (Figure <a href="lms.html#fig:ppcheck-brms">5.8</a>). Elle compare les données observées à des données simulées à partir du modèle ajusté. Si le modèle est bien ajusté aux données, alors on devrait pouvoir l’utiliser pour générer des données qui ressemblent aux données observées. Par conséquent, si les courbes simulées recouvrent bien les observations, cela indique que le modèle capte correctement la structure des données. Dans le cas contraire, cela peut suggérer un problème de spécification du modèle, par exemple un lien ou une famille de distribution inadaptée (voir Chapitre <a href="glms.html#glms">6</a>).</p>
@@ -364,7 +364,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span></span>
 <span><span class="co"># Afficher le résultat</span></span>
 <span><span class="va">bayes_pval</span></span>
-<span><span class="co">#&gt; [1] 0.5</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.50375</span></span></code></pre></div>
 </div>
 <div id="la-comparaison-de-modèles" class="section level2" number="5.4">
 <h2>
@@ -400,10 +400,10 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span><span class="co"># Comparaison</span></span>
 <span><span class="va">waic1</span><span class="op">$</span><span class="va">estimates</span><span class="op">[</span><span class="st">'waic'</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt;  Estimate        SE </span></span>
-<span><span class="co">#&gt; 172.43145  13.14333</span></span>
+<span><span class="co">#&gt; 172.50456  13.13435</span></span>
 <span><span class="va">waic0</span><span class="op">$</span><span class="va">estimates</span><span class="op">[</span><span class="st">'waic'</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt;  Estimate        SE </span></span>
-<span><span class="co">#&gt; 334.03145  17.13167</span></span></code></pre></div>
+<span><span class="co">#&gt; 333.97491  17.23233</span></span></code></pre></div>
 <p>Ouf, c’est bien le cas. La fonction <code><a href="https://mc-stan.org/loo/reference/loo.html">loo()</a></code> permet de calculer le LOO-CV (une approximation en fait) :</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Leave-one-out cross-validation</span></span>
@@ -414,7 +414,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span><span class="fu"><a href="https://mc-stan.org/loo/reference/loo_compare.html">loo_compare</a></span><span class="op">(</span><span class="va">loo0</span>, <span class="va">loo1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      elpd_diff se_diff</span></span>
 <span><span class="co">#&gt; fit1   0.0       0.0  </span></span>
-<span><span class="co">#&gt; fit0 -80.8       9.1</span></span></code></pre></div>
+<span><span class="co">#&gt; fit0 -80.7       9.1</span></span></code></pre></div>
 <p>Dans cette sortie <code>R</code>, <code>elpd_diff</code> donne l’écart de LOO-CV entre chaque modèle et celui qui a la plus grande valeur. Ainsi, le meilleur modèle est sur la première ligne avec un elpd_diff égal à zéro ; ici, c’est le modèle avec la covariable. On arrive donc à la même conclusion qu’avec le WAIC.</p>
 </div>
 <div id="en-résumé-4" class="section level2" number="5.5">
@@ -466,7 +466,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-11-14.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

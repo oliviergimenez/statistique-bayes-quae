@@ -225,15 +225,15 @@ ggplot() +
 
 ### Introduction
 
-Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par la masse, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
+Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins-versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n'est pas expliquée par la masse, et donc d'obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l'exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques. 
 
-Qu'est-ce qu'un effet aléatoire ? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d'une aire d'étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou l'aire d'étude. 
+Qu'est-ce qu'un effet aléatoire ? Un effet est aléatoire lorsqu'il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l'on devait refaire l'expérience, peu importe les sites ou les individus, l'important est de pouvoir généraliser l'interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l'expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d'une aire d'étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou à l'aire d'étude. 
 
 Au passage, vous verrez les termes modèles hiérarchiques, multi-niveaux ou à effets aléatoires utilisés pour désigner un GLMM dans la littérature scientifique. Parfois il s'agit de la même chose, parfois il s'agit de GLMM un peu modifiés. Pour éviter les confusions, souvenez-vous que les GLMM sont utilisés pour analyser des données qui viennent avec une structure en groupes.  
 
 ### Exemple
 
-Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
+Pour illustrer concrètement un GLMM, imaginez la situation où l'on cherche à estimer l'abondance de ragondins dans le bassin-versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d'étude. Sur chaque transect, on compte le nombre de ragondins présents à dix points espacés régulièrement. On s'intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure \@ref(fig:protocole) et s'inspire du livre de mon collègue Jason Matthiopoulos [@matthiopoulosHowBeQuantitative2011].
 
 ```{r protocole, fig.cap="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température.", echo = FALSE, dpi = 600}
 library(ggplot2)
@@ -317,7 +317,7 @@ ggplot2::ggsave("envoi-final-quae/figures-svg/33.svg",
 ```
 
 
-A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos 10 transects, on a eu des soucis d'échantillonnage sur 3 d'entre eux pour lesquels on n'a pu faire que 2 ou 3 points : 
+A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos dix transects, on a eu des soucis d'échantillonnage sur trois d'entre eux pour lesquels on n'a pu faire que deux ou trois points : 
 ```{r}
 set.seed(123) # pour la reproductibilité
 transects <- 10 # nombre total de transects
@@ -361,7 +361,7 @@ On souhaite analyser ces données. On n'a pas à faire à des données binaires 
 \begin{align}
    \text{y}_i &\sim \text{Poisson(}\theta_i) &\text{[vraisemblance]}\\
   \text{log}(\theta_i) &= \beta_{0} + \beta_1 \; \text{temp}_{i} &\text{[relation linéaire]} \\
-  \text{}\theta_i &= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &\text{[relation transformée]} \\
+  \theta_i &= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &\text{[relation transformée]} \\
   \beta_0, \beta_1 &\sim \text{Normale}(0, 1.5) &\text{[prior sur les paramètres]} \\
 \end{align}
 
@@ -403,11 +403,11 @@ summary(fit_complete)
 ```
 
 Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d'ajustement permet de voir dans la Figure \@ref(fig:ppcheck-complete) que l'ajustement n'est pas bon : 
-```{r ppcheck-complete, fig.cap="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE, dpi = 600}
+```{r ppcheck-complete, fig.cap="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.", echo=FALSE, dpi = 600}
 brms::pp_check(fit_complete)
 ```
 
-Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais la même pente : 
+Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais avec la même pente : 
 ```{r include=FALSE}
 # Modèle avec no pooling / pas de regroupement (effet fixe transect)
 fit_nopool <- brm(Ragondins ~ Temp + as.factor(Transect),
@@ -465,7 +465,7 @@ df_intercepts
 On estime bien un intercept pour chaque transect, donc 10 intercepts, et la pente, c'est-à-dire l'effet de la température, est la même pour tous les transects. Notez aussi que les valeurs obtenues `Nombre` ici sont des moyennes attendues issues du modèle de Poisson. Ce sont donc des valeurs continues, décimales, bien que les données observées soient des comptages entiers. C'est une caractéristique des modèles de Poisson : la variable à prédire est discrète, mais le modèle s’appuie sur une moyenne continue pour modéliser sa distribution.
 
 La qualité de l'ajustement est meilleure comme on le voit dans la Figure \@ref(fig:ppcheck-nopool) : 
-```{r ppcheck-nopool, fig.cap="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).", echo=FALSE, dpi = 600}
+```{r ppcheck-nopool, fig.cap="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).", echo=FALSE, dpi = 600}
 brms::pp_check(fit_nopool)
 ```
 
@@ -575,7 +575,7 @@ summary(fit_partial)
 Ce résumé fournit les estimations a posteriori des effets fixes ainsi que des écarts-types des effets aléatoires. La ligne `sd(Intercept)` donne l'estimation de $\sigma$, proche du 0.3 utilisé pour simuler les données (l'intervalle de crédibilité contient la vraie valeur). Les lignes `Intercept` et `Temp` donnent les estimations de $\beta_0$ et $\beta_1$ sur l'échelle log. On verra un peu plus tard comment vérifier que ces estimations sont proches des valeurs utilisées pour simuler les données.
 
 On peut aussi jeter un coup d'oeil aux densités et traces des paramètres (Figure \@ref(fig:model-diagnostics)) : 
-```{r model-diagnostics, fig.cap="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.", dpi = 600}
+```{r model-diagnostics, fig.cap="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling. Dans les histogrammes (colonne de gauche), l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots (colonne de droite), l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.", dpi = 600}
 plot(fit_partial)
 ```
 
@@ -629,7 +629,7 @@ ggplot2::ggsave("envoi-final-quae/figures-svg/39.svg",
 On voit que l'ajustement fourni par le partial pooling est très similaire au no pooling, et bien meilleur que le complete pooling. Il y a une petite différence pour les transects avec peu de points d'échantillonnage, les transects 4, 5 et 8, pour lesquels le partial pooling se rapproche du complete pooling. En l'absence de plus d'information (de données) pour ces transects, il est plutôt raisonnable que les estimations se rapprochent de la moyenne donnée par le modèle avec complete pooling plutôt que vers des valeurs extrêmes, atypiques. Rappelez-vous que dans un GLMM, les niveaux de l'effet aléatoire sont caractéristiques d'une population avec une moyenne commune. C'est ce partage d'information entre les transects avec 10 points d'échantillonnage et ceux avec 2 ou 3 points, on parle de "borrowing strength" qui permet d'atténuer, de tamponner, on parle de "shrinkage", la tendance à sur-ajuster du modèle avec no pooling ou à effet fixe, et en ce sens on parle parfois de "regularization". 
 
 La qualité de l'ajustement est validée comme on le voit dans la Figure \@ref(fig:ppcheck-partial) : 
-```{r ppcheck-partial, fig.cap="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).", echo=FALSE, dpi = 600}
+```{r ppcheck-partial, fig.cap="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).", echo=FALSE, dpi = 600}
 brms::pp_check(fit_partial)
 ```
 
@@ -723,7 +723,7 @@ En conclusion, le modèle incluant la température offre un meilleur ajustement 
 
 Pour clôre ce chapitre, je vous propose de faire la même analyse avec le package `lme4` en fréquentiste. 
 
-On charge le dit package : 
+On charge ledit package : 
 ```{r fit_lme4_quad}
 library(lme4)
 ```

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-J'espère que je ne vous ai pas (trop) perdu dans le chapitre précédent avec toutes ces équations. Dans ce nouveau chapitre, nous passons dans les coulisses de la statistique bayésienne en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et pourquoi ces techniques de simulation sont devenues essentielles pour mettre en œuvre l’inférence bayésienne en pratique. Et comme rien ne vaut la pratique, nous mettrons un peu la main à la pâte en codant nous-mêmes, à travers notre exemple fil rouge sur l’estimation d’une probabilité de survie.
+J’espère que je ne vous ai pas (trop) perdu dans le chapitre précédent avec toutes ces équations. Dans ce nouveau chapitre, nous passons dans les coulisses de la statistique bayésienne, en découvrant les méthodes de Monte Carlo par chaînes de Markov (MCMC). Vous verrez comment et pourquoi ces techniques de simulation sont devenues essentielles pour mettre en œuvre l’inférence bayésienne en pratique. Et comme rien ne vaut la pratique, nous mettrons un peu la main à la pâte en codant nous-mêmes, à travers notre exemple fil rouge sur l’estimation d’une probabilité de survie.
 
 ## Application du théorème de Bayes
 
@@ -21,7 +21,7 @@ Appliquons le théorème de Bayes de manière plus directe que dans le Chapitre 
 num <- function(theta) dbinom(y, n, theta) * dbeta(theta, 1, 1)
 ```
 
-Nous pouvons maintenant écrire la fonction qui calcule le dénominateur, et pour ce faire, nous allons utiliser la fonction `integrate` de `R` qui permet de calculer l'intégrale d'une fonction d'une variable. La fonction `integrate` met en oeuvre des techniques de quadrature pour diviser en petits carrés l'aire sous la courbe délimitée par la fonction à intégrer, et les compter.
+Nous pouvons maintenant écrire la fonction qui calcule le dénominateur, et pour ce faire, nous allons utiliser la fonction `integrate` de `R` qui permet de calculer l'intégrale d'une fonction d'une variable. La fonction `integrate()` met en oeuvre des techniques de quadrature pour diviser en petits carrés l'aire sous la courbe délimitée par la fonction à intégrer, et les compter.
 
 
 ``` r
@@ -66,18 +66,18 @@ La distribution postérieure exacte (couleur rouge brique) et l'approximation nu
 
 Dans notre exemple, nous avons un seul paramètre à estimer : la survie hivernale. Cela signifie qu’il s’agit d’une intégrale unidimensionnelle au dénominateur, ce qui est assez facile avec les techniques de quadrature et la fonction `R` `integrate()`.
 
-Mais que se passe-t-il si nous avons plusieurs paramètres ? Par exemple, imaginez que vous vouliez ajuster un modèle de régression avec une probabilité de survie qui dépend d'une variable explicative, par exemple la masse des ragondins. L'effet de cette variable est capturé par le paramètre de régression $\beta_0$ (l'ordonnée à l'origine), $\beta_1$ la pente associée, et on a aussi l'erreur résiduelle avec l'écart-type $\sigma$ (voir Chapitre \@ref(lms)). Le théorème de Bayes donne alors la distribution postérieure jointe de ces paramètres, c'est-à-dire des trois paramètres ensemble :
+Mais que se passe-t-il si nous avons plusieurs paramètres ? Par exemple, imaginez que vous vouliez ajuster un modèle de régression avec une probabilité de survie qui dépend d'une variable explicative, par exemple la masse des ragondins. L'effet de cette variable est capturé par le paramètre de régression $\beta_0$ (l'ordonnée à l'origine), $\beta_1$ la pente associée, et on a aussi l'erreur résiduelle avec l'écart-type $\sigma$ (voir Chapitre \@ref(lms)). Le théorème de Bayes donne alors la distribution postérieure jointe de ces paramètres (c'est-à-dire des trois paramètres ensemble) :
 
 $$ \displaystyle \Pr(\beta_0, \beta_1, \sigma \mid \text{y}) = \frac{ \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \times \Pr(\beta_0, \beta_1, \sigma)}{\displaystyle \iiint \Pr(\text{y} \mid \beta_0, \beta_1, \sigma) \Pr(\beta_0, \beta_1, \sigma) \, d\beta_0 \, d\beta_1 \, d\sigma} $$
 
 Il y a deux défis numériques majeurs :
 
 - Souhaite-t-on vraiment calculer une intégrale triple ? Non, car les méthodes classiques ne vont pas beaucoup plus loin que deux dimensions.
-- On s’intéresse souvent aux distributions marginales des paramètres (par ex. celle de $\beta_1$ correspondant à l'effet de la masse sur la survie), obtenues en intégrant la distribution a posteriori jointe sur les autres paramètres (ici une intégrale double par rapport à $\beta_0$ et $\sigma$) - ce qui devient vite incalculable quand leur nombre augmente.
+- On s’intéresse souvent aux distributions marginales des paramètres (par exemple celle de $\beta_1$ correspondant à l'effet de la masse sur la survie), obtenues en intégrant la distribution a posteriori jointe sur les autres paramètres (ici une intégrale double par rapport à $\beta_0$ et $\sigma$) - ce qui devient vite incalculable quand leur nombre augmente.
 
 Dans la section suivante, nous introduisons des méthodes de simulation puissantes pour surmonter ces limitations.
 
-## Les méthodes de Monte Carlo par chaînes de Markov (MCMC)
+## Les algorithmes MCMC
 
 En bref, l'idée des méthodes de Monte Carlo par chaînes de Markov (MCMC) est d'utiliser des simulations pour approximer les distributions a posteriori avec une certaine précision, en tirant un grand nombre d’échantillons. Cela évite le calcul explicite des intégrales multidimensionnelles auxquelles on a à faire lorsqu’on applique le théorème de Bayes.
 
@@ -93,7 +93,7 @@ Comment utilise-t-on l’intégration Monte Carlo dans un contexte bayésien ? L
 sample_from_posterior <- rbeta(1000, 20, 39) 
 # calcul de la moyenne par intégration Monte Carlo
 mean(sample_from_posterior) 
-#> [1] 0.3382938
+#> [1] 0.3413258
 ```
 
 On peut vérifier que la moyenne obtenue est proche de l’espérance théorique d’une distribution bêta :
@@ -110,7 +110,7 @@ Un autre résumé numérique utile est l’intervalle de crédibilité à l’in
 ``` r
 quantile(sample_from_posterior, probs = c(2.5/100, 97.5/100))
 #>      2.5%     97.5% 
-#> 0.2245674 0.4620604
+#> 0.2288076 0.4652693
 ```
 
 En passant, il y a une différence entre l'intervalle de crédibilité en statistique bayésienne et l'intervalle de confiance de la statistique fréquentiste. Un intervalle de confiance à 95% signifie que si l’on répétait l’expérience un très grand nombre de fois (équiper des ragondins de GPS et constater le nombre de survivants à l'hiver), environ 95% des intervalles construits de cette manière contiendraient la vraie valeur $\theta$ du paramètre. Mais on ne peut pas dire que la probabilité que le paramètre soit dans un intervalle donné est de 95%. Un intervalle de crédibilité à 95%, en revanche, signifie qu'il y a 95% de probabilité que le paramètre se trouve dans cet intervalle. L'interprétation de l'intervalle de crédibilité est un peu plus intuitive que celle de l'intervalle de confiance. 
@@ -119,13 +119,13 @@ Maintenant, qu’est-ce qu’une chaîne de Markov ? Une chaîne de Markov est u
 
 \[
 \begin{array}{c|cc}
-& \text{ensoleillé demain} & \text{pluvieux demain} \\\\ \hline
-\text{ensoleillé aujourd'hui} & 0.8 & 0.2 \\\\
-\text{pluvieux aujourd'hui}   & 0.9 & 0.1
+& \text{Ensoleillé demain} & \text{Pluvieux demain} \\\\ \hline
+\text{Ensoleillé aujourd'hui} & 0.8 & 0.2 \\\\
+\text{Pluvieux aujourd'hui}   & 0.9 & 0.1
 \end{array}
 \]
 
-Les lignes indiquent la météo aujourd’hui, et les colonnes celle de demain. Les cellules donnent la probabilité d’avoir une journée ensoleillée ou pluvieuse demain, selon le temps qu’il fait aujourd'hui (des probabilités conditionnelles, voir Chapitre \@ref(principes)).
+Les lignes indiquent la météo aujourd’hui, et les colonnes, celle de demain. Les cellules donnent la probabilité d’avoir une journée ensoleillée ou pluvieuse demain, selon le temps qu’il fait aujourd'hui (des probabilités conditionnelles, voir Chapitre \@ref(principes)).
 
 Sous certaines conditions, une chaîne de Markov converge vers une distribution stationnaire unique. Dans notre exemple météorologique, lançons la chaîne pour 20 étapes :
 
@@ -148,9 +148,9 @@ Revenons aux méthodes MCMC. L’idée centrale est que l'on peut construire une
 
 En combinant Monte Carlo et chaînes de Markov, les méthodes MCMC nous permettent de générer un échantillon de valeurs dont la distribution converge vers la distribution a posteriori (chaîne de Markov), et d’utiliser cet échantillon pour calculer des résumés numériques a posteriori (Monte Carlo), comme la moyenne ou les intervalles de crédibilité.
 
-Il existe plusieurs manières de construire des chaînes de Markov pour l’inférence bayésienne. Vous avez peut-être entendu parler de l’algorithme de Metropolis-Hastings ou de l’échantillonneur de Gibbs. Vous pouvez consulter <https://chi-feng.github.io/mcmc-demo/> pour une galerie interactive d’algorithmes MCMC. Ici, j’illustre l’algorithme de Metropolis et sa mise en œuvre pratique. Pour cela je m'inspire de l'excellent livre de Jim @albert2009. Il n'est pas question d'être capable d'écrire un tel algorithme par soi-même, seulement d'en saisir les grandes lignes, et surtout la notion de simulations. 
+Il existe plusieurs manières de construire des chaînes de Markov pour l’inférence bayésienne. Vous avez peut-être entendu parler de l’algorithme de Metropolis-Hastings ou de l’échantillonneur de Gibbs. Vous pouvez consulter <https://chi-feng.github.io/mcmc-demo/> pour une galerie interactive d’algorithmes MCMC. Ici, j’illustre l’algorithme de Metropolis et sa mise en œuvre pratique. Pour cela je m'inspire de l'excellent livre de Jim @albert2009. Il n'est pas question d'être capable d'écrire un tel algorithme par soi-même, seulement d'en saisir les grandes lignes et, surtout, la notion de simulations. 
 
-Revenons à notre exemple d’estimation de la survie. Nous allons illustrer l’échantillonnage depuis la distribution a posteriori de la survie. Commençons par écrire les fonctions pour la vraisemblance, le prior et la postérieure. On se place sur l'échelle log pour manipuler des sommes et des soustractions plutôt que des produits et des ratios qui rendent les calculs numériques instables :
+Revenons à notre exemple d’estimation de la survie. Nous allons illustrer l’échantillonnage depuis la distribution a posteriori de la survie. Commençons par écrire les fonctions pour la vraisemblance, le prior et la postérieure. On se place sur l’échelle log pour manipuler des sommes et des soustractions plutôt que des produits et des ratios qui rendent les calculs numériques instables :
 
 
 ``` r
@@ -265,7 +265,7 @@ On peut maintenant visualiser l’évolution des valeurs de la chaîne grâce à
 <p class="caption">(\#fig:traceplot)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations.</p>
 </div>
 
-Que nous apprend ce trace plot ? L’axe horizontal représente les itérations (ou temps dans la chaîne de Markov). L’axe vertical montre les valeurs simulées de la probabilité de survie à chaque étape. Dans la figure, on observe que la chaîne reste parfois plusieurs itérations consécutives à la même valeur. Cela se produit lorsque la valeur candidate proposée par l’algorithme est rejetée — la chaîne conserve alors la valeur précédente (ou courante plus précisément). À d'autres moments, on voit des sauts vers de nouvelles valeurs, qui correspondent aux propositions acceptées.
+Que nous apprend ce trace plot ? L’axe horizontal représente les itérations (ou temps dans la chaîne de Markov). L’axe vertical montre les valeurs simulées de la probabilité de survie à chaque étape. Dans la figure, on observe que la chaîne reste parfois pendant plusieurs itérations consécutives à la même valeur. Cela se produit lorsque la valeur candidate proposée par l’algorithme est rejetée – la chaîne conserve alors la valeur précédente (ou courante plus précisément). À d’autres moments, on voit des sauts vers de nouvelles valeurs, qui correspondent aux propositions acceptées.
 
 On peut ensuite encapsuler l'algorithme dans une fonction réutilisable, ce qui permet de lancer facilement plusieurs chaînes :
 
@@ -275,7 +275,7 @@ metropolis <- function(steps = 100, inits = 0.5, away = 1){
   theta.post <- rep(NA, steps) # on crée un vecteur pour stocker les échantillons
   theta.post[1] <- inits # on initialise avec la valeur de départ
   
-  for (t in 2:steps){ # boucle sur les étapes (à partir de la 2e)
+  for (t in 2:steps){ # boucle sur les étapes (à partir de la 2ème)
     
     theta_star <- move(theta.post[t-1], away) # proposition d'une nouvelle valeur
 
@@ -308,9 +308,7 @@ On trace ensuite les deux chaînes ensemble comme dans la Figure \@ref(fig:trace
 <p class="caption">(\#fig:traceplot2)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des itérations. Deux chaînes ont été lancées avec des valeurs initiales différentes, 0.5 en bleu et 0.2 en jaune.</p>
 </div>
 
-Notez que nous n'obtenons pas exactement les mêmes résultats car l'algorithme est stochastique. On observe l'évolution parallèle de deux chaînes lancées avec des valeurs initiales différentes. Si les deux chaînes se rejoignent rapidement et oscillent autour des mêmes valeurs, cela indique une bonne convergence vers la distribution stationnaire souhaitée. C’est une étape clé des diagnostics de convergence MCMC que l'on verra dans la suite de ce chapitre. 
-
-Pour observer la convergence sur une plus longue période, on lance une chaîne avec 1000 itérations. Cela permet d’obtenir un trace plot plus “lisse” qui montre la stabilité de la chaîne, comme dans la Figure \@ref(fig:traceplot3) :
+Notez que nous n’obtenons pas exactement les mêmes résultats, car l’algorithme est stochastique. On observe l’évolution parallèle de deux chaînes lancées avec des valeurs initiales différentes. Si les deux chaînes se rejoignent rapidement et oscillent autour des mêmes valeurs, cela indique une bonne convergence vers la distribution stationnaire souhaitée. C’est une étape clé des diagnostics de convergence MCMC que l’on verra dans la suite de ce chapitre. Pour observer la convergence sur une plus longue période, on lance une chaîne avec 1 000 itérations. Cela permet d’obtenir un trace plot plus “lisse” qui montre la stabilité de la chaîne, comme dans la Figure \@ref(fig:traceplot3) :
 <div class="figure" style="text-align: center">
 <img src="02-methodesmcmc_files/figure-html/traceplot3-1.svg" alt="Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations." width="90%" />
 <p class="caption">(\#fig:traceplot3)Trace plot des valeurs simulées de la probabilité de survie \(\theta\) au fil des 1000 itérations.</p>
@@ -320,11 +318,11 @@ Pour observer la convergence sur une plus longue période, on lance une chaîne 
 
 <!-- ![](images/mcmc-betabin.gif) -->
 
-Avec un grand nombre d'itérations, chaque chaîne devrait se stabiliser autour de sa distribution stationnaire. Visuellement, on recherche une zone dense, homogène et bien explorée, ressemblant à une pelouse bien tondue (c'est une image). 
+Avec un grand nombre d’itérations, chaque chaîne devrait se stabiliser autour de sa distribution stationnaire. Visuellement, on recherche une zone dense, homogène et bien explorée, ressemblant à une pelouse bien tondue (c’est une image).
 
-Une fois la distribution stationnaire atteinte, vous pouvez considérer les valeurs simulées de la chaîne de Markov comme un échantillon de la distribution a posteriori et obtenir des résumés numériques des paramètres (moyenne a posteriori, intervalle de crédibilité). 
+Une fois la distribution stationnaire atteinte, vous pouvez considérer les valeurs simulées de la chaîne de Markov comme un échantillon de la distribution a posteriori et obtenir des résumés numériques des paramètres (moyenne a posteriori, intervalle de crédibilité).
 
-Quand peut-on dire qu'on a atteint cette distribution stationnaire ? Une fois qu'on a la convergence, combien de simulations faut-il encore faire pour obtenir une bonne approximation de la distribution a posteriori de nos paramètres ? Je réponds à ces questions dans la section suivante.
+Quand peut-on dire qu’on a atteint cette distribution stationnaire ? Une fois qu’on a la convergence, combien de simulations faut-il encore faire pour obtenir une bonne approximation de la distribution a posteriori de nos paramètres ? Je réponds à ces questions dans la section suivante.
 
 ## Évaluer la convergence {#convergence-diag}
 
@@ -360,14 +358,14 @@ Il est important de garder à l’esprit qu’une valeur proche de 1 pour la sta
 
 Quelle longueur de chaîne est nécessaire pour obtenir des estimations fiables des paramètres ? Il faut garder à l’esprit que les étapes successives d’une chaîne de Markov ne sont pas indépendantes. C’est ce qu’on appelle l’autocorrélation. Idéalement, on cherche à minimiser cette autocorrélation.
 
-Ici encore, les trace plots permettent de diagnostiquer des problèmes d’autocorrélation. Revenons à l’exemple de survie. La Figure \@ref(fig:trace-away) ci-dessous montre les trace plots (3000 itérations) pour différentes valeurs de l’écart-type (paramètre `away`) de la loi normale de proposition utilisée pour générer les valeurs candidates :
+Ici encore, les trace plots permettent de diagnostiquer des problèmes d’autocorrélation. Revenons à l’exemple de survie. La Figure \@ref(fig:trace-away) ci-dessous montre les trace plots (3000 itérations) pour différentes valeurs de l’écart-type (paramètre `away`) de la loi normale de proposition utilisée pour générer les valeurs candidates.
 
 <div class="figure" style="text-align: center">
 <img src="02-methodesmcmc_files/figure-html/trace-away-1.svg" alt="Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations." width="90%" />
 <p class="caption">(\#fig:trace-away)Trace plots pour différentes valeurs de l'écart-type de la proposition (away). Un bon mixing est observé avec away = 1. La zone grise ombrée correspond à un burn-in de 300 itérations.</p>
 </div>
 
-Les petits et grands déplacements visibles dans les panneaux de gauche et de droite entraînent une forte corrélation entre les observations successives de la chaîne de Markov, tandis qu’un écart-type égal à 1 (au centre) permet une exploration efficace de l’espace des paramètres. Ce mouvement dans l’espace des paramètres est appelé "mixing". Le mixing est considéré comme mauvais lorsque la chaîne fait de trop petits ou de trop grands sauts, et bon dans le cas contraire.
+Les petits et grands déplacements visibles dans les panneaux de gauche et de droite entraînent une forte corrélation entre les observations successives de la chaîne de Markov, tandis qu’un écart-type égal à 1 (au centre) permet une exploration efficace de l’espace des paramètres. Ce mouvement dans l’espace des paramètres est appelé "mixing". Le mixing est considéré comme mauvais lorsque la chaîne fait de trop petits ou de trop grands sauts, et comme bon dans le cas contraire.
 
 En complément des trace plots, les graphiques de la fonction d’autocorrélation (ACF) offrent un moyen pratique de visualiser la force de l’autocorrélation dans un échantillon donné. Les ACF montrent la corrélation entre les valeurs échantillonnées successivement, séparées par un nombre croissant d’itérations, appelé lag (décalage). On obtient dans la Figure \@ref(fig:acf) ces graphiques de fonction d’autocorrélation pour différentes valeurs de l’écart-type de la distribution de proposition grâce à la fonction `forecast::ggAcf()` :
 <div class="figure" style="text-align: center">
@@ -377,7 +375,7 @@ En complément des trace plots, les graphiques de la fonction d’autocorrélati
 
 Dans les panneaux de gauche et de droite, l’autocorrélation est forte, diminue lentement avec le lag, et le mixing est mauvais. Dans le panneau central, l’autocorrélation est faible, diminue rapidement avec le lag, et le mixing est bon.
 
-L’autocorrélation n’est pas forcément un gros problème. Des observations fortement corrélées nécessitent simplement un plus grand nombre d’échantillons, et donc des simulations plus longues. Mais combien d’itérations faut-il exactement ? La taille effective de l’échantillon (`n.eff`) mesure la longueur utile de la chaîne en tenant compte de l’autocorrélation. Il est recommandé de vérifier la n.eff pour chaque paramètre d’intérêt, ainsi que pour toute combinaison pertinente de paramètres. En général, on considère qu’il faut au moins $\text{n.eff} \geq 100$ observations indépendantes pour obtenir des estimations Monte Carlo fiables des paramètres du modèle. Dans l’exemple de la survie animale, n.eff peut être calculée avec la fonction `coda::effectiveSize()`:
+L’autocorrélation n’est pas forcément un gros problème. Des observations fortement corrélées nécessitent simplement un plus grand nombre d’échantillons, et donc des simulations plus longues. Mais combien d’itérations faut-il exactement ? La taille effective de l’échantillon (`n.eff`) mesure la longueur utile de la chaîne en tenant compte de l’autocorrélation. Il est recommandé de vérifier la `n.eff` pour chaque paramètre d’intérêt, ainsi que pour toute combinaison pertinente de paramètres. En général, on considère qu’il faut au moins $\text{n.eff} \geq 400$ observations indépendantes pour obtenir des estimations Monte Carlo fiables des paramètres du modèle. Dans l’exemple de la survie animale, `n.eff` peut être calculée avec la fonction `effectiveSize()` du package `coda`:
 
 ``` r
 # Générer les chaînes pour trois valeurs d'écart-type
@@ -404,7 +402,7 @@ tibble("Écart-type" = c(0.1, 1, 10),
 #> 3         10      77
 ```
 
-Comme on pouvait s’y attendre, la valeur de `n.eff` est inférieure au nombre total d’itérations MCMC (3000) en raison de l’autocorrélation. Ce n’est que lorsque l’écart-type de la distribution de proposition est égal à 1 que le mixing est bon (`n.eff` $\geq 100$), ce qui permet d'obtenir une taille d’échantillon effective satisfaisante.
+Comme on pouvait s’y attendre, la valeur de `n.eff` est inférieure au nombre total d’itérations MCMC (3000) en raison de l’autocorrélation. Ce n’est que lorsque l’écart-type de la distribution de proposition est égal à 1 que le mixing est bon (`n.eff` $\geq 400$), ce qui permet d'obtenir une taille d’échantillon effective satisfaisante.
 
 ### Et si vous avez des problèmes de convergence ?
 
@@ -414,7 +412,7 @@ Lorsque le mixing est mauvais et que la taille effective de l’échantillon est
 
 Si les problèmes de convergence persistent, il y a souvent un problème avec le modèle lui-même. Un bug dans le code ? Une faute de frappe ? Une erreur dans les équations ? Comme souvent en programmation, le meilleur moyen d’identifier le problème est de réduire la complexité du modèle et de repartir d’un modèle plus simple, jusqu’à ce que vous trouviez ce qui ne va pas.
 
-Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et le type de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les Chapitres \@ref(lms) et \@ref(glms). 
+Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et la quantité de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les Chapitres \@ref(lms) et \@ref(glms). 
 
 ## En résumé
 

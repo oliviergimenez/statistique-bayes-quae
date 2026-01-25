@@ -1,7 +1,7 @@
 --- 
-title: "Statistique bayésienne avec R"
+title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2025-11-14"
+date: "2026-01-25"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -38,13 +38,13 @@ description: "Introduction à la statistique bayésienne avec R"
 
 <!-- <!-- <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" alt="Deploys by Netlify" /> </a> -->
 
-On retrouve la statistique bayésienne un peu partout en sciences. Par exemple, en épidémiologie pour prédire la circulation des virus, en écologie pour expliquer l'extinction des espèces végétales et animales ou encore en informatique pour filtrer les courriels nuisibles. Si l'utilisation de la statistique bayésienne a explosé au cours des dernières années, c'est grâce au progrès de nos ordinateurs. C'est aussi grâce à la nature même de l'approche qui permet de coller à notre façon d'apprendre, de raisonner et d'accumuler des connaissances.
+On retrouve la statistique bayésienne un peu partout en sciences. Par exemple, en épidémiologie, pour prédire la circulation des virus, en écologie, pour expliquer l’extinction des espèces végétales et animales, ou encore en informatique, pour filtrer les courriels nuisibles. Si l’utilisation de la statistique bayésienne a explosé au cours des dernières années, c’est grâce au progrès de nos ordinateurs. C’est aussi grâce à la nature même de l’approche qui permet de coller à notre façon d’apprendre, de raisonner et d’accumuler des connaissances.
 
-Dans ce livre, je vous propose une introduction à la statistique bayésienne. Ce livre est en français parce que c'est plus facile à écrire pour moi, et parce que j'aurais aimé avoir plus d'ouvrages dans ma langue maternelle lorsque j'étais étudiant.
+Dans ce livre, je vous propose une introduction à la statistique bayésienne. Ce livre est en français parce que c’est la langue dans laquelle je me sens le plus à l’aise pour écrire, et parce que j’aurais aimé avoir plus d’ouvrages dans ma langue maternelle lorsque j’étais étudiant.
 
-Je me suis fixé comme objectifs de i) synthétiser les aspects méthodologiques à bien comprendre et ii) fournir les moyens pratiques pour utiliser vous-mêmes la statistique.  Parce qu'on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique bayésienne. Ce logiciel c'est `R`, un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, *Introduction à R et au tidyverse* disponible en ligne via <https://juba.github.io/tidyverse> et le site du projet collaboratif *Analyse-R*, disponible aussi en ligne à <https://larmarange.github.io/analyse-R/>. Pour la statistique bayésienne en particulier, je présente `brms`, un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans `R`. Dans la version enrichie du livre disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présente aussi `NIMBLE`, un package qui nécessite de programmer (écrire des boucles par exemple), mais offre en contrepartie une grande flexibilité.
+Je me suis fixé comme objectifs de 1) synthétiser les aspects méthodologiques à bien comprendre, et 2) fournir les moyens pratiques pour utiliser vous-mêmes la statistique bayésienne. Parce que l’on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique. Ce logiciel, c’est `R`, c’est un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, *Introduction à R et au tidyverse* disponible en ligne via <https://juba.github.io/tidyverse> et le site du projet collaboratif *Analyse-R*, disponible aussi en ligne à <https://larmarange.github.io/analyse-R/>. Pour la statistique bayésienne en particulier, je présente un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans `R` : `brms`. Dans la version enrichie de ce livre consultable en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présente aussi un package qui nécessite de programmer (écrire des boucles par exemple), mais qui offre en contrepartie une grande flexibilité : `NIMBLE`.
 
-Plutôt que dans un style académique, j'ai choisi d'écrire un peu comme si nous étions ensemble dans la même pièce ou en visio-conférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent en fait) des abus de langage et des approximations mathématiques. Vous ne m'en voudrez pas j'espère.
+Plutôt que dans un style académique, j’ai choisi d’écrire un peu comme si nous étions ensemble dans la même pièce ou en visioconférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent, en fait) des abus de langage et des approximations mathématiques pour faciliter la compréhension. Vous ne m’en voudrez pas, j’espère.
 
 <img src="images/cover.png" width="100%" style="display: block; margin: auto;" />
 
@@ -52,41 +52,42 @@ Plutôt que dans un style académique, j'ai choisi d'écrire un peu comme si nou
 
 <!-- Contrairement à l'approche fréquentiste, qui considère les paramètres comme des valeurs fixes mais inconnues, l'approche bayésienne les modélise comme des quantités aléatoires, décrites par une distribution de probabilité qui reflète nos incertitudes. -->
 
-La statistique bayésienne est une approche pour analyser les données et prendre des décisions en présence d’incertitude, comme lorsqu’on lance un dé ou qu’on prévoit la météo : on ne peut pas savoir exactement ce qui va se passer, mais on peut estimer les chances des différents résultats. Pourquoi adopter cette approche ? Plusieurs raisons peuvent motiver son utilisation :
+La statistique bayésienne est une approche pour analyser les données et prendre des décisions en présence d’incertitude, comme lorsqu’on lance un dé ou que l’on prévoit la météo : on ne peut pas savoir exactement ce qui va se passer, mais on peut estimer les chances des différents résultats. Pourquoi adopter cette approche ? Plusieurs raisons peuvent motiver son utilisation :
 
-- une interprétation naturelle des probabilités : en statistique bayésienne, une probabilité représente un degré de confiance dans une hypothèse ou un paramètre, ce qui correspond bien à notre manière intuitive de raisonner face à l’incertitude ;
+- une interprétation naturelle des probabilités : en statistique bayésienne, une probabilité représente un degré de confiance dans une hypothèse ou dans un paramètre, ce qui correspond bien à notre manière intuitive de raisonner face à l’incertitude ;
 - une grande flexibilité : le cadre bayésien s’adapte bien à des données incomplètes, hétérogènes ou rares, ainsi qu’à des modèles complexes (hiérarchiques, non linéaires, dynamiques, etc.) ;
-- la possibilité d’intégrer des connaissances préalables : on peut capitaliser sur des résultats d'études précédentes ou des avis d'expert.e.s de manière transparente et formalisée ;
-- une gestion rigoureuse de l'incertitude : la statistique bayésienne fournit non seulement une estimation des paramètres, mais aussi une mesure directe de l’incertitude associée.
+- la possibilité d’intégrer des connaissances préalables : on peut capitaliser sur des résultats d’études précédentes ou des avis d’expertises de manière transparente et formalisée ;
+- une gestion rigoureuse de l’incertitude : la statistique bayésienne fournit non seulement une estimation des paramètres, mais aussi une mesure directe de l’incertitude associée.
 
 ## Ce que nous allons voir dans ce livre {-}
 
-J'aimerais vous guider dans l'apprentissage de la statistique bayésienne. J'ai rassemblé le matériel qui m'a paru essentiel pour la comprendre et l'appliquer. L'objectif est que vous soyez à l’aise avec l’approche bayésienne et que vous puissiez l’appliquer à vos propres données. Les objectifs sont de :
+J’aimerais vous guider dans l’apprentissage de la statistique bayésienne. J’ai rassemblé le matériel qui m’a paru essentiel pour la comprendre et l’appliquer. L’objectif est que vous soyez à l’aise avec l’approche bayésienne et que vous puissiez l’appliquer à vos propres données. Les objectifs sont de :
 
-- démystifier la statistique bayésienne et les méthodes de Monte Carlo par chaînes de Markov (MCMC) ;
+- démythifier la statistique bayésienne et les méthodes de Monte Carlo par chaînes de Markov (MCMC) ;
 - comprendre les différences entre approche bayésienne et approche fréquentiste ;
 - lire et comprendre les sections "méthodes" des articles scientifiques utilisant l'approche bayésienne ;
 - savoir mettre en oeuvre vos analyses avec la statistique bayésienne dans `R`.
 
-Le Chapitre \@ref(principes) pose les bases en revenant sur quelques rappels de probabilité utiles pour la suite. Ce sera aussi l’occasion d’introduire les notions clés de la statistique bayésienne, à travers un exemple simple qui permettra de fixer les idées.
+Le chapitre \@ref(principes) pose les bases en revenant sur quelques rappels de probabilité utiles pour la suite. Ce sera aussi l’occasion d’introduire les notions clés de la statistique bayésienne, à travers un exemple simple qui permettra de fixer les idées.
 
-Dans le Chapitre \@ref(mcmc), nous passerons dans les coulisses de la statistique bayésienne, avec les méthodes de Monte Carlo par chaînes de Markov (MCMC), qui rendent l’inférence possible en pratique. On mettra un peu la main à la pâte en codant nous-mêmes une analyse bayésienne.
+Dans le chapitre \@ref(mcmc), nous passerons dans les coulisses de la statistique bayésienne, avec les méthodes MCMC, qui rendent l’inférence possible en pratique. Nous mettrons un peu la main à la pâte en codant nous-mêmes une analyse bayésienne.
 
-Le Chapitre \@ref(logiciels) présentera `brms ` un outil très utile pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie du livre disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présenterai aussi `NIMBLE`. Grâce à ces outils, plus besoin de tout faire soi-même.
+Le chapitre \@ref(logiciels) présentera `brms`, un outil très utile pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie du livre disponible en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présenterai aussi `NIMBLE`. Grâce à ces outils, nul besoin de tout faire soi-même.
 
-Le Chapitre \@ref(prior) sera consacré aux distributions a priori. On verra comment bien les choisir, comment traduire de l’information existante sous forme de prior, et les pièges à éviter.
+Le chapitre \@ref(prior) sera consacré aux distributions a priori. Nous verrons comment les choisir avec pertinence, comment traduire de l’information existante sous forme de prior, et les pièges à éviter. 
 
-Dans le Chapitre \@ref(lms), nous verrons comment faire une régression linéaire en statistique bayésienne. Nous en profiterons pour illustrer la comparaison et la validation des modèles. Nous utiliserons `brms` (et `NIMBLE` dans la version enrichie en ligne) et comparerons à l'approche fréquentiste.
+Dans le chapitre \@ref(lms), nous verrons comment faire une régression linéaire en statistique bayésienne. Nous en profiterons pour illustrer la comparaison et la validation des modèles. Nous utiliserons `brms` (et `NIMBLE`) et le comparerons à l’approche fréquentiste.
 
-Le Chapitre \@ref(glms) nous emmènera vers les modèles linéaires généralisés, avec ou sans effets aléatoires - des modèles très utilisés en pratique. On s'appuiera sur la simulation de données, un outil précieux pour bien comprendre ce que fait un modèle. Je vous montrerai comment faire ces analyses avec `brms` (et avec `NIMBLE` dans la version enrichie en ligne) et on comparera à l'analyse fréquentiste.
+Le chapitre \@ref(glms) nous emmènera vers les modèles linéaires généralisés, avec ou sans effets aléatoires – des modèles très utilisés en pratique. Nous nous appuierons sur la simulation de données, un outil précieux pour bien comprendre ce que fait un modèle. Je vous montrerai comment faire ces analyses avec `brms` (et avec `NIMBLE`) et nous les comparerons aux analyses fréquentistes.
 
 Enfin, un dernier chapitre viendra résumer les messages clés du livre et proposer quelques conseils pour appliquer la statistique bayésienne.
 
 ## Comment lire ce livre ? {-}
 
-Je n'ai pas vraiment de conseil à vous donner sur la meilleure manière de lire ce livre. Personnellement, je trouve toujours difficile d'absorber toute l'information contenue dans un bouquin. Vous pouvez lire en continu ou bien grapiller des éléments de-ci de-là.
+Je n’ai pas vraiment de conseil à vous donner sur la meilleure manière de lire ce livre. Personnellement, je trouve toujours difficile d’absorber toute l’information contenue dans un
+ouvrage. Vous pouvez lire en continu ou bien grappiller des éléments de-ci de-là.
 
-Le code `R` est fourni, je l'ai hébergé sur <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S'exercer permet de mieux comprendre, et de vérifier qu'on a bien compris. Si vous lisez la version électronique disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles à <https://github.com/oliviergimenez/statistique-bayes-quae>.
+Dans chacun des chapitres, le code `R` est fourni, je l’ai aussi hébergé sur mon site <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S’exercer permet de mieux comprendre et de vérifier que l’on a bien assimilé. Si vous lisez la version électronique de cet ouvrage, disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles en ligne à <https://github.com/oliviergimenez/statistique-bayes-quae>.
 
 <!-- Pour que vous puissiez facilement copier le code et l\'exécuter, je n'utilise pas les signes `>` ou `+` dans le code source `R`, et le texte est précédé de deux dièses `##` pour être traité comme des commentaires et ignoré par `R`. Le nom des packages est en gras (e.g., **dplyr**), et le code et les noms de fichier sont formatés en police code (e.g., `mon-fichier.Rmd`). Le nom des fonctions est suivi par des parenthèses (e.g., `dplyr::mutate()`). Le doublement des deux points `::` permet d'accéder à une fonction d'un package sans charger ce package.  -->
 
@@ -114,7 +115,7 @@ J'ai écrit ce livre avec `RStudio` (<http://www.rstudio.com/ide/>) en utilisant
 
 
 
-J'ai utilisé la version R-4.5.0_2025-04-11 de `R` et les packages suivants :
+J'ai utilisé la version R-4.5.2_2025-10-31 de `R` et les packages suivants :
 
 
 

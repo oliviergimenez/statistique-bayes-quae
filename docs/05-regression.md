@@ -78,18 +78,18 @@ summary(lm.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept     0.06      0.06    -0.05     0.17 1.00     4138     3110
-#> x             1.10      0.06     0.99     1.21 1.00     3735     3192
+#> Intercept     0.06      0.06    -0.05     0.17 1.00     4366     3028
+#> x             1.10      0.06     0.99     1.21 1.00     4188     3147
 #> 
 #> Further Distributional Parameters:
 #>       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> sigma     0.57      0.04     0.49     0.66 1.00     3951     2849
+#> sigma     0.57      0.04     0.49     0.65 1.00     4090     3050
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
-Par défaut, `brms` a utilisé 4 chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l'inférence a posteriori. Dans les sorties, `Intercept`, `x` et `sigma` correspondent respectivement aux paramètres $\beta_0$, $\beta_1$ et $\sigma$ du modèle. Le \( \hat{R} \) pour les 3 paramètres vaut 1, et les tailles d'échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données. 
+Par défaut, `brms` a utilisé quatre chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l'inférence a posteriori. Dans les sorties, `Intercept`, `x` et `sigma` correspondent respectivement aux paramètres $\beta_0$, $\beta_1$ et $\sigma$ du modèle. Le \( \hat{R} \) pour les 3 paramètres vaut 1, et les tailles d'échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données. 
 
 On vérifie que le mixing est bon (Figure \@ref(fig:fig-posterior-regression)) :
 
@@ -98,8 +98,8 @@ plot(lm.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/fig-posterior-regression-1.svg" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire." width="90%" />
-<p class="caption">(\#fig:fig-posterior-regression)Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire.</p>
+<img src="05-regression_files/figure-html/fig-posterior-regression-1.svg" alt="Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire. Dans les histogrammes, l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots, l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération." width="90%" />
+<p class="caption">(\#fig:fig-posterior-regression)Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire. Dans les histogrammes, l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots, l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.</p>
 </div>
 
 ### Des priors faiblement informatifs {#weakly-informative-priors}
@@ -198,12 +198,12 @@ summary(lm.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept     0.06      0.06    -0.06     0.18 1.00     3648     2815
-#> x             1.10      0.06     0.99     1.20 1.00     3778     2918
+#> Intercept     0.06      0.06    -0.05     0.18 1.00     3562     2765
+#> x             1.10      0.06     0.99     1.21 1.00     3870     2731
 #> 
 #> Further Distributional Parameters:
 #>       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> sigma     0.57      0.04     0.49     0.66 1.00     3555     2593
+#> sigma     0.57      0.04     0.49     0.66 1.00     3540     2633
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -278,8 +278,8 @@ pp_check(lm.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="05-regression_files/figure-html/ppcheck-brms-1.svg" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle." width="90%" />
-<p class="caption">(\#fig:ppcheck-brms)Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.</p>
+<img src="05-regression_files/figure-html/ppcheck-brms-1.svg" alt="Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée." width="90%" />
+<p class="caption">(\#fig:ppcheck-brms)Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée.</p>
 </div>
 
 La fonction `pp_check()` génère des graphiques de posterior predictive checks (Figure \@ref(fig:ppcheck-brms)). Elle compare les données observées à des données simulées à partir du modèle ajusté. Si le modèle est bien ajusté aux données, alors on devrait pouvoir l'utiliser pour générer des données qui ressemblent aux données observées. Par conséquent, si les courbes simulées recouvrent bien les observations, cela indique que le modèle capte correctement la structure des données. Dans le cas contraire, cela peut suggérer un problème de spécification du modèle, par exemple un lien ou une famille de distribution inadaptée (voir Chapitre \@ref(glms)).  
@@ -302,7 +302,7 @@ bayes_pval <- mean(T_sim >= T_obs)
 
 # Afficher le résultat
 bayes_pval
-#> [1] 0.5
+#> [1] 0.50375
 ```
 
 
@@ -352,10 +352,10 @@ waic0 <- waic(fit0)
 # Comparaison
 waic1$estimates['waic',]
 #>  Estimate        SE 
-#> 172.43145  13.14333
+#> 172.50456  13.13435
 waic0$estimates['waic',]
 #>  Estimate        SE 
-#> 334.03145  17.13167
+#> 333.97491  17.23233
 ```
 
 Ouf, c'est bien le cas. La fonction `loo()` permet de calculer le LOO-CV (une approximation en fait) : 
@@ -369,7 +369,7 @@ loo0 <- loo(fit0)
 loo_compare(loo0, loo1)
 #>      elpd_diff se_diff
 #> fit1   0.0       0.0  
-#> fit0 -80.8       9.1
+#> fit0 -80.7       9.1
 ```
 
 Dans cette sortie `R`, `elpd_diff` donne l’écart de LOO-CV entre chaque modèle et celui qui a la plus grande valeur. Ainsi, le meilleur modèle est sur la première ligne avec un elpd_diff égal à zéro ; ici, c’est le modèle avec la covariable. On arrive donc à la même conclusion qu’avec le WAIC. 

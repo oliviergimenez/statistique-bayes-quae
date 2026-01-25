@@ -51,7 +51,7 @@ en-résumé
 mcmc
 introduction-2
 application-du-théorème-de-bayes
-les-méthodes-de-monte-carlo-par-chaînes-de-markov-mcmc
+les-algorithmes-mcmc
 convergence-diag
 burn-in
 longueur-de-chaîne
@@ -59,7 +59,9 @@ et-si-vous-avez-des-problèmes-de-convergence
 en-résumé-1
 logiciels
 introduction-3
-brms
+la-syntaxe-du-packagebrms
+visualisation
+les-priors
 en-résumé-2
 prior
 introduction-4
@@ -95,4 +97,4 @@ en-résumé-5
 ce-quon-a-vu
 la-statistique-bayésienne-en-résumé
 quelques-conseils
-en-conclusion
+pour-finir

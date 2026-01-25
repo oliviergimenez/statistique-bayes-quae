@@ -77,10 +77,10 @@ Jetons un coup d'oeil aux résumés numériques et aux diagnostics de convergenc
 ```{r}
 summary(lm.brms)
 ```
-Par défaut, `brms` a utilisé 4 chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l'inférence a posteriori. Dans les sorties, `Intercept`, `x` et `sigma` correspondent respectivement aux paramètres $\beta_0$, $\beta_1$ et $\sigma$ du modèle. Le \( \hat{R} \) pour les 3 paramètres vaut 1, et les tailles d'échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données. 
+Par défaut, `brms` a utilisé quatre chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l'inférence a posteriori. Dans les sorties, `Intercept`, `x` et `sigma` correspondent respectivement aux paramètres $\beta_0$, $\beta_1$ et $\sigma$ du modèle. Le \( \hat{R} \) pour les 3 paramètres vaut 1, et les tailles d'échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données. 
 
 On vérifie que le mixing est bon (Figure \@ref(fig:fig-posterior-regression)) :
-```{r fig-posterior-regression, echo = TRUE, fig.cap = "Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire.", dpi = 600}
+```{r fig-posterior-regression, echo = TRUE, fig.cap = "Histogrammes des distributions a posteriori (colonne de gauche) et traces (colonne de droite) des paramètres de la régression linéaire. Dans les histogrammes, l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots, l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.", dpi = 600}
 plot(lm.brms)
 ```
 
@@ -360,7 +360,7 @@ ggplot(data, aes(x = x, y = y)) +
 Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre \@ref(glms)), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L'idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori des paramètres du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.
 
 Dans `brms`, il suffit de faire : 
-```{r ppcheck-brms, echo = TRUE, fig.cap = "Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle.", dpi = 600}
+```{r ppcheck-brms, echo = TRUE, fig.cap = "Posterior predictive checks réalisés avec brms. La courbe noire correspond aux données observées, les courbes bleues aux données simulées selon le modèle. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée.", dpi = 600}
 pp_check(lm.brms)
 ```
 

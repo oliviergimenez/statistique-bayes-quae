@@ -4,7 +4,7 @@
 
 Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. `NIMBLE` et `brms` sont deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
 
-## `brms`
+## La syntaxe du package`brms`
 
 `brms` signifie **B**ayesian **R**egression **M**odels using **S**tan. Ce package permet de formuler et d’estimer des modèles de régression (voir la section suivante et les Chapitres \@ref(lms) et \@ref(glms)) de manière intuitive grâce à une syntaxe proche de celle du package `lme4` (la référence `R` pour les modèles mixtes), tout en s’appuyant sur `Stan`, un logiciel de référence en statistique bayésienne. Le package est en constant développement, rendez-vous à <https://paul-buerkner.github.io/brms/>. Vous pouvez obtenir de l'aide via <https://discourse.mc-stan.org/>. 
 
@@ -95,6 +95,8 @@ Ou plus directement avec la fonction `posterior::summarise_draws()` :
 summarise_draws(theta)
 ```
 
+## Visualisation
+
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
 ```{r hist-surviebrms, fig.cap = "Histogramme de la distribution a posteriori de la probabilité de survie (\\(\\theta\\)).", dpi = 600}
 draws_fit %>%
@@ -104,11 +106,12 @@ draws_fit %>%
 ```
 
 Dans `brms`, on peut évaluer la convergence des chaînes MCMC (Figure \@ref(fig:trace-surviebrms)) :
-```{r trace-surviebrms, fig.cap = "Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\\(\\beta\\)).", dpi = 600}
+```{r trace-surviebrms, fig.cap = "Histogramme de la distribution a posteriori et trace plot de la probabilité de survie sur l’échelle logit (b). Dans l’histogramme, l’axe des abscisses représente les valeurs possibles de l’intercept (échelle logit) et l’axe des ordonnées la fréquence des valeurs simulées. Dans le trace plot, l’axe des abscisses correspond au numéro de l’itération MCMC et l’axe des ordonnées aux valeurs simulées de l’intercept (échelle logit).", dpi = 600}
 plot(bayes.brms)
 ```
 
 Ce graphique affiche les trace plots (à droite) ainsi que les densités a posteriori (à gauche). 
+
 Au passage, pour déterminer de la longueur de la période de pré-chauffage ou burn-in, il suffit de faire tourner `brms` avec `warmup = 0` pour quelques centaines ou milliers d'itérations et d'examiner la trace du paramètre pour décider du nombre d'itérations à utiliser pour atteindre la convergence.  
 
 Un avantage majeur des méthodes MCMC est qu'elles permettent d'obtenir la distribution a posteriori de n’importe quelle fonction des paramètres en appliquant cette fonction aux valeurs tirées dans les distributions a posteriori de ces paramètres. A noter qu'ici on estime l'intercept $\beta$ et on a donc déjà utilisé cette idée pour obtenir la distribution a posteriori de la probabilité de survie en appliquant la fonction logit réciproque. Comme autre exemple, disons que j'aimerais calculer l'espérance de vie des ragondins, celle-ci étant donnée par $\lambda = -1/\log(\theta)$ :
@@ -120,13 +123,15 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
-```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie.", dpi = 600}
+```{r hist-life, fig.cap = "Histogramme de la distribution a posteriori de l'espérance de vie. L'axe des abscisses représente les différentes valeurs possibles de l'espérance de vie. L'axe vertical indique le nombre de tirages simulés (Count) pour chaque valeur.", dpi = 600}
 lambda %>%
   as_tibble() %>%
   ggplot() +
   geom_histogram(aes(x = Intercept), color = "white") +
   labs(x = "Espérance de vie")
 ```
+
+## Les priors
 
 Il y a tout un tas de paramètres qui sont fixés par défaut dans `brms`, il est important d'en être conscient. Ça concerne les priors en particulier. Dans `brms`, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :
 ```{r}

@@ -4,7 +4,7 @@
 
 Dans ce chapitre, nous découvrirons `brms` un outil très pratique pour faire de la statistique bayésienne sans trop d’efforts. Dans la version enrichie en ligne à <https://oliviergimenez.github.io/statistique-bayes/logiciels.html>, vous trouverez aussi une introduction à `NIMBLE`. `NIMBLE` et `brms` sont deux packages `R` qui implémentent pour vous les algorithmes MCMC. Concrètement, il vous suffit de spécifier une vraisemblance et des priors pour que le théorème de Bayes s'applique automatiquement. Grâce à une syntaxe proche de celle de `R`, les deux packages rendent cette étape relativement simple, même pour des modèles complexes.  
 
-## `brms`
+## La syntaxe du package`brms`
 
 `brms` signifie **B**ayesian **R**egression **M**odels using **S**tan. Ce package permet de formuler et d’estimer des modèles de régression (voir la section suivante et les Chapitres \@ref(lms) et \@ref(glms)) de manière intuitive grâce à une syntaxe proche de celle du package `lme4` (la référence `R` pour les modèles mixtes), tout en s’appuyant sur `Stan`, un logiciel de référence en statistique bayésienne. Le package est en constant développement, rendez-vous à <https://paul-buerkner.github.io/brms/>. Vous pouvez obtenir de l'aide via <https://discourse.mc-stan.org/>. 
 
@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.70      0.28    -1.24    -0.16 1.00     1978     2210
+#> Intercept    -0.70      0.28    -1.26    -0.16 1.00     2017     2308
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3338277
+#> [1] 0.3349722
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1467922 0.2901563 0.3313862 0.3742808 0.5824359
+#> 0.1547381 0.2901631 0.3333714 0.3770679 0.5550068
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,8 +109,10 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.334  0.331 0.0607 0.0624 0.239 0.441  1.00    1978.    2210.
+#> 1 Intercept 0.335  0.333 0.0623 0.0645 0.237 0.440  1.00    2017.    2308.
 ```
+
+## Visualisation
 
 Pour visualiser la distribution a posteriori de la probabilité de survie, il suffit d'utiliser (Figure \@ref(fig:hist-surviebrms)) :
 
@@ -133,11 +135,12 @@ plot(bayes.brms)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="03-miseenoeuvrepratique_files/figure-html/trace-surviebrms-1.svg" alt="Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\(\beta\))." width="90%" />
-<p class="caption">(\#fig:trace-surviebrms)Densité a posteriori et trace plot de la probabilité de survie sur l'échelle logit (\(\beta\)).</p>
+<img src="03-miseenoeuvrepratique_files/figure-html/trace-surviebrms-1.svg" alt="Histogramme de la distribution a posteriori et trace plot de la probabilité de survie sur l’échelle logit (b). Dans l’histogramme, l’axe des abscisses représente les valeurs possibles de l’intercept (échelle logit) et l’axe des ordonnées la fréquence des valeurs simulées. Dans le trace plot, l’axe des abscisses correspond au numéro de l’itération MCMC et l’axe des ordonnées aux valeurs simulées de l’intercept (échelle logit)." width="90%" />
+<p class="caption">(\#fig:trace-surviebrms)Histogramme de la distribution a posteriori et trace plot de la probabilité de survie sur l’échelle logit (b). Dans l’histogramme, l’axe des abscisses représente les valeurs possibles de l’intercept (échelle logit) et l’axe des ordonnées la fréquence des valeurs simulées. Dans le trace plot, l’axe des abscisses correspond au numéro de l’itération MCMC et l’axe des ordonnées aux valeurs simulées de l’intercept (échelle logit).</p>
 </div>
 
 Ce graphique affiche les trace plots (à droite) ainsi que les densités a posteriori (à gauche). 
+
 Au passage, pour déterminer de la longueur de la période de pré-chauffage ou burn-in, il suffit de faire tourner `brms` avec `warmup = 0` pour quelques centaines ou milliers d'itérations et d'examiner la trace du paramètre pour décider du nombre d'itérations à utiliser pour atteindre la convergence.  
 
 Un avantage majeur des méthodes MCMC est qu'elles permettent d'obtenir la distribution a posteriori de n’importe quelle fonction des paramètres en appliquant cette fonction aux valeurs tirées dans les distributions a posteriori de ces paramètres. A noter qu'ici on estime l'intercept $\beta$ et on a donc déjà utilisé cette idée pour obtenir la distribution a posteriori de la probabilité de survie en appliquant la fonction logit réciproque. Comme autre exemple, disons que j'aimerais calculer l'espérance de vie des ragondins, celle-ci étant donnée par $\lambda = -1/\log(\theta)$ :
@@ -150,7 +153,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.923  0.905 0.159 0.152 0.698  1.22  1.00    1978.    2210.
+#> 1 Intercept 0.927  0.910 0.163 0.161 0.694  1.22  1.00    2017.    2308.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -164,9 +167,11 @@ lambda %>%
 ```
 
 <div class="figure" style="text-align: center">
-<img src="03-miseenoeuvrepratique_files/figure-html/hist-life-1.svg" alt="Histogramme de la distribution a posteriori de l'espérance de vie." width="90%" />
-<p class="caption">(\#fig:hist-life)Histogramme de la distribution a posteriori de l'espérance de vie.</p>
+<img src="03-miseenoeuvrepratique_files/figure-html/hist-life-1.svg" alt="Histogramme de la distribution a posteriori de l'espérance de vie. L'axe des abscisses représente les différentes valeurs possibles de l'espérance de vie. L'axe vertical indique le nombre de tirages simulés (Count) pour chaque valeur." width="90%" />
+<p class="caption">(\#fig:hist-life)Histogramme de la distribution a posteriori de l'espérance de vie. L'axe des abscisses représente les différentes valeurs possibles de l'espérance de vie. L'axe vertical indique le nombre de tirages simulés (Count) pour chaque valeur.</p>
 </div>
+
+## Les priors
 
 Il y a tout un tas de paramètres qui sont fixés par défaut dans `brms`, il est important d'en être conscient. Ça concerne les priors en particulier. Dans `brms`, les priors par défaut sont souvent non informatifs ou faiblement informatifs, mais il est toujours bon de les examiner explicitement. La commande suivante permet d’afficher le résumé des priors utilisés dans un modèle déjà ajusté :
 
@@ -211,7 +216,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.67      0.28    -1.22    -0.14 1.00     1824     2218
+#> Intercept    -0.68      0.28    -1.24    -0.13 1.00     1804     2669
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential

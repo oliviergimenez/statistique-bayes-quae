@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapitre 4 Les distributions a priori | Statistique bayésienne avec R</title>
+<title>Chapitre 4 Les distributions a priori | Introduction à la statistique bayésienne avec R</title>
 <meta name="author" content="Olivier Gimenez">
 <meta name="description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
 <meta name="generator" content="bookdown 0.43 with bs4_book()">
-<meta property="og:title" content="Chapitre 4 Les distributions a priori | Statistique bayésienne avec R">
+<meta property="og:title" content="Chapitre 4 Les distributions a priori | Introduction à la statistique bayésienne avec R">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/prior.html">
 <meta property="og:description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapitre 4 Les distributions a priori | Statistique bayésienne avec R">
+<meta name="twitter:title" content="Chapitre 4 Les distributions a priori | Introduction à la statistique bayésienne avec R">
 <meta name="twitter:description" content="4.1 Introduction Dans ce chapitre, nous allons explorer un aspect fondamental de la statistique bayésienne : le rôle des distributions a priori ou priors. Nous verrons comment ces priors...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -62,7 +62,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">Statistique bayésienne avec R</a>
+        <a href="index.html" title="">Introduction à la statistique bayésienne avec R</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -106,7 +106,7 @@
 </h2>
 <p>En statistique bayésienne, le prior joue un rôle essentiel : il traduit nos connaissances, nos incertitudes ou, au contraire, notre absence d’information sur les paramètres d’un modèle. Bien choisir ses priors est donc une étape clé de toute analyse bayésienne. Pourquoi utiliser un prior ?</p>
 <ul>
-<li><p>Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis d’experts. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on ne partait de rien. Nous verrons un exemple dans la Section <a href="prior.html#informativeprior">4.4</a>.</p></li>
+<li><p>Pour intégrer les connaissances existantes : on dispose souvent d’informations issues d’études antérieures, de méta-analyses ou d’avis de personnes expertes. Le prior permet de formaliser et d’intégrer cette connaissance préalable, plutôt que de l’ignorer et de faire comme si on ne partait de rien. Nous verrons un exemple dans la Section <a href="prior.html#informativeprior">4.4</a>.</p></li>
 <li><p>Pour faire face à un manque de données : lorsque les données sont rares ou peu informatives, les méthodes fréquentistes peuvent échouer à estimer correctement certains paramètres (estimation aux bornes pour une probabilité, ou variance nulle d’un effet aléatoire). Dans ces situations, un prior bien choisi peut aider à stabiliser l’inférence, en apportant une information complémentaire.</p></li>
 <li><p>Pour encadrer les modèles complexes : dans les modèles mixtes, ou en présence de paramètres difficilement estimables, les priors permettent de borner l’espace des solutions à des valeurs plausibles et d’éviter des estimations aberrantes. Par exemple, dans un modèle mixte (voir Chapitre <a href="glms.html#glms">6</a>) où l’on estime la variance entre groupes ou modalités d’un effet, l’absence de prior peut entraîner des valeurs irréalistes ou des instabilités numériques. Un prior faiblement informatif peut aider dans cette situation.</p></li>
 <li><p>Pour prévenir le sur-ajustement : dans les modèles comportant de nombreuses variables explicatives, les priors jouent un rôle de régularisation en pénalisant les effets peu importants. Par exemple, dans une régression incluant de nombreuses covariables, un prior du type <span class="math inline">\(N(0,1.5^2)\)</span> empêche le modèle d’attribuer des effets trop forts à des variables peu informatives, réduisant ainsi le risque de sur-ajustement.</p></li>
@@ -115,7 +115,7 @@
 <ul>
 <li><p>Un prior non-informatif vise à exprimer un manque de connaissance : il est souvent utilisé lorsqu’on ne veut pas introduire d’hypothèses fortes. En pratique, cela se traduit par des distributions larges ou uniformes. Mais attention : même un prior apparemment vague peut être informatif une fois transformé sur l’échelle du modèle, comme on le verra dans la Section <a href="prior.html#surprise">4.5</a>.</p></li>
 <li><p>Un prior informatif reflète une connaissance crédible et externe au jeu de données analysé : il peut provenir d’une synthèse bibliographique, d’une expérience passée ou de l’avis d’un spécialiste. Il a pour avantage de réduire l’incertitude sur les paramètres, surtout avec peu de données. On verra un exemple dans la Section <a href="prior.html#informativeprior">4.4</a>.</p></li>
-<li><p>Un prior faiblement informatif (ou weakly informative) est un peu un compromis entre les priors non-informatifs et informatifs. L’idée est d’exclure des valeurs manifestement aberrantes ou incompatibles avec ce que l’on sait du phénomène étudié, tout en laissant suffisamment de liberté au modèle pour apprendre des données. Ce type de prior est utilisé notamment dans <code>brms</code>. On verra un exemple dans le Chapitre <a href="glms.html#glms">6</a> qui suit.</p></li>
+<li><p>Un prior faiblement informatif (ou weakly informative) est un peu un compromis entre les priors non-informatifs et informatifs. L’idée est d’exclure des valeurs manifestement aberrantes ou incompatibles avec ce que l’on sait du phénomène étudié, tout en laissant suffisamment de liberté au modèle pour apprendre des données. Ce type de prior est utilisé notamment dans <code>brms</code>. On verra un exemple dans le Chapitre <a href="glms.html#glms">6</a>.</p></li>
 </ul>
 <p>En pratique, une stratégie prudente consiste à commencer avec un prior faiblement informatif, comme une loi normale centrée avec une variance modérée, puis à tester des alternatives plus informatives (ou plus vagues) pour examiner l’impact sur les résultats a posteriori. C’est l’idée de l’analyse de sensibilité qu’on développe dans la Section <a href="prior.html#sensibilite">4.3</a>.</p>
 </div>
@@ -193,7 +193,7 @@ Figure 4.1: Effet combiné du prior et de la taille d’échantillon sur la dist
 <th>Modèle</th>
 <th>Prior pour <span class="math inline">\(\theta\)</span>
 </th>
-<th>Survie moy. a posteriori</th>
+<th>Survie moyenne a posteriori</th>
 <th>Intervalle crédibilité 95%</th>
 </tr></thead>
 <tbody>
@@ -224,7 +224,7 @@ Figure 4.1: Effet combiné du prior et de la taille d’échantillon sur la dist
 <th>Modèle</th>
 <th>Prior pour <span class="math inline">\(\theta\)</span>
 </th>
-<th>Survie moy. a posteriori</th>
+<th>Survie moyenne a posteriori</th>
 <th>Intervalle crédibilité 95%</th>
 </tr></thead>
 <tbody>
@@ -256,7 +256,7 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span class="header-section-number">4.4.2</span> Méthode du moment-matching<a class="anchor" aria-label="anchor" href="#m%C3%A9thode-du-moment-matching"><i class="fas fa-link"></i></a>
 </h3>
 <p>Dans l’exemple du cincle, on a utilisé une distribution normale comme prior informatif pour un paramètre qui se trouve être une probabilité. Or la normale peut prendre des valeurs négatives ou plus grande que 1, ce qui n’est pas souhaitable pour une probabilité. Dans l’exemple, le prior informatif <span class="math inline">\(N(0.57, 0.075^2)\)</span> est en moyenne entre 0 et 1 avec une petite variance, donc peu de chance que cela tourne mal. Vous pouvez vous en rendre compte en simulant des données avec <code>R</code> et la commande <code>summary(rnorm(n = 100, mean = 0.57, sd = 0.075))</code>. Malgré tout, ça n’est pas très satisfaisant.</p>
-<p>La bonne nouvelle c’est qu’on peut construire un prior informatif plus adéquat pour une probabilité par la méthode dit du “moment-matching”. La méthode du moment-matching sert à choisir les paramètres d’une loi a priori en les calant sur les moments (souvent la moyenne et la variance) qui traduisent l’information a priori qu’on possède (avant de voir les données).</p>
+<p>La bonne nouvelle, c’est qu’on peut construire un prior informatif plus adéquat pour une probabilité par la méthode dit du “moment-matching”. La méthode du moment-matching sert à choisir les paramètres d’une loi a priori en les calant sur les moments (souvent la moyenne et la variance) qui traduisent l’information a priori qu’on possède (avant de voir les données).</p>
 <p>Lorsque l’information a priori est disponible sous forme d’une moyenne <span class="math inline">\(\mu\)</span> et d’un écart‑type <span class="math inline">\(\sigma\)</span>, on peut transformer ces moments en paramètres <span class="math inline">\(a,b\)</span> d’une distribution bêta. Pour rappel, la moyenne et la variance d’une bêta de paramètres <span class="math inline">\(a\)</span> et <span class="math inline">\(b\)</span> sont <span class="math inline">\(\mu=\dfrac{a}{a+b}\)</span> et <span class="math inline">\(\sigma^2=\dfrac{ab}{(a+b)^2(a+b+1)}\)</span>. En inversant ces relations on obtient : <span class="math inline">\(a=\displaystyle \Bigl(\frac{1-\mu}{\sigma^2}-\frac{1}{\mu}\Bigr)\mu^2\)</span> et <span class="math inline">\(b=\displaystyle a\Bigl(\frac{1}{\mu}-1\Bigr)\)</span>. Dans notre exemple, on a <span class="math inline">\(\mu=0.57\)</span> et <span class="math inline">\(\sigma=0.075\)</span> dont on peut déduire <span class="math inline">\(a = 24.3\)</span> et <span class="math inline">\(b = 18.3\)</span> avec quelques lignes de code :</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># paramètres de moyenne et d'écart-type souhaités pour la distribution bêta</span></span>
@@ -275,12 +275,12 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span><span class="va">ech_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10000</span>, shape1 <span class="op">=</span> <span class="fl">24.3</span>, shape2 <span class="op">=</span> <span class="fl">18.3</span><span class="op">)</span></span>
 <span><span class="co"># on calcule la moyenne empirique des tirages (doit approcher 0.57)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5708341</span></span>
+<span><span class="co">#&gt; [1] 0.5715358</span></span>
 <span><span class="co"># on calcule l'écart-type empirique des tirages (doit approcher 0.075)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.07491089</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.07540966</span></span></code></pre></div>
 <p>On peut donc adopter un prior <span class="math inline">\(\text{Beta}(a=24.3,\,b=18.3)\)</span> pour tenir compte de l’information moyenne et sa variabilité obtenue par la relation allométrique survie-masse.</p>
-<p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet de la masse des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
+<p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet de la masse des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis à 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
 <p>On peut commencer par la moyenne <span class="math inline">\(\mu\)</span>. L’intervalle est symétrique, donc on peut déduire directement que la moyenne <span class="math inline">\(\mu\)</span> du prior est le milieu de l’intervalle : <span class="math inline">\(\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05\)</span>.</p>
 <p>Passons à l’écart-type <span class="math inline">\(\sigma\)</span>. L’expert·e affime que 80% des valeurs de <span class="math inline">\(\theta\)</span> sont comprises entre –0.15 et 0.25. Or pour une loi normale, cette proportion s’écrit <span class="math inline">\(\Pr(\mu - z\,\sigma \leq \theta \leq \mu + z \, \sigma) = 0.80\)</span>. Cela signifie que 80% de la masse de la distribution est contenue dans un intervalle centré sur <span class="math inline">\(\mu\)</span> et de largeur <span class="math inline">\(2z\sigma\)</span>. Pour un niveau de 80%, la valeur de <span class="math inline">\(z\)</span> vaut environ 1.2816 (on l’obtient via <code>qnorm(0.90)</code> où 0.90 est le quantile supérieur <span class="math inline">\(1−\alpha/2 = 1-20/2\)</span> avec <span class="math inline">\((1−\alpha)\% = 80\%\)</span> et donc <span class="math inline">\(\alpha = 0.20\)</span>). Finalement, on obtient <span class="math inline">\(\sigma = \displaystyle \frac{0.25-(-0.15)}{2 \times 1.2816} \approx 0.156\)</span>. Voici le calcul dans <code>R</code> :</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
@@ -325,7 +325,7 @@ Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0
 <h2>
 <span class="header-section-number">4.5</span> Attention aux priors dits non-informatifs<a class="anchor" aria-label="anchor" href="#surprise"><i class="fas fa-link"></i></a>
 </h2>
-<p>En statistique bayésienne, on utilise souvent des priors non-informatifs. Mais attention, les apparences peuvent être trompeuses, surtout lorsqu’on travaille sur des paramètres définis sur des échelles transformées, comme le logit ou le log dans les modèles linéaires généralisés (Chapitre <a href="glms.html#glms">6</a>). Prenons un exemple courant où l’on modélise une probabilité <span class="math inline">\(\theta\)</span> sur l’échelle logit via un paramètre <span class="math inline">\(\beta\)</span> tel que <span class="math inline">\(\text{logit}(\theta) = \beta\)</span>.</p>
+<p>En statistique bayésienne, on utilise souvent des priors non informatifs. Mais attention, les apparences peuvent être trompeuses, surtout lorsqu’on travaille sur des paramètres définis sur des échelles transformées, comme le logit ou le log dans les modèles linéaires généralisés (Chapitre <a href="glms.html#glms">6</a>). Prenons un exemple courant où l’on modélise une probabilité <span class="math inline">\(\theta\)</span> sur l’échelle logit via un paramètre <span class="math inline">\(\beta\)</span> tel que <span class="math inline">\(\text{logit}(\theta) = \beta\)</span>.</p>
 <p>En pratique, on peut utiliser les simulations pour vérifier que des priors ne réservent pas de mauvaises surprises après transformation, c’est ce qu’on appelle des prior predictive checks. Ça se passe avant même d’ajuster un modèle, et pour ce faire on va :</p>
 <ol style="list-style-type: decimal">
 <li>simuler des valeurs depuis le prior de <span class="math inline">\(\beta\)</span> sur l’échelle logit ;</li>
@@ -344,8 +344,8 @@ Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0
 <p>Ici la distribution induite sur <span class="math inline">\(\theta\)</span> est uniforme, couvrant surtout la plage de valeurs entre 0.05 et 0.95 comme on peut le voir dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de droite), ce qui reflète mieux un manque d’information sur <span class="math inline">\(\theta\)</span>. Ce deuxième choix est le bon, on parle de priors faiblement informatifs (ou weakly informative).</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:prior-combined-ggplot"></span>
-<img src="04-priors_files/figure-html/prior-combined-ggplot-1.svg" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \)." width="100%"><p class="caption">
-Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="math inline">\(\theta = \text{logit}^{-1}(\beta)\)</span> après transformation par la fonction logit réciproque de <span class="math inline">\(\beta \sim N(0, 10^2)\)</span> et <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>.
+<img src="04-priors_files/figure-html/prior-combined-ggplot-1.svg" alt="Comparaison de deux priors obtenus sur la probabilité \( \theta = \text{logit}^{-1}(\beta) \) après transformation par la fonction logit réciproque de \( \beta \sim N(0, 10^2) \) et \( \beta \sim N(0, 1.5^2) \). L'axe des abscisses représente les différentes valeurs possibles de la probabilité \( \theta \) obtenues après transformation par la fonction logit inverse. L'axe des ordonnées indique la fréquence des tirages simulés pour chaque valeur." width="100%"><p class="caption">
+Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="math inline">\(\theta = \text{logit}^{-1}(\beta)\)</span> après transformation par la fonction logit réciproque de <span class="math inline">\(\beta \sim N(0, 10^2)\)</span> et <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>. L’axe des abscisses représente les différentes valeurs possibles de la probabilité <span class="math inline">\(\theta\)</span> obtenues après transformation par la fonction logit inverse. L’axe des ordonnées indique la fréquence des tirages simulés pour chaque valeur.
 </p>
 </div>
 <p>Il existe aussi des priors invariants, c’est-à-dire dont la forme tient compte de l’échelle du paramètre. Le prior de Jeffreys en est un exemple : il maximise l’information apportée par les données, tout en restant invariant par reparamétrisation. Par exemple, pour une probabilité <span class="math inline">\(\theta\)</span>, le prior de Jeffreys est <span class="math inline">\(\text{Beta}(0.5, 0.5)\)</span>. Ce prior est moins plat qu’une uniforme <span class="math inline">\(\text{Beta}(1, 1)\)</span>. Il est souvent utilisé lorsqu’on souhaite une approche objective, sans introduire d’information subjective. En pratique toutefois, le prior de Jeffreys est difficile à calculer, et on privilégiera l’approche par simulations pour s’assurer que les paramètres transformés ont des priors raisonnables.</p>
@@ -437,7 +437,7 @@ Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-11-14.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

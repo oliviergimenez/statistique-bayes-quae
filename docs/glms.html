@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Statistique bayésienne avec R</title>
+<title>Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Introduction à la statistique bayésienne avec R</title>
 <meta name="author" content="Olivier Gimenez">
 <meta name="description" content="6.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à des extensions du modèle linéaire vu au chapitre précédent, les modèles linéaires généralisés (GLM) et les...">
 <meta name="generator" content="bookdown 0.43 with bs4_book()">
-<meta property="og:title" content="Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Statistique bayésienne avec R">
+<meta property="og:title" content="Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Introduction à la statistique bayésienne avec R">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://oliviergimenez.github.io/statistique-bayes/glms.html">
 <meta property="og:description" content="6.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à des extensions du modèle linéaire vu au chapitre précédent, les modèles linéaires généralisés (GLM) et les...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Statistique bayésienne avec R">
+<meta name="twitter:title" content="Chapitre 6 Modèles linéaires généralisés, et généralisés mixtes | Introduction à la statistique bayésienne avec R">
 <meta name="twitter:description" content="6.1 Introduction Ce chapitre présente l’application de la statistique bayésienne à des extensions du modèle linéaire vu au chapitre précédent, les modèles linéaires généralisés (GLM) et les...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -62,7 +62,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">Statistique bayésienne avec R</a>
+        <a href="index.html" title="">Introduction à la statistique bayésienne avec R</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -175,22 +175,22 @@ Figure 6.3: Comparaison entre une régression linéaire et une régression logis
 <h3>
 <span class="header-section-number">6.3.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction-7"><i class="fas fa-link"></i></a>
 </h3>
-<p>Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n’est pas expliquée par la masse, et donc d’obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l’exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques.</p>
-<p>Qu’est-ce qu’un effet aléatoire ? Un effet est aléatoire lorsqu’il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l’on devait refaire l’expérience, peu importe les sites ou les individus, l’important est de pouvoir généraliser l’interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l’expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d’une aire d’étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou l’aire d’étude.</p>
+<p>Souvent, les données sont récoltées ou mesurées avec une certaine structure, elles sont hiérarchisées ou groupées, par exemple la relation entre la survie de ragondins et leur masse dans différentes populations de différents bassins-versants. Il est alors pertinent de modéliser cette structure dans les données. Cela permet de mieux expliquer la variabilité dans la survie moyenne qui n’est pas expliquée par la masse, et donc d’obtenir de meilleures estimations. Pour ce faire, on introduit les modèles linéaires généralisés mixtes (GLMM) qui combinent des effets fixes comme dans les GLM, représentant l’effet moyen d’une variable explicative (la masse dans l’exemple des ragondins), et des effets aléatoires représentant la variabilité entre groupes ou niveaux hiérarchiques.</p>
+<p>Qu’est-ce qu’un effet aléatoire ? Un effet est aléatoire lorsqu’il représente une sélection aléatoire d’unités dans une population plus vaste, par exemple des sites d’échantillonnage ou des individus ; si l’on devait refaire l’expérience, peu importe les sites ou les individus, l’important est de pouvoir généraliser l’interprétation des effets. En ce sens, le sexe des ragondins par exemple ne peut pas être considéré comme un effet aléatoire ; si on refait l’expérience, la variable sexe a toujours les deux mêmes modalités mâle et femelle. Au contraire, considérer les sites d’une aire d’étude de nos ragondins comme un effet fixe permet seulement de dire des choses sur ces sites précis, sans possibilité de généraliser à la « population » de sites, ou à l’aire d’étude.</p>
 <p>Au passage, vous verrez les termes modèles hiérarchiques, multi-niveaux ou à effets aléatoires utilisés pour désigner un GLMM dans la littérature scientifique. Parfois il s’agit de la même chose, parfois il s’agit de GLMM un peu modifiés. Pour éviter les confusions, souvenez-vous que les GLMM sont utilisés pour analyser des données qui viennent avec une structure en groupes.</p>
 </div>
 <div id="exemple" class="section level3" number="6.3.2">
 <h3>
 <span class="header-section-number">6.3.2</span> Exemple<a class="anchor" aria-label="anchor" href="#exemple"><i class="fas fa-link"></i></a>
 </h3>
-<p>Pour illustrer concrètement un GLMM, imaginez la situation où l’on cherche à estimer l’abondance de ragondins dans le bassin versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d’étude. Sur chaque transect, on compte le nombre de ragondins présents à 10 points espacés régulièrement. On s’intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure <a href="glms.html#fig:protocole">6.4</a> et s’inspire du livre de mon collègue Jason Matthiopoulos <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-matthiopoulosHowBeQuantitative2011">Matthiopoulos 2011</a>)</span>.</p>
+<p>Pour illustrer concrètement un GLMM, imaginez la situation où l’on cherche à estimer l’abondance de ragondins dans le bassin-versant du Lez, à Montpellier, où le Lez est un fleuve qui traverse la ville. On répartit dix transects sur la zone d’étude. Sur chaque transect, on compte le nombre de ragondins présents à dix points espacés régulièrement. On s’intéresse à la réponse du nombre de ragondins (comptages) en fonction de la température. Les mesures sont bien hiérarchisées, on fait 1 mesure du nombre de ragondins sur chacun des 10 points que contient chacun des 10 transects. Le protocole est illustré dans la Figure <a href="glms.html#fig:protocole">6.4</a> et s’inspire du livre de mon collègue Jason Matthiopoulos <span class="citation">(<a href="r%C3%A9f%C3%A9rences.html#ref-matthiopoulosHowBeQuantitative2011">Matthiopoulos 2011</a>)</span>.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:protocole"></span>
 <img src="06-glms_files/figure-html/protocole-1.svg" alt="Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L'aire d'étude est en noir. En haut on a le nombre de ragondins, et en bas la température." width="90%"><p class="caption">
 Figure 6.4: Schéma des données sur les ragondins selon un protocole d’échantillonnage avec 10 points dans 10 transects. L’aire d’étude est en noir. En haut on a le nombre de ragondins, et en bas la température.
 </p>
 </div>
-<p>A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos 10 transects, on a eu des soucis d’échantillonnage sur 3 d’entre eux pour lesquels on n’a pu faire que 2 ou 3 points :</p>
+<p>A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos dix transects, on a eu des soucis d’échantillonnage sur trois d’entre eux pour lesquels on n’a pu faire que deux ou trois points :</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># pour la reproductibilité</span></span>
 <span><span class="va">transects</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="co"># nombre total de transects</span></span>
@@ -238,7 +238,7 @@ Figure 6.5: Relation entre le nombre de ragondins et la température par transec
 <p><span class="math display">\[\begin{align}
    \text{y}_i &amp;\sim \text{Poisson(}\theta_i) &amp;\text{[vraisemblance]}\\
   \text{log}(\theta_i) &amp;= \beta_{0} + \beta_1 \; \text{temp}_{i} &amp;\text{[relation linéaire]} \\
-  \text{}\theta_i &amp;= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &amp;\text{[relation transformée]} \\
+  \theta_i &amp;= e^{\beta_0 + \beta_1 \; \text{temp}_{i}} &amp;\text{[relation transformée]} \\
   \beta_0, \beta_1 &amp;\sim \text{Normale}(0, 1.5) &amp;\text{[prior sur les paramètres]} \\
 \end{align}\]</span></p>
 <p>Cette distribution est relativement facile à manipuler, puisqu’entre autres, elle a un seul paramètre <span class="math inline">\(\theta\)</span> qui donne le taux d’apparition de l’événement modélisé, et qu’en moyenne, le nombre attendu de ragondins ici devrait être égal à ce paramètre.</p>
@@ -273,11 +273,11 @@ Figure 6.5: Relation entre le nombre de ragondins et la température par transec
 Ici on ignore que les données sont mesurées par transect, et on suppose à tort que toutes les observations sont indépendantes. Le risque, c’est de tirer de mauvaises conclusions : on peut croire qu’une seule relation existe, alors que les différences ne sont pas dues à la température, mais aux variations d’un transect à l’autre, ou au contraire on peut passer à côté d’une vraie tendance. Un test d’ajustement permet de voir dans la Figure <a href="glms.html#fig:ppcheck-complete">6.6</a> que l’ajustement n’est pas bon :
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ppcheck-complete"></span>
-<img src="06-glms_files/figure-html/ppcheck-complete-1.svg" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%"><p class="caption">
-Figure 6.6: Vérification de l’adéquation du modèle avec complete pooling ou regroupement complet. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.
+<img src="06-glms_files/figure-html/ppcheck-complete-1.svg" alt="Vérification de l'adéquation du modèle avec complete pooling ou regroupement complet. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données." width="90%"><p class="caption">
+Figure 6.6: Vérification de l’adéquation du modèle avec complete pooling ou regroupement complet. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir). Le mauvais recouvrement indique une mauvaise adéquation du modèle aux données.
 </p>
 </div>
-<p>Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais la même pente :</p>
+<p>Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais avec la même pente :</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># modèle avec no pooling / pas de regroupement (effet fixe transect)</span></span>
 <span><span class="va">fit_nopool</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">Ragondins</span> <span class="op">~</span> <span class="va">Temp</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">Transect</span><span class="op">)</span>,</span>
@@ -354,8 +354,8 @@ Figure 6.6: Vérification de l’adéquation du modèle avec complete pooling ou
 La qualité de l’ajustement est meilleure comme on le voit dans la Figure <a href="glms.html#fig:ppcheck-nopool">6.7</a> :
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ppcheck-nopool"></span>
-<img src="06-glms_files/figure-html/ppcheck-nopool-1.svg" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%"><p class="caption">
-Figure 6.7: Vérification de l’adéquation du modèle avec no pooling ou pas de regroupement. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).
+<img src="06-glms_files/figure-html/ppcheck-nopool-1.svg" alt="Vérification de l'adéquation du modèle avec no pooling ou pas de regroupement. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%"><p class="caption">
+Figure 6.7: Vérification de l’adéquation du modèle avec no pooling ou pas de regroupement. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).
 </p>
 </div>
 <p>Ce modèle “no pooling” fait mieux que le modèle “complete pooling”, comme on peut le voir dans la Figure <a href="glms.html#fig:pooling-ragondins">6.8</a>, mais il reste insatisfaisant. L’approche “no pooling” consiste à ajuster un modèle indépendant pour chaque transect, sans partager d’information entre ces groupes. Cela pose deux problèmes : d’une part, on ne peut pas généraliser les résultats obtenus à d’autres transects que ceux observés ; d’autre part, on ignore des informations potentiellement utiles en supposant que chaque transect n’a rien à apprendre des autres. Cette stratégie devient particulièrement inefficace lorsque chaque groupe comporte peu d’observations.</p>
@@ -423,8 +423,8 @@ Figure 6.8: Comparaison entre les modèles complete pooling (noir) et no pooling
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">fit_partial</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:model-diagnostics"></span>
-<img src="06-glms_files/figure-html/model-diagnostics-1.svg" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling." width="90%"><p class="caption">
-Figure 6.9: Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling.
+<img src="06-glms_files/figure-html/model-diagnostics-1.svg" alt="Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling. Dans les histogrammes (colonne de gauche), l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots (colonne de droite), l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération." width="90%"><p class="caption">
+Figure 6.9: Vérification de la convergence des chaînes MCMC pour le modèle avec partial pooling. Dans les histogrammes (colonne de gauche), l’axe des abscisses représente les valeurs possibles du paramètre estimé (intercept, pente ou écart-type) et l’axe des ordonnées correspond à leur fréquence dans l’échantillon a posteriori. Dans les trace plots (colonne de droite), l’axe des abscisses indique le numéro d’itération du MCMC, tandis que l’axe des ordonnées représente la valeur simulée du paramètre à chaque itération.
 </p>
 </div>
 On peut alors mettre à jour la Figure <a href="glms.html#fig:pooling-ragondins">6.8</a> avec la Figure <a href="glms.html#fig:partial-ragondins">6.10</a> :
@@ -438,8 +438,8 @@ Figure 6.10: Comparaison entre les modèles complete pooling (noir), no pooling 
 La qualité de l’ajustement est validée comme on le voit dans la Figure <a href="glms.html#fig:ppcheck-partial">6.11</a> :
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ppcheck-partial"></span>
-<img src="06-glms_files/figure-html/ppcheck-partial-1.svg" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%"><p class="caption">
-Figure 6.11: Vérification de l’adéquation du modèle avec partial pooling ou regroupement partiel. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).
+<img src="06-glms_files/figure-html/ppcheck-partial-1.svg" alt="Vérification de l'adéquation du modèle avec partial pooling ou regroupement partiel. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir)." width="90%"><p class="caption">
+Figure 6.11: Vérification de l’adéquation du modèle avec partial pooling ou regroupement partiel. L’axe des abscisses représente les valeurs possibles de la variable réponse simulée ou observée. L’axe des ordonnées indique leur densité estimée. Les distributions simulées (en bleu) sont comparées aux données observées (en noir).
 </p>
 </div>
 <p>Lorsqu’on ajuste un modèle sur une variable standardisée, comme ici la température centrée-réduite, les coefficients estimés (<span class="math inline">\(\beta_0, \beta_1\)</span>) s’interprètent sur cette échelle modifiée : <span class="math inline">\(\beta_1\)</span> représente l’effet d’un écart-type de température, et <span class="math inline">\(\beta_0\)</span> correspond à la valeur attendue quand la température standardisée est 0, c’est-à-dire à la température moyenne. On a souvent envie d’exprimer les effets sur des unités compréhensibles, ici les degrés celsius, plutôt qu’en écart-type de température, qui est plus abstrait. Pour revenir à une interprétation sur l’échelle réelle (en degré celsius donc), les coefficients estimés sur la température centrée-réduite peuvent être transformés pour revenir à l’échelle réelle à l’aide des formules suivantes :</p>
@@ -524,7 +524,7 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 <span class="header-section-number">6.3.4.2</span> Ajustement du modèle en fréquentiste avec <code>lme4</code><a class="anchor" aria-label="anchor" href="#ajustement-du-mod%C3%A8le-en-fr%C3%A9quentiste-avec-lme4"><i class="fas fa-link"></i></a>
 </h4>
 <p>Pour clôre ce chapitre, je vous propose de faire la même analyse avec le package <code>lme4</code> en fréquentiste.</p>
-<p>On charge le dit package :</p>
+<p>On charge ledit package :</p>
 <div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span></code></pre></div>
 <p>Puis on applique le GLMM, notez que la syntaxe de <code>brms</code> est inspirée de celle utilisée dans <code>lme4</code> :</p>
@@ -646,7 +646,7 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2025-11-14.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
