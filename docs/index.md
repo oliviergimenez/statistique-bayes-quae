@@ -1,7 +1,7 @@
 --- 
 title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2026-01-25"
+date: "2026-01-27"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -40,13 +40,15 @@ description: "Introduction à la statistique bayésienne avec R"
 
 On retrouve la statistique bayésienne un peu partout en sciences. Par exemple, en épidémiologie, pour prédire la circulation des virus, en écologie, pour expliquer l’extinction des espèces végétales et animales, ou encore en informatique, pour filtrer les courriels nuisibles. Si l’utilisation de la statistique bayésienne a explosé au cours des dernières années, c’est grâce au progrès de nos ordinateurs. C’est aussi grâce à la nature même de l’approche qui permet de coller à notre façon d’apprendre, de raisonner et d’accumuler des connaissances.
 
-Dans ce livre, je vous propose une introduction à la statistique bayésienne. Ce livre est en français parce que c’est la langue dans laquelle je me sens le plus à l’aise pour écrire, et parce que j’aurais aimé avoir plus d’ouvrages dans ma langue maternelle lorsque j’étais étudiant.
+Dans ce livre, je vous propose une introduction à la statistique bayésienne. Vous êtes en train de lire la version électronique du livre à paraître chez les éditions Quae en mars 2026.
+
+<img src="images/cover.png" width="100%" style="display: block; margin: auto;" />
+
+Ce livre est en français parce que c’est la langue dans laquelle je me sens le plus à l’aise pour écrire, et parce que j’aurais aimé avoir plus d’ouvrages dans ma langue maternelle lorsque j’étais étudiant.
 
 Je me suis fixé comme objectifs de 1) synthétiser les aspects méthodologiques à bien comprendre, et 2) fournir les moyens pratiques pour utiliser vous-mêmes la statistique bayésienne. Parce que l’on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique. Ce logiciel, c’est `R`, c’est un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, *Introduction à R et au tidyverse* disponible en ligne via <https://juba.github.io/tidyverse> et le site du projet collaboratif *Analyse-R*, disponible aussi en ligne à <https://larmarange.github.io/analyse-R/>. Pour la statistique bayésienne en particulier, je présente un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans `R` : `brms`. Dans la version enrichie de ce livre consultable en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présente aussi un package qui nécessite de programmer (écrire des boucles par exemple), mais qui offre en contrepartie une grande flexibilité : `NIMBLE`.
 
 Plutôt que dans un style académique, j’ai choisi d’écrire un peu comme si nous étions ensemble dans la même pièce ou en visioconférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent, en fait) des abus de langage et des approximations mathématiques pour faciliter la compréhension. Vous ne m’en voudrez pas, j’espère.
-
-<img src="images/cover.png" width="100%" style="display: block; margin: auto;" />
 
 ## Pourquoi s'intéresser à la statistique bayésienne ? {-}
 
@@ -87,7 +89,7 @@ Enfin, un dernier chapitre viendra résumer les messages clés du livre et propo
 Je n’ai pas vraiment de conseil à vous donner sur la meilleure manière de lire ce livre. Personnellement, je trouve toujours difficile d’absorber toute l’information contenue dans un
 ouvrage. Vous pouvez lire en continu ou bien grappiller des éléments de-ci de-là.
 
-Dans chacun des chapitres, le code `R` est fourni, je l’ai aussi hébergé sur mon site <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S’exercer permet de mieux comprendre et de vérifier que l’on a bien assimilé. Si vous lisez la version électronique de cet ouvrage, disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles en ligne à <https://github.com/oliviergimenez/statistique-bayes-quae>.
+Dans chacun des chapitres, le code `R` est fourni, je l’ai aussi hébergé sur mon site <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S’exercer permet de mieux comprendre et de vérifier que l’on a bien assimilé. Si vous lisez la version électronique de cet ouvrage, disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles en ligne à <https://github.com/oliviergimenez/statistique-bayes-quae>. Vous y trouverez i) l'intégralité du code `R` et des textes qui composent les chapitres de ce livre (les fichiers `R Markdown` suivants : `index.Rmd`, `01-principes.Rmd`, `02-methodesmcmc.Rmd`, `03-misenoeuvrepratique.Rmd`, `04-priors.Rmd`, `05-regression.Rmd`, `06-glms.Rmd` et `07-conclusions.Rmd`) mais aussi ii) simplement les scripts `R` nettoyés du texte pour vous permettre de faire tourner le code plus facilement (le fichier compressé `scriptsR.zip`). 
 
 <!-- Pour que vous puissiez facilement copier le code et l\'exécuter, je n'utilise pas les signes `>` ou `+` dans le code source `R`, et le texte est précédé de deux dièses `##` pour être traité comme des commentaires et ignoré par `R`. Le nom des packages est en gras (e.g., **dplyr**), et le code et les noms de fichier sont formatés en police code (e.g., `mon-fichier.Rmd`). Le nom des fonctions est suivi par des parenthèses (e.g., `dplyr::mutate()`). Le doublement des deux points `::` permet d'accéder à une fonction d'un package sans charger ce package.  -->
 
