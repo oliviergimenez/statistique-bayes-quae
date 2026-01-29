@@ -1,7 +1,7 @@
 --- 
 title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2026-01-27"
+date: "2026-01-29"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
