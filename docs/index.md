@@ -1,7 +1,7 @@
 --- 
 title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2026-01-29"
+date: "2026-01-30"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -49,6 +49,9 @@ Ce livre est en français parce que c’est la langue dans laquelle je me sens l
 Je me suis fixé comme objectifs de 1) synthétiser les aspects méthodologiques à bien comprendre, et 2) fournir les moyens pratiques pour utiliser vous-mêmes la statistique bayésienne. Parce que l’on comprend mieux en faisant, nous utiliserons un logiciel pour pratiquer la statistique. Ce logiciel, c’est `R`, c’est un logiciel libre pour faire des statistiques et de la science des données. En français, je recommande l’excellent manuel de Julien Barnier, *Introduction à R et au tidyverse* disponible en ligne via <https://juba.github.io/tidyverse> et le site du projet collaboratif *Analyse-R*, disponible aussi en ligne à <https://larmarange.github.io/analyse-R/>. Pour la statistique bayésienne en particulier, je présente un package qui propose une syntaxe simple et familière, proche de celle utilisée pour les régressions dans `R` : `brms`. Dans la version enrichie de ce livre consultable en ligne à <https://oliviergimenez.github.io/statistique-bayes/>, je présente aussi un package qui nécessite de programmer (écrire des boucles par exemple), mais qui offre en contrepartie une grande flexibilité : `NIMBLE`.
 
 Plutôt que dans un style académique, j’ai choisi d’écrire un peu comme si nous étions ensemble dans la même pièce ou en visioconférence, et que je devais vous expliquer de vive voix la statistique bayésienne. Ainsi, je ferai parfois (souvent, en fait) des abus de langage et des approximations mathématiques pour faciliter la compréhension. Vous ne m’en voudrez pas, j’espère.
+
+Pour citer ce livre :       
+Gimenez O., 2026. *Introduction à la statistique bayésienne avec le logiciel R*. Versailles, éditions Quæ, 78 p. <https://doi.org/10.35690/978-2-7592-4258-0>
 
 ## Pourquoi s'intéresser à la statistique bayésienne ? {-}
 
