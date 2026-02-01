@@ -6,6 +6,8 @@ Vous trouverez ici tout le matériel concernant le livre [**Introduction à la s
 
 -   Les scripts `R` nettoyés du texte pour vous permettre de faire tourner le code plus facile : [`scriptsR.zip`](https://github.com/oliviergimenez/statistique-bayes-quae/raw/refs/heads/main/scriptsR.zip).
 
+-   Les applications interactives ou `shinyApps` permettant d’explorer de manière visuelle et intuitive plusieurs concepts clés abordés dans le livre (priors, MCMC, régression, modèles hiérarchiques) : [`shinyApps.zip`](https://github.com/oliviergimenez/statistique-bayes-quae/raw/refs/heads/main/shinyApps.zip).
+
 Ce livre est sous licence [Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 <img src="https://github.com/user-attachments/assets/57bff5c8-8afd-4ca6-bb01-f0f49cf3ea46" width="639" height="906"/>

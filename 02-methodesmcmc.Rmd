@@ -480,6 +480,15 @@ Si les problèmes de convergence persistent, il y a souvent un problème avec le
 
 Un autre conseil est de considérer votre modèle avant tout comme un générateur de données. Simulez des données à partir de ce modèle, en utilisant des valeurs réalistes pour les paramètres, puis tentez de retrouver ces paramètres en ajustant le modèle aux données simulées. Cette approche vous aidera à mieux comprendre comment le modèle fonctionne, ce qu’il ne fait pas, et la quantité de données nécessaire pour obtenir des estimations de paramètres fiables. On reviendra sur cette technique dans les Chapitres \@ref(lms) et \@ref(glms). 
 
+## Application interactive associée au chapitre
+
+Ce chapitre est accompagné d’une application interactive (`shinyApp`) pour illustrer concrètement le fonctionnement des algorithmes MCMC. Elle permet de visualiser les trajectoires des chaînes, le mélange, l’autocorrélation et l’impact des réglages sur la qualité de l’échantillonnage. L'application est fournie dans le script `02-mcmc.R` et peut être lancée depuis `R` avec :
+
+```{r, eval = FALSE}
+library(shiny)
+runApp("02-mcmc.R")
+```
+
 ## En résumé
 
 + L’idée des méthodes de Monte Carlo par chaînes de Markov (MCMC) est de simuler des valeurs à partir d’une chaîne de Markov dont la distribution stationnaire est précisément la distribution a posteriori des paramètres qu'on cherche à estimer.

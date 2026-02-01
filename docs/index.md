@@ -1,7 +1,7 @@
 --- 
 title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2026-01-30"
+date: "2026-02-01"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -92,9 +92,19 @@ Enfin, un dernier chapitre viendra résumer les messages clés du livre et propo
 Je n’ai pas vraiment de conseil à vous donner sur la meilleure manière de lire ce livre. Personnellement, je trouve toujours difficile d’absorber toute l’information contenue dans un
 ouvrage. Vous pouvez lire en continu ou bien grappiller des éléments de-ci de-là.
 
-Dans chacun des chapitres, le code `R` est fourni, je l’ai aussi hébergé sur mon site <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S’exercer permet de mieux comprendre et de vérifier que l’on a bien assimilé. Si vous lisez la version électronique de cet ouvrage, disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles en ligne à <https://github.com/oliviergimenez/statistique-bayes-quae>. Vous y trouverez i) l'intégralité du code `R` et des textes qui composent les chapitres de ce livre (les fichiers `R Markdown` suivants : `index.Rmd`, `01-principes.Rmd`, `02-methodesmcmc.Rmd`, `03-misenoeuvrepratique.Rmd`, `04-priors.Rmd`, `05-regression.Rmd`, `06-glms.Rmd` et `07-conclusions.Rmd`) mais aussi ii) simplement les scripts `R` nettoyés du texte pour vous permettre de faire tourner le code plus facilement (le fichier compressé `scriptsR.zip`). 
+Dans chacun des chapitres, le code `R` est fourni, je l’ai aussi hébergé sur mon site <https://github.com/oliviergimenez/statistique-bayes-quae> et le mettrai à jour. S’exercer permet de mieux comprendre et de vérifier que l’on a bien assimilé. Si vous lisez la version électronique de cet ouvrage, disponible à <https://oliviergimenez.github.io/statistique-bayes-quae/>, vous pouvez copier les lignes de code puis les coller dans `R` pour les exécuter. 
+
+Pour gagner un peu de place, et éviter de perturber trop la lecture, certains codes ne sont pas donnés, en particulier ceux qui permettent de produire les figures, mais ils sont disponibles en ligne à <https://github.com/oliviergimenez/statistique-bayes-quae>. Vous y trouverez :    
+
+i) l'intégralité du code `R` et des textes qui composent les chapitres de ce livre ; tout est dans les fichiers `R Markdown` qui s'appellent `index.Rmd`, `01-principes.Rmd`, `02-methodesmcmc.Rmd`, `03-misenoeuvrepratique.Rmd`, `04-priors.Rmd`, `05-regression.Rmd`, `06-glms.Rmd` et `07-conclusions.Rmd` ; 
+
+ii) les scripts `R` nettoyés du texte pour vous permettre de faire tourner le code plus facilement, ils sont dans le fichier compressé `scriptsR.zip` ;     
+
+iii) des applications interactives ou `shinyApps`, fournies sous forme de scripts `R` dans le fichier compressé `shinyApps.zip`, permettant d’explorer de manière visuelle et intuitive plusieurs concepts clés abordés dans le livre (priors, MCMC, régression, modèles hiérarchiques). L’objectif de ces applications est de rendre plus tangible le matériel présenté dans les chapitres, en permettant de manipuler les paramètres et d’observer immédiatement leurs effets. Ces applications peuvent être utilisées en complément de la lecture, ou comme supports pédagogiques autonomes.
 
 <!-- Pour que vous puissiez facilement copier le code et l\'exécuter, je n'utilise pas les signes `>` ou `+` dans le code source `R`, et le texte est précédé de deux dièses `##` pour être traité comme des commentaires et ignoré par `R`. Le nom des packages est en gras (e.g., **dplyr**), et le code et les noms de fichier sont formatés en police code (e.g., `mon-fichier.Rmd`). Le nom des fonctions est suivi par des parenthèses (e.g., `dplyr::mutate()`). Le doublement des deux points `::` permet d'accéder à une fonction d'un package sans charger ce package.  -->
+
+## Pour aller plus loin {-}
 
 Si vous voulez aller plus loin, je conseille les ouvrages suivants dont la liste n'est bien sûr pas exhaustive. Ces ouvrages ont été une source d'inspiration dans la rédaction de ce livre. J'ai hésité à donner plus de références, et à citer (beaucoup) d'articles scientifiques, mais je ne le ferai pas, les ouvrages ci-dessous sont largement suffisants. 
 

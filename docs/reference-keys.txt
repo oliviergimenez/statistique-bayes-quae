@@ -47,6 +47,7 @@ statbayes
 un-exemple-fil-rouge
 maxvrais
 et-en-bayésien
+application-interactive-associée-au-chapitre
 en-résumé
 mcmc
 introduction-2
@@ -56,12 +57,14 @@ convergence-diag
 burn-in
 longueur-de-chaîne
 et-si-vous-avez-des-problèmes-de-convergence
+application-interactive-associée-au-chapitre-1
 en-résumé-1
 logiciels
 introduction-3
 la-syntaxe-du-packagebrms
 visualisation
 les-priors
+application-interactive-associée-au-chapitre-2
 en-résumé-2
 prior
 introduction-4
@@ -71,6 +74,7 @@ informativeprior
 méta-analyse
 méthode-du-moment-matching
 surprise
+application-interactive-associée-au-chapitre-3
 en-résumé-3
 lms
 introduction-5
@@ -82,6 +86,7 @@ weakly-informative-priors
 lajustement-par-maximum-de-vraisemblance
 lévaluation-des-modèles
 la-comparaison-de-modèles
+application-interactive-associée-au-chapitre-4
 en-résumé-4
 glms
 introduction-6
@@ -93,6 +98,7 @@ lapproche-glm
 lapproche-glmm
 ajustement-du-modèle-en-bayésien-avec-brms
 ajustement-du-modèle-en-fréquentiste-avec-lme4
+application-interactive-associée-au-chapitre-5
 en-résumé-5
 ce-quon-a-vu
 la-statistique-bayésienne-en-résumé

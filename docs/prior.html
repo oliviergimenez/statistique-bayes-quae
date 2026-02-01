@@ -257,7 +257,7 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <p>Dans l’exemple du cincle, on a utilisé une distribution normale comme prior informatif pour un paramètre qui se trouve être une probabilité. Or la normale peut prendre des valeurs négatives ou plus grande que 1, ce qui n’est pas souhaitable pour une probabilité. Dans l’exemple, le prior informatif <span class="math inline">\(N(0.57, 0.075^2)\)</span> est en moyenne entre 0 et 1 avec une petite variance, donc peu de chance que cela tourne mal. Vous pouvez vous en rendre compte en simulant des données avec <code>R</code> et la commande <code>summary(rnorm(n = 100, mean = 0.57, sd = 0.075))</code>. Malgré tout, ça n’est pas très satisfaisant.</p>
 <p>La bonne nouvelle, c’est qu’on peut construire un prior informatif plus adéquat pour une probabilité par la méthode dit du “moment-matching”. La méthode du moment-matching sert à choisir les paramètres d’une loi a priori en les calant sur les moments (souvent la moyenne et la variance) qui traduisent l’information a priori qu’on possède (avant de voir les données).</p>
 <p>Lorsque l’information a priori est disponible sous forme d’une moyenne <span class="math inline">\(\mu\)</span> et d’un écart‑type <span class="math inline">\(\sigma\)</span>, on peut transformer ces moments en paramètres <span class="math inline">\(a,b\)</span> d’une distribution bêta. Pour rappel, la moyenne et la variance d’une bêta de paramètres <span class="math inline">\(a\)</span> et <span class="math inline">\(b\)</span> sont <span class="math inline">\(\mu=\dfrac{a}{a+b}\)</span> et <span class="math inline">\(\sigma^2=\dfrac{ab}{(a+b)^2(a+b+1)}\)</span>. En inversant ces relations on obtient : <span class="math inline">\(a=\displaystyle \Bigl(\frac{1-\mu}{\sigma^2}-\frac{1}{\mu}\Bigr)\mu^2\)</span> et <span class="math inline">\(b=\displaystyle a\Bigl(\frac{1}{\mu}-1\Bigr)\)</span>. Dans notre exemple, on a <span class="math inline">\(\mu=0.57\)</span> et <span class="math inline">\(\sigma=0.075\)</span> dont on peut déduire <span class="math inline">\(a = 24.3\)</span> et <span class="math inline">\(b = 18.3\)</span> avec quelques lignes de code :</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># paramètres de moyenne et d'écart-type souhaités pour la distribution bêta</span></span>
 <span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fl">0.57</span> <span class="co"># moyenne de la probabilité</span></span>
 <span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.075</span> <span class="co"># écart-type sur cette probabilité</span></span>
@@ -269,20 +269,20 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span><span class="co">#&gt;    a    b </span></span>
 <span><span class="co">#&gt; 24.3 18.3</span></span></code></pre></div>
 <p>On peut vérifier que cette distribution bêta a bien pour moyenne et écart-type les valeurs données par la méta-analyse :</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># on génère 10000 valeurs tirées d'une loi Bêta avec les paramètres a = 24.3 et b = 18.3</span></span>
 <span><span class="va">ech_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10000</span>, shape1 <span class="op">=</span> <span class="fl">24.3</span>, shape2 <span class="op">=</span> <span class="fl">18.3</span><span class="op">)</span></span>
 <span><span class="co"># on calcule la moyenne empirique des tirages (doit approcher 0.57)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5704716</span></span>
+<span><span class="co">#&gt; [1] 0.5716546</span></span>
 <span><span class="co"># on calcule l'écart-type empirique des tirages (doit approcher 0.075)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ech_prior</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.07441795</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.075211</span></span></code></pre></div>
 <p>On peut donc adopter un prior <span class="math inline">\(\text{Beta}(a=24.3,\,b=18.3)\)</span> pour tenir compte de l’information moyenne et sa variabilité obtenue par la relation allométrique survie-masse.</p>
 <p>La méthode du moment matching ne s’applique pas qu’aux probabilités. On peut aussi s’en servir pour construire un prior pour un paramètre réel, par exemple l’effet de la masse des ragondins sur leur survie (voir Chapitre <a href="lms.html#lms">5</a>). Imaginons qu’un·e expert·e dise : « Je suis à 80% sûr que le paramètre <span class="math inline">\(\theta\)</span> se trouve entre –0.15 et 0.25. ». Cette phrase définit un intervalle de crédibilité à 80 % : <span class="math inline">\(\Pr(\theta \in [-0.15,0.25]) = 0.80\)</span>. On cherche un prior de type loi normale <span class="math inline">\(\theta \sim N(\mu,\sigma^2)\)</span> qui reflète exactement cette information.</p>
 <p>On peut commencer par la moyenne <span class="math inline">\(\mu\)</span>. L’intervalle est symétrique, donc on peut déduire directement que la moyenne <span class="math inline">\(\mu\)</span> du prior est le milieu de l’intervalle : <span class="math inline">\(\displaystyle{\mu = \frac{-0.15+0.25}{2}}=0.05\)</span>.</p>
 <p>Passons à l’écart-type <span class="math inline">\(\sigma\)</span>. L’expert·e affime que 80% des valeurs de <span class="math inline">\(\theta\)</span> sont comprises entre –0.15 et 0.25. Or pour une loi normale, cette proportion s’écrit <span class="math inline">\(\Pr(\mu - z\,\sigma \leq \theta \leq \mu + z \, \sigma) = 0.80\)</span>. Cela signifie que 80% de la masse de la distribution est contenue dans un intervalle centré sur <span class="math inline">\(\mu\)</span> et de largeur <span class="math inline">\(2z\sigma\)</span>. Pour un niveau de 80%, la valeur de <span class="math inline">\(z\)</span> vaut environ 1.2816 (on l’obtient via <code>qnorm(0.90)</code> où 0.90 est le quantile supérieur <span class="math inline">\(1−\alpha/2 = 1-20/2\)</span> avec <span class="math inline">\((1−\alpha)\% = 80\%\)</span> et donc <span class="math inline">\(\alpha = 0.20\)</span>). Finalement, on obtient <span class="math inline">\(\sigma = \displaystyle \frac{0.25-(-0.15)}{2 \times 1.2816} \approx 0.156\)</span>. Voici le calcul dans <code>R</code> :</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># borne inférieure et supérieure données par l’expert·e</span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.15</span></span>
 <span><span class="va">b</span> <span class="op">&lt;-</span>  <span class="fl">0.25</span></span>
@@ -305,7 +305,7 @@ Figure 4.2: Comparaison des estimations a posteriori de la survie du cincle plon
 <span><span class="va">sigma</span></span>
 <span><span class="co">#&gt; [1] 0.1560608</span></span></code></pre></div>
 <p>On conclut que le prior informatif voulu est une <span class="math inline">\(N(\mu=0.05,\sigma=0.156)\)</span>. On peut vérifier que tout s’est bien passé :</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mu</span>    <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.1560608</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.15</span>, <span class="fl">0.25</span><span class="op">)</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span></span>
@@ -332,12 +332,12 @@ Figure 4.3: Distribution normale avec une moyenne de 0.05 et un écart-type de 0
 <li>inspecter la distribution a priori induite sur <span class="math inline">\(\theta\)</span> et juger si elle semble réaliste.</li>
 </ol>
 <p>Un premier choix est de prendre comme prior une loi normale avec une grande variance, par exemple <span class="math inline">\(\beta \sim N(0, 10^2)\)</span>. Les étapes 1 et 2 s’obtiennent via :</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">logit_prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="co"># simulation</span></span>
 <span><span class="va">prior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">logit_prior</span><span class="op">)</span> <span class="co"># transformation</span></span></code></pre></div>
 <p>Le problème est qu’après transformation avec la fonction réciproque du logit, la majorité des valeurs simulées, et donc la probabilité <span class="math inline">\(\theta\)</span>, sont proches de 0 ou de 1 comme on le voit dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de gauche), ce qui favorise de manière implicite des valeurs extrêmes. On passe d’un prior non-informatif sur l’échelle logit à un prior très informatif (sans le vouloir) sur l’échelle naturelle de la probabilité.</p>
 <p>Un autre choix consiste à prendre <span class="math inline">\(\beta \sim N(0, 1.5^2)\)</span>. Les deux premières étapes de la simulation se résument à :</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">logit_prior2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="va">prior2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html">plogis</a></span><span class="op">(</span><span class="va">logit_prior2</span><span class="op">)</span></span></code></pre></div>
 <p>Ici la distribution induite sur <span class="math inline">\(\theta\)</span> est uniforme, couvrant surtout la plage de valeurs entre 0.05 et 0.95 comme on peut le voir dans la Figure <a href="prior.html#fig:prior-combined-ggplot">4.4</a> (panneau de droite), ce qui reflète mieux un manque d’information sur <span class="math inline">\(\theta\)</span>. Ce deuxième choix est le bon, on parle de priors faiblement informatifs (ou weakly informative).</p>
@@ -349,9 +349,18 @@ Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="
 </div>
 <p>Il existe aussi des priors invariants, c’est-à-dire dont la forme tient compte de l’échelle du paramètre. Le prior de Jeffreys en est un exemple : il maximise l’information apportée par les données, tout en restant invariant par reparamétrisation. Par exemple, pour une probabilité <span class="math inline">\(\theta\)</span>, le prior de Jeffreys est <span class="math inline">\(\text{Beta}(0.5, 0.5)\)</span>. Ce prior est moins plat qu’une uniforme <span class="math inline">\(\text{Beta}(1, 1)\)</span>. Il est souvent utilisé lorsqu’on souhaite une approche objective, sans introduire d’information subjective. En pratique toutefois, le prior de Jeffreys est difficile à calculer, et on privilégiera l’approche par simulations pour s’assurer que les paramètres transformés ont des priors raisonnables.</p>
 </div>
-<div id="en-résumé-3" class="section level2" number="4.6">
+<div id="application-interactive-associée-au-chapitre-3" class="section level2" number="4.6">
 <h2>
-<span class="header-section-number">4.6</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.6</span> Application interactive associée au chapitre<a class="anchor" aria-label="anchor" href="#application-interactive-associ%C3%A9e-au-chapitre-3"><i class="fas fa-link"></i></a>
+</h2>
+<p>Une application interactive (<code>shinyApp</code>) est proposée pour explorer le rôle des distributions a priori. Elle permet de comparer différents choix de priors, d’effectuer des prior predictive checks et de visualiser leur influence sur l’inférence. L’application est fournie dans le script <code>04-priors.R</code> et peut être lancée depuis <code>R</code> avec :</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/">shiny</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html">runApp</a></span><span class="op">(</span><span class="st">"04-priors.R"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="en-résumé-3" class="section level2" number="4.7">
+<h2>
+<span class="header-section-number">4.7</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-3"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p>Plus les données sont riches, moins le prior influence l’estimation a posteriori.</p></li>
@@ -418,7 +427,8 @@ Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="
 </ul>
 </li>
 <li><a class="nav-link" href="#surprise"><span class="header-section-number">4.5</span> Attention aux priors dits non-informatifs</a></li>
-<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-3"><span class="header-section-number">4.6</span> En résumé</a></li>
+<li><a class="nav-link" href="#application-interactive-associ%C3%A9e-au-chapitre-3"><span class="header-section-number">4.6</span> Application interactive associée au chapitre</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-3"><span class="header-section-number">4.7</span> En résumé</a></li>
 </ul>
 
       <div class="book-extra">
@@ -436,7 +446,7 @@ Figure 4.4: Comparaison de deux priors obtenus sur la probabilité <span class="
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-30.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-02-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

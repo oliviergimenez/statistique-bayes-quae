@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.69      0.28    -1.25    -0.15 1.00     1965     2617
+#> Intercept    -0.69      0.28    -1.24    -0.15 1.00     1588     2307
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3370476
+#> [1] 0.3365172
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1263096 0.2942957 0.3348438 0.3777448 0.6155087
+#> 0.1282870 0.2936775 0.3338043 0.3776052 0.5752788
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,7 +109,7 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.337  0.335 0.0610 0.0616 0.240 0.441  1.00    1965.    2617.
+#> 1 Intercept 0.337  0.334 0.0616 0.0621 0.240 0.442  1.00    1588.    2307.
 ```
 
 ## Visualisation
@@ -153,7 +153,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.932  0.914 0.161 0.152 0.700  1.22  1.00    1965.    2617.
+#> 1 Intercept 0.931  0.911 0.162 0.154 0.700  1.22  1.00    1588.    2307.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -216,11 +216,21 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.68      0.28    -1.25    -0.14 1.00     1551     2325
+#> Intercept    -0.69      0.28    -1.28    -0.15 1.00     2053     2049
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
 #> scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+## Application interactive associée au chapitre
+
+Ce chapitre est complété par une application interactive (`shinyApp`) basée sur `brms`, permettant d’explorer l’ajustement d’un modèle bayésien simple, les sorties numériques et les diagnostics de convergence, sans écrire de code supplémentaire. L'application est fournie dans le script `03-brms.R` et peut être lancée depuis `R` avec :
+
+
+``` r
+library(shiny)
+runApp("03-brms.R")
 ```
 
 ## En résumé

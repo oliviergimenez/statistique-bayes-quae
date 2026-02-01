@@ -127,7 +127,7 @@ z_i &amp;\sim \text{Bernoulli}(\theta_i) &amp;\text{[vraisemblance]}\\
 <!-- \theta_i &= \text{logit}^{-1}(a + b \; x_i) = \dfrac {e^{a+b \; x_i}} {1+e^{a+b \; x_i}} \\ -->
 <!-- \end{align} -->
 <p>Pour illustrer tout ça, on peut reprendre les données ragondins auxquelles on ajoute des données de masse des individus, et pour ce faire, on recrée les données brutes, c’est-à-dire les <span class="math inline">\(z_i\)</span> :</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Nombre total de ragondins suivis, survivants</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">57</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">19</span></span>
@@ -141,7 +141,7 @@ z_i &amp;\sim \text{Bernoulli}(\theta_i) &amp;\text{[vraisemblance]}\\
 <span></span>
 <span><span class="va">df_bern</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>survie <span class="op">=</span> <span class="va">z</span>, masse <span class="op">=</span> <span class="va">masse</span><span class="op">)</span></span></code></pre></div>
 <p>On peut maintenant ajuster les deux modèles avec <code>brms</code> par exemple (on obtiendrait la même chose avec <code>NIMBLE</code>), la régression linéaire et la régression logistique :</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Ajustement de la régression linéaire</span></span>
 <span><span class="va">fit_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">survie</span> <span class="op">~</span> <span class="va">masse</span>, </span>
 <span>              data <span class="op">=</span> <span class="va">df_bern</span>, </span>
@@ -190,7 +190,7 @@ Figure 6.4: Schéma des données sur les ragondins selon un protocole d’échan
 </p>
 </div>
 <p>A partir de ce protocole, simulons des données avec le script suivant. On va corser le tout en supposant que sur nos dix transects, on a eu des soucis d’échantillonnage sur trois d’entre eux pour lesquels on n’a pu faire que deux ou trois points :</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># pour la reproductibilité</span></span>
 <span><span class="va">transects</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="co"># nombre total de transects</span></span>
 <span><span class="va">nb_points</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">3</span>, <span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span> <span class="co"># nombre de points par transect</span></span>
@@ -243,7 +243,7 @@ Figure 6.5: Relation entre le nombre de ragondins et la température par transec
 <p>Cette distribution est relativement facile à manipuler, puisqu’entre autres, elle a un seul paramètre <span class="math inline">\(\theta\)</span> qui donne le taux d’apparition de l’événement modélisé, et qu’en moyenne, le nombre attendu de ragondins ici devrait être égal à ce paramètre.</p>
 <p>Dans ce GLM avec distribution de Poisson, les coefficients <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span> s’interprètent sur l’échelle logarithmique. Plus précisément, une variation d’une unité de température entraîne une multiplication du nombre moyen de ragondins par <span class="math inline">\(\exp(\beta_1)\)</span>. Par exemple, si <span class="math inline">\(\beta_1 = 0.3\)</span>, alors une augmentation d’un degré correspond à une hausse attendue d’environ <span class="math inline">\(35\%\)</span> du nombre moyen de ragondins, puisque <span class="math inline">\(\exp(0.3) \approx 1.35\)</span>. On peut aussi visualiser graphiquement la relation entre le nombre de ragondins et la température, comme dans les Figures <a href="glms.html#fig:pooling-ragondins">6.8</a> et <a href="glms.html#fig:partial-ragondins">6.10</a> à venir.</p>
 <p>Dans un premier modèle, oublions la structure en groupes/niveaux dans les données, ici les transects. On fait passer une seule droite dans le nuage de points, c’est le modèle avec “complete pooling” ou regroupement complet :</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># on n'oublie pas de standardiser la covariable température</span></span>
 <span><span class="va">sim_simple</span><span class="op">$</span><span class="va">Temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">sim_simple</span><span class="op">$</span><span class="va">Temperature</span><span class="op">)</span></span>
 <span></span>
@@ -252,7 +252,7 @@ Figure 6.5: Relation entre le nombre de ragondins et la température par transec
 <span>                    data <span class="op">=</span> <span class="va">sim_simple</span>, <span class="co"># données simulées</span></span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span><span class="op">)</span> <span class="co"># distribution de Poisson, lien log</span></span></code></pre></div>
 <p>Les résultats sont les suivants :</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit_complete</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  Family: poisson </span></span>
 <span><span class="co">#&gt;   Links: mu = log </span></span>
@@ -277,13 +277,13 @@ Figure 6.6: Vérification de l’adéquation du modèle avec complete pooling ou
 </p>
 </div>
 <p>Pour prendre en compte la structuration des données, on peut ajuster un autre modèle dans lequel le transect est traité comme un effet fixe. Autrement dit, on ajuste une droite séparée pour chaque transect, avec son propre intercept, mais avec la même pente :</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># modèle avec no pooling / pas de regroupement (effet fixe transect)</span></span>
 <span><span class="va">fit_nopool</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">Ragondins</span> <span class="op">~</span> <span class="va">Temp</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">Transect</span><span class="op">)</span>,</span>
 <span>                    data <span class="op">=</span> <span class="va">sim_simple</span>, <span class="co"># données simulées</span></span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span><span class="op">)</span> <span class="co"># distribution de Poisson, lien log</span></span></code></pre></div>
 <p>Les résultats sont les suivants :</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit_nopool</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  Family: poisson </span></span>
 <span><span class="co">#&gt;   Links: mu = log </span></span>
@@ -310,7 +310,7 @@ Figure 6.6: Vérification de l’adéquation du modèle avec complete pooling ou
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
 <span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
 <p>Ici j’ai indiqué à <code>brms</code> de considérer le transect comme une variable catégorielle, un facteur, c’est le <code>as.factor(Transect)</code> dans l’appel à la fonction <code><a href="https://paulbuerkner.com/brms/reference/brm.html">brm()</a></code>. Par défaut, le premier niveau du facteur (ici le transect 1) est utilisé comme niveau de référence. Cela signifie que l’intercept <span class="math inline">\(\beta_0\)</span> estimé dans le modèle correspond au transect 1, et que les coefficients associés aux autres transects représentent les écarts (sur l’échelle log) par rapport à ce transect 1. Par exemple, on estime <span class="math inline">\(\beta_0\)</span> à 3.9, c’est l’intercept pour le transect 1. On estime aussi le décalage entre le transect 1 et le transect 2 à 0.04. Alors l’intercept pour le transect 2 est donné par 3.94. Ce calcul peut être répété pour chaque transect pour obtenir les intercepts spécifiques, que l’on peut ensuite transformer via l’exponentielle pour retrouver le nombre moyen attendu de ragondins (sur l’échelle d’origine) pour une température moyenne (qui vaut 0 ici puisqu’on a standardisé la variable température) :</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># extraire l'intercept (référence = Transect 1)</span></span>
 <span><span class="va">beta0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/fixed.effects.html">fixef</a></span><span class="op">(</span><span class="va">fit_nopool</span><span class="op">)</span><span class="op">[</span><span class="st">"Intercept"</span>, <span class="st">"Estimate"</span><span class="op">]</span></span>
 <span></span>
@@ -387,14 +387,14 @@ Figure 6.8: Comparaison entre les modèles complete pooling (noir) et no pooling
 <span class="header-section-number">6.3.4.1</span> Ajustement du modèle en bayésien avec <code>brms</code><a class="anchor" aria-label="anchor" href="#ajustement-du-mod%C3%A8le-en-bay%C3%A9sien-avec-brms"><i class="fas fa-link"></i></a>
 </h4>
 <p>On ajuste d’abord le GLMM avec partial pooling avec <code>brms</code> :</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># modèle avec partial pooling (effet aléatoire transect)</span></span>
 <span><span class="va">fit_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">Ragondins</span> <span class="op">~</span> <span class="va">Temp</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Transect</span><span class="op">)</span>, <span class="co"># relation nombre de ragondins vs température avec effet aléatoire transect sur l'intercept</span></span>
 <span>                    data <span class="op">=</span> <span class="va">sim_simple</span>, <span class="co"># données simulées</span></span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span><span class="op">)</span> <span class="co"># distribution de Poisson, lien log</span></span></code></pre></div>
 <p>Dans la syntaxe, l’effet aléatoire sur l’intercept est spécifié avec <code>(1 | Transect)</code>, où le <code>1</code> signifie qu’on travaille sur l’intercept, et qu’il y a un intercept par (c’est le <code>|</code>) transect. Si on voulait ajouter un effet aléatoire sur la pente, on écrirait <code>(1 + Temp | Transect)</code>.</p>
 <p>Les résultats sont :</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit_partial</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  Family: poisson </span></span>
 <span><span class="co">#&gt;   Links: mu = log </span></span>
@@ -418,7 +418,7 @@ Figure 6.8: Comparaison entre les modèles complete pooling (noir) et no pooling
 <span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
 <p>Ce résumé fournit les estimations a posteriori des effets fixes ainsi que des écarts-types des effets aléatoires. La ligne <code>sd(Intercept)</code> donne l’estimation de <span class="math inline">\(\sigma\)</span>, proche du 0.3 utilisé pour simuler les données (l’intervalle de crédibilité contient la vraie valeur). Les lignes <code>Intercept</code> et <code>Temp</code> donnent les estimations de <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span> sur l’échelle log. On verra un peu plus tard comment vérifier que ces estimations sont proches des valeurs utilisées pour simuler les données.</p>
 <p>On peut aussi jeter un coup d’oeil aux densités et traces des paramètres (Figure <a href="glms.html#fig:model-diagnostics">6.9</a>) :</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">fit_partial</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:model-diagnostics"></span>
@@ -449,7 +449,7 @@ Figure 6.11: Vérification de l’adéquation du modèle avec partial pooling ou
 \beta_0^{\text{réel}} = \beta_0^{\text{standardisé}} - \beta_1^{\text{standardisé}} \times \frac{\text{moyenne de la température}}{\text{écart-type de la température}}
 \]</span></p>
 <p>Dans <code>R</code>, vous pouvez utiliser le code suivant :</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># on récupère les valeurs simulées dans les distributions a posteriori des paramètres</span></span>
 <span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_matrix.html">as_draws_matrix</a></span><span class="op">(</span><span class="va">fit_partial</span><span class="op">)</span></span>
 <span><span class="va">sbzero</span> <span class="op">&lt;-</span> <span class="va">post</span><span class="op">[</span>, <span class="st">"b_Intercept"</span><span class="op">]</span></span>
@@ -463,7 +463,7 @@ Figure 6.11: Vérification de l’adéquation du modèle avec partial pooling ou
 <span><span class="va">bun</span>   <span class="op">&lt;-</span> <span class="va">sbun</span> <span class="op">/</span> <span class="va">sg</span> <span class="co"># beta1 réel</span></span>
 <span><span class="va">bzero</span> <span class="op">&lt;-</span> <span class="va">sbzero</span> <span class="op">-</span> <span class="va">sbun</span> <span class="op">*</span> <span class="va">mu</span> <span class="op">/</span> <span class="va">sg</span> <span class="co"># beta0 réel</span></span></code></pre></div>
 <p>On peut alors visualiser les coefficients sur l’échelle originale et comparer à la valeur utilisée pour simuler les données comme dans les Figures <a href="glms.html#fig:hist-b0-reel">6.12</a> et <a href="glms.html#fig:hist-b1-reel">6.13</a> :</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>b0 <span class="op">=</span> <span class="va">bzero</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">b0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span>, fill <span class="op">=</span> <span class="st">"skyblue"</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -479,7 +479,7 @@ Figure 6.11: Vérification de l’adéquation du modèle avec partial pooling ou
 Figure 6.12: Distribution a posteriori de l’intercept moyen (échelle réelle). La ligne rouge indique la vraie valeur (0).
 </p>
 </div>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>b1 <span class="op">=</span> <span class="va">bun</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">b1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span>, fill <span class="op">=</span> <span class="st">"skyblue"</span>, bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
@@ -497,13 +497,13 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 </div>
 <p>On retrouve les paramètres ayant servi à simuler les données (en rouge). Il ne s’agit que d’une seule simulation, c’est donc normal qu’en moyenne on n’obtienne pas exactement la même chose (c’est-à-dire que le trait rouge ne coïncide pas plus à la plus grande valeur de l’histogramme), c’est seulement en répétant l’expérience de simulations un grand nombre de fois que cela se produirait.</p>
 <p>En bonus, comparons les modèles avec et sans effet de la température. Cela permet de tester la pertinence de la température comme variable explicative :</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># modèle avec partial pooling (effet aléatoire transect)</span></span>
 <span><span class="va">fit_partial2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">Ragondins</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Transect</span><span class="op">)</span>, <span class="co"># un intercept moyen, pas d'effet de la température, avec l'effet aléatoire transect</span></span>
 <span>                    data <span class="op">=</span> <span class="va">sim_simple</span>, <span class="co"># données simulées</span></span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">poisson</a></span><span class="op">(</span><span class="st">"log"</span><span class="op">)</span><span class="op">)</span> <span class="co"># distribution de Poisson, lien log</span></span></code></pre></div>
 <p>On calcule le WAIC pour chaque modèle, et on les compare :</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">waic1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit_partial</span><span class="op">)</span></span>
 <span><span class="va">waic2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit_partial2</span><span class="op">)</span></span>
 <span><span class="fu">tibble</span><span class="op">(</span></span>
@@ -524,17 +524,17 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 </h4>
 <p>Pour clôre ce chapitre, je vous propose de faire la même analyse avec le package <code>lme4</code> en fréquentiste.</p>
 <p>On charge ledit package :</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span></code></pre></div>
 <p>Puis on applique le GLMM, notez que la syntaxe de <code>brms</code> est inspirée de celle utilisée dans <code>lme4</code> :</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_lme4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html">glmer</a></span><span class="op">(</span></span>
 <span>  <span class="va">Ragondins</span> <span class="op">~</span> <span class="va">Temp</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Transect</span><span class="op">)</span>, <span class="co"># formule complète</span></span>
 <span>  data   <span class="op">=</span> <span class="va">sim_simple</span>,        <span class="co"># jeu de données simulé précédemment</span></span>
 <span>  family <span class="op">=</span> <span class="va">poisson</span>      <span class="co"># distribution adaptée à un comptage</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Voici les résultats :</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit_lme4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized linear mixed model fit by maximum likelihood (Laplace</span></span>
 <span><span class="co">#&gt;   Approximation) [glmerMod]</span></span>
@@ -597,9 +597,18 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 </div>
 </div>
 </div>
-<div id="en-résumé-5" class="section level2" number="6.4">
+<div id="application-interactive-associée-au-chapitre-5" class="section level2" number="6.4">
 <h2>
-<span class="header-section-number">6.4</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-5"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.4</span> Application interactive associée au chapitre<a class="anchor" aria-label="anchor" href="#application-interactive-associ%C3%A9e-au-chapitre-5"><i class="fas fa-link"></i></a>
+</h2>
+<p>Une application interactive (<code>shinyApp</code>) accompagne ce chapitre pour illustrer les modèles linéaires généralisés et généralisés mixtes. Elle met en évidence les différences entre complete pooling, no pooling et partial pooling, et permet de visualiser l’effet des structures hiérarchiques sur l’inférence. L’application est fournie dans le script <code>06-glmms.R</code> et peut être lancée depuis <code>R</code> avec :</p>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/">shiny</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html">runApp</a></span><span class="op">(</span><span class="st">"06-glmms.R"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="en-résumé-5" class="section level2" number="6.5">
+<h2>
+<span class="header-section-number">6.5</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-5"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p>Les modèles linéaires généralisés (GLM) permettent d’étendre les modèles linéaires aux situations où l’on ne peut pas supposer une erreur normale.</p></li>
@@ -627,7 +636,8 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 <li><a class="nav-link" href="#lapproche-glmm"><span class="header-section-number">6.3.4</span> L’approche GLMM</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-5"><span class="header-section-number">6.4</span> En résumé</a></li>
+<li><a class="nav-link" href="#application-interactive-associ%C3%A9e-au-chapitre-5"><span class="header-section-number">6.4</span> Application interactive associée au chapitre</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-5"><span class="header-section-number">6.5</span> En résumé</a></li>
 </ul>
 
       <div class="book-extra">
@@ -645,7 +655,7 @@ Figure 6.13: Distribution a posteriori de l’effet de la température (échelle
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-30.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-02-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

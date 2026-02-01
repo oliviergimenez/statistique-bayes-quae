@@ -190,6 +190,16 @@ Plus généralement, lorsque l'on dispose de suffisamment de données, les estim
 
 C’est une illustration du lien entre les deux approches, et du rôle central que joue la vraisemblance en statistique : elle constitue le point commun fondamental entre les approches bayésienne et fréquentiste.
 
+## Application interactive associée au chapitre
+
+Ce chapitre est accompagné d’une application interactive (`shinyApp`) permettant d’explorer le modèle bêta–binomial et la mise à jour bayésienne de manière visuelle et intuitive. Elle permet notamment de voir comment le prior, les données observées et la distribution a posteriori interagissent. L'application est fournie dans le script `01-betabinom.R` et peut être lancée depuis `R` avec :
+
+
+``` r
+library(shiny)
+runApp("01-betabinom.R")
+```
+
 ## En résumé
 
 - Le théorème de Bayes est un outil de mise à jour des connaissances.

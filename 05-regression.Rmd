@@ -471,6 +471,15 @@ loo_compare(loo0, loo1)
 
 Dans cette sortie `R`, `elpd_diff` donne l’écart de LOO-CV entre chaque modèle et celui qui a la plus grande valeur. Ainsi, le meilleur modèle est sur la première ligne avec un elpd_diff égal à zéro ; ici, c’est le modèle avec la covariable. On arrive donc à la même conclusion qu’avec le WAIC. 
 
+## Application interactive associée au chapitre
+
+Ce chapitre est accompagné d’une application interactive (`shinyApp`) dédiée à la régression linéaire. Elle permet de simuler des données, d’ajuster un modèle avec `brms`, et d’explorer l’effet des paramètres, des priors et de la taille d’échantillon sur les résultats. L'application est fournie dans le script `05-lms.R` et peut être lancée depuis `R` avec :
+
+```{r, eval = FALSE}
+library(shiny)
+runApp("05-lms.R")
+```
+
 ## En résumé
 
 + La régression linéaire permet de modéliser la relation entre une variable réponse continue et une ou plusieurs variables explicatives, en tenant compte d'une variabilité résiduelle.

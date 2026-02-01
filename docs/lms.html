@@ -119,17 +119,17 @@
 </h3>
 <p>Qu’est-ce que j’entends par simuler des données ? L’analyse et la simulation des données sont deux faces d’un même modèle. Dans l’analyse, on utilise les données pour estimer les paramètres d’un modèle. Dans la simulation, on fixe les paramètres et on utilise le modèle pour générer des données. Une raison d’utiliser les simulations est que cette gymnastique va nous obliger à bien comprendre le modèle ; si je n’arrive pas à simuler des données à partir d’un modèle, c’est que je n’ai pas complètement compris comment il marchait. Il y a des tas d’autres bonnes raisons pour utiliser les simulations. Comme la vérité (les paramètres et le modèle) est connue, on peut vérifier que le modèle est bien codé. On peut évaluer le biais et la précision des estimations de nos paramètres, évaluer les effets de ne pas respecter les hypothèses du modèle, planifier un protocole de récolte de données ou encore évaluer la puissance d’un test statistique. Bref, c’est une technique très utile à avoir dans votre boîte à outils !</p>
 <p>Revenons à notre exemple. Pour simuler des données selon le modèle de régression linéaire, on commence par fixer nos paramètres : <span class="math inline">\(\beta_0 = 0.1\)</span>, <span class="math inline">\(\beta_1 = 1\)</span> et <span class="math inline">\(\sigma^2 = 0.5\)</span> :</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">beta0</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># valeur vraie de l'intercept</span></span>
 <span><span class="va">beta1</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># valeur vraie du coefficient de x</span></span>
 <span><span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="co"># écart-type des erreurs</span></span></code></pre></div>
 <p>Puis on simule <span class="math inline">\(n = 100\)</span> valeurs <span class="math inline">\(x_i\)</span> de notre variable explicative selon une loi normale de moyenne 0 et d’écart-type 1, autrement dit <span class="math inline">\(N(0,1)\)</span> :</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">666</span><span class="op">)</span> <span class="co"># pour rendre la simulation reproductible</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="co"># nombre d'observations</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># covariable x simulée selon une loi normale standard</span></span></code></pre></div>
 <p>Enfin, on simule les valeurs de la variable réponse, en ajoutant une erreur normale <code>epsilon</code> à la relation linéaire <code>beta0 + beta1 * x</code> :</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epsilon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span> <span class="co"># génère les erreurs normales</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">beta0</span> <span class="op">+</span> <span class="va">beta1</span> <span class="op">*</span> <span class="va">x</span> <span class="op">+</span> <span class="va">epsilon</span> <span class="co"># ajoute les erreurs à la relation linéaire</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">y</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></code></pre></div>
@@ -146,12 +146,12 @@ Figure 5.1: Données simulées (n = 100) selon le modèle <span class="math inli
 <span class="header-section-number">5.2.3</span> L’ajustement avec <code>brms</code><a class="anchor" aria-label="anchor" href="#lajustement-avec-brms"><i class="fas fa-link"></i></a>
 </h3>
 <p>Dans cette section, on utilise <code>brms</code> pour ajuster le modèle de régression linéaire aux données qu’on vient de générer. Si tout se passe bien, les paramètres estimés devraient être proches des valeurs utilisées pour générer les données. Je vais relativement vite ici puisqu’on a couvert les différentes étapes au Chapitre <a href="logiciels.html#logiciels">3</a>. La syntaxe est très proche de celle qu’on utiliserait pour ajuster le modèle par maximum de vraisemblance avec la fonction <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> dans <code>R</code> :</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="co"># formule : y en fonction de x</span></span>
 <span>               data <span class="op">=</span> <span class="va">data</span>, <span class="co"># jeu de données</span></span>
 <span>               family <span class="op">=</span> <span class="va">gaussian</span><span class="op">)</span> <span class="co"># distribution normale</span></span></code></pre></div>
 <p>Jetons un coup d’oeil aux résumés numériques et aux diagnostics de convergence :</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  Family: gaussian </span></span>
 <span><span class="co">#&gt;   Links: mu = identity; sigma = identity </span></span>
@@ -174,7 +174,7 @@ Figure 5.1: Données simulées (n = 100) selon le modèle <span class="math inli
 <span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
 <p>Par défaut, <code>brms</code> a utilisé quatre chaînes qui ont tourné pendant 2000 itérations chacune avec 1000 itérations utilisées comme burn-in, soit au total 4000 itérations pour l’inférence a posteriori. Dans les sorties, <code>Intercept</code>, <code>x</code> et <code>sigma</code> correspondent respectivement aux paramètres <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> et <span class="math inline">\(\sigma\)</span> du modèle. Le <span class="math inline">\(\hat{R}\)</span> pour les 3 paramètres vaut 1, et les tailles d’échantillon efficaces sont satisfaisantes. Les intervalles de crédibilité contiennent la vraie valeur du paramètre utilisée pour simuler les données.</p>
 <p>On vérifie que le mixing est bon (Figure <a href="lms.html#fig:fig-posterior-regression">5.2</a>) :</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:fig-posterior-regression"></span>
@@ -188,7 +188,7 @@ Figure 5.2: Histogrammes des distributions a posteriori (colonne de gauche) et t
 <span class="header-section-number">5.2.4</span> Des priors faiblement informatifs<a class="anchor" aria-label="anchor" href="#weakly-informative-priors"><i class="fas fa-link"></i></a>
 </h3>
 <p>Plutôt que d’utiliser les priors par défaut de <code>brms</code>, choisissons d’autres priors. Nous allons utiliser des priors faiblement informatifs, et plus spécifiquement une normale avec moyenne 0 et écart-type 1.5 ou <span class="math inline">\(N(0,1.5)\)</span> pour les paramètres de régression <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span>. On a déjà parlé des priors faiblement informatifs au Chapitre <a href="prior.html#prior">4</a>. L’idée est proche de celle des priors vagues ou non-informatifs, dans le sens où l’on s’efforce de refléter via les priors faiblement informatifs le fait qu’on n’a pas vraiment d’information sur les paramètres du modèle. La différence est que les priors non-informatifs peuvent induire des valeurs aberrantes comme on l’a vu au Chapitre <a href="prior.html#prior">4</a>. C’est encore le cas ici. Prenez par exemple des <span class="math inline">\(N(0,100)\)</span> pour les paramètres de la relation linéaire qui lie la masse des ragondins à la température, et simulez tout un tas de valeurs dans ces priors, puis formez la relation linéaire :</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># nombre de droites à simuler</span></span>
 <span><span class="va">n_lines</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
@@ -242,20 +242,20 @@ y_i &amp;\sim \text{Normale}(\mu_i, \sigma^2) &amp;\text{[vraisemblance]}\\
 \sigma &amp;\sim \text{Exp}(1) &amp;\text{[prior sur les paramètres]} \\
 \end{align}\]</span></p>
 <p>Spécifions ces priors :</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myprior</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>, <span class="co"># prior sur le coefficient de x</span></span>
 <span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>, <span class="co"># prior sur l'intercept</span></span>
 <span>  <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html">prior</a></span><span class="op">(</span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/brmsfamily.html">exponential</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span> <span class="co"># prior sur l'écart-type de l'erreur</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Puis refaisons l’ajustement avec <code>brms</code> :</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm.brms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brm.html">brm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, </span>
 <span>               data <span class="op">=</span> <span class="va">data</span>, </span>
 <span>               family <span class="op">=</span> <span class="va">gaussian</span>, </span>
 <span>               prior <span class="op">=</span> <span class="va">myprior</span><span class="op">)</span></span></code></pre></div>
 <p>On vérifie que les résumés numériques obtenus sont proches de ceux obtenus avec les priors par défaut, et surtout des valeurs utilisées pour simuler les données :</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  Family: gaussian </span></span>
 <span><span class="co">#&gt;   Links: mu = identity; sigma = identity </span></span>
@@ -298,7 +298,7 @@ Figure 5.6: Comparaison des estimations des paramètres du modèle (intercept ou
 </h2>
 <p>La qualité de l’ajustement d’un modèle aux données est essentielle pour évaluer la confiance que l’on peut accorder aux estimations des paramètres. Les tests de qualité d’ajustement (ou goodness-of-fit en anglais) sont bien établis en statistique fréquentiste, et beaucoup d’entre eux peuvent aussi être utilisés dans des modèles bayésiens simples. C’est le cas par exemple de l’analyse des résidus.</p>
 <p>Dans le cas d’une régression linéaire, il y a plusieurs hypothèses sur lesquelles repose le modèle. Ce sont les hypothèses d’indépendance, de normalité, de linéarité et d’homoscédasticité (<span class="math inline">\(\sigma\)</span> ne varie pas avec la variable explicative). On peut en général évaluer les deux premières avec le contexte. Concernant les deux autres, on peut visualiser l’ajustement en superposant la droite de régression estimée au nuage de points observés. Avec le package <code>brms</code>, cela donne la Figure <a href="lms.html#fig:brms-fit-plot">5.7</a> :</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># extrait les valeurs tirées dans les distributions a posteriori des paramètres</span></span>
 <span><span class="va">post</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_df.html">as_draws_df</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
 <span></span>
@@ -338,7 +338,7 @@ Figure 5.7: Ajustement du modèle linéaire par brms. La droite bleue est la ré
 </div>
 <p>Les méthodes bayésiennes sont souvent utilisées pour des modèles plus complexes que la régression linéaire (comme les modèles mixtes, voir Chapitre <a href="glms.html#glms">6</a>), pour lesquels il n’existe pas de tests de qualité d’ajustement standards “clé en main”. Dans ces situations, on utilise couramment ce qu’on appelle des posterior predictive checks. L’idée est de simuler de nouveaux jeux de données à partir de la distribution a posteriori des paramètres du modèle, puis de les comparer aux données observées. Plus les données simulées ressemblent aux données réelles, plus cela suggère que le modèle s’ajuste bien. Cette comparaison peut se faire de manière visuelle ou à l’aide d’une Bayesian p-value qui quantifie l’écart entre données simulées et observées.</p>
 <p>Dans <code>brms</code>, il suffit de faire :</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ppcheck-brms"></span>
@@ -348,7 +348,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 </div>
 <p>La fonction <code><a href="https://mc-stan.org/bayesplot/reference/pp_check.html">pp_check()</a></code> génère des graphiques de posterior predictive checks (Figure <a href="lms.html#fig:ppcheck-brms">5.8</a>). Elle compare les données observées à des données simulées à partir du modèle ajusté. Si le modèle est bien ajusté aux données, alors on devrait pouvoir l’utiliser pour générer des données qui ressemblent aux données observées. Par conséquent, si les courbes simulées recouvrent bien les observations, cela indique que le modèle capte correctement la structure des données. Dans le cas contraire, cela peut suggérer un problème de spécification du modèle, par exemple un lien ou une famille de distribution inadaptée (voir Chapitre <a href="glms.html#glms">6</a>).</p>
 <p>On peut également calculer une Bayesian p-value (ou p-valeur bayésienne) qui représente la proportion de jeux de données simulés sous le modèle pour lesquels la statistique choisie (ici la moyenne) est aussi grande ou plus grande que celle observée. Une valeur proche de 0 ou de 1 peut indiquer un mauvais ajustement du modèle pour cette statistique particulière, tandis qu’une valeur proche de 0.5 suggère un bon ajustement. Avec <code>brms</code>, cette Bayesian p-value s’obtient comme suit :</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraire les simulations de y_rep</span></span>
 <span><span class="va">y_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">lm.brms</span><span class="op">)</span></span>
 <span></span>
@@ -377,21 +377,21 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <p>Le WAIC (Watanabe-Akaike Information Criterion) et le LOO-CV (Leave-One-Out cross-validation) permettent de comparer des modèles en estimant leur capacité à prédire de nouvelles données. Ils combinent l’ajustement aux données observées avec une pénalisation de la complexité du modèle. Une valeur de WAIC ou de LOO-CV plus faible indique un meilleur modèle. Le WAIC est basé sur une approximation théorique, tandis que le LOO-CV repose sur une validation croisée. Le LOO-CV est généralement plus précis, surtout pour les modèles complexes ou les jeux de données de taille limitée, mais il est aussi plus coûteux en calcul. En pratique, lorsque les modèles sont bien spécifiés et que l’échantillon est grand, WAIC et LOO-CV donnent souvent des résultats très proches pour un même modèle.</p>
 <p>Je reviens à l’exemple de la régression linéaire. On aimerait tester l’hypothèse que la variable <span class="math inline">\(x\)</span> explique bien une part importante de la variation dans <span class="math inline">\(y\)</span>. Cela revient à comparer les modèles avec et sans cette variable.</p>
 <p>Dans <code>brms</code>, on ajuste ces deux modèles avec des priors faiblement informatifs :</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="lms.html#cb56-1" tabindex="-1"></a><span class="co"># Modèle avec covariable</span></span>
-<span id="cb56-2"><a href="lms.html#cb56-2" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
-<span id="cb56-3"><a href="lms.html#cb56-3" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
-<span id="cb56-4"><a href="lms.html#cb56-4" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
-<span id="cb56-5"><a href="lms.html#cb56-5" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> b),</span>
-<span id="cb56-6"><a href="lms.html#cb56-6" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma)</span>
-<span id="cb56-7"><a href="lms.html#cb56-7" tabindex="-1"></a>            ))</span>
-<span id="cb56-8"><a href="lms.html#cb56-8" tabindex="-1"></a></span>
-<span id="cb56-9"><a href="lms.html#cb56-9" tabindex="-1"></a><span class="co"># Modèle sans covariable</span></span>
-<span id="cb56-10"><a href="lms.html#cb56-10" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
-<span id="cb56-11"><a href="lms.html#cb56-11" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
-<span id="cb56-12"><a href="lms.html#cb56-12" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
-<span id="cb56-13"><a href="lms.html#cb56-13" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="lms.html#cb60-1" tabindex="-1"></a><span class="co"># Modèle avec covariable</span></span>
+<span id="cb60-2"><a href="lms.html#cb60-2" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb60-3"><a href="lms.html#cb60-3" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb60-4"><a href="lms.html#cb60-4" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
+<span id="cb60-5"><a href="lms.html#cb60-5" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> b),</span>
+<span id="cb60-6"><a href="lms.html#cb60-6" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma)</span>
+<span id="cb60-7"><a href="lms.html#cb60-7" tabindex="-1"></a>            ))</span>
+<span id="cb60-8"><a href="lms.html#cb60-8" tabindex="-1"></a></span>
+<span id="cb60-9"><a href="lms.html#cb60-9" tabindex="-1"></a><span class="co"># Modèle sans covariable</span></span>
+<span id="cb60-10"><a href="lms.html#cb60-10" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">brm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb60-11"><a href="lms.html#cb60-11" tabindex="-1"></a>            <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb60-12"><a href="lms.html#cb60-12" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">1.5</span>), <span class="at">class =</span> Intercept),</span>
+<span id="cb60-13"><a href="lms.html#cb60-13" tabindex="-1"></a>              <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sigma))</span></code></pre></div>
 <p>La fonction <code><a href="https://mc-stan.org/loo/reference/waic.html">waic()</a></code> permet d’extraire le WAIC, où le modèle avec la plus petite valeur est préféré. Si le modèle avec <span class="math inline">\(x\)</span> est bien le bon (c’est ce qu’on attend puisque c’est comme ça que les données ont été simulées), on devrait voir qu’il est nettement meilleur que celui sans covariable :</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calcul du WAIC pour chaque modèle</span></span>
 <span><span class="va">waic1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit1</span><span class="op">)</span></span>
 <span><span class="va">waic0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/waic.html">waic</a></span><span class="op">(</span><span class="va">fit0</span><span class="op">)</span></span>
@@ -404,7 +404,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span><span class="co">#&gt;  Estimate        SE </span></span>
 <span><span class="co">#&gt; 333.97491  17.23233</span></span></code></pre></div>
 <p>Ouf, c’est bien le cas. La fonction <code><a href="https://mc-stan.org/loo/reference/loo.html">loo()</a></code> permet de calculer le LOO-CV (une approximation en fait) :</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Leave-one-out cross-validation</span></span>
 <span><span class="va">loo1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/loo.html">loo</a></span><span class="op">(</span><span class="va">fit1</span><span class="op">)</span></span>
 <span><span class="va">loo0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/loo/reference/loo.html">loo</a></span><span class="op">(</span><span class="va">fit0</span><span class="op">)</span></span>
@@ -416,9 +416,18 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <span><span class="co">#&gt; fit0 -80.7       9.1</span></span></code></pre></div>
 <p>Dans cette sortie <code>R</code>, <code>elpd_diff</code> donne l’écart de LOO-CV entre chaque modèle et celui qui a la plus grande valeur. Ainsi, le meilleur modèle est sur la première ligne avec un elpd_diff égal à zéro ; ici, c’est le modèle avec la covariable. On arrive donc à la même conclusion qu’avec le WAIC.</p>
 </div>
-<div id="en-résumé-4" class="section level2" number="5.5">
+<div id="application-interactive-associée-au-chapitre-4" class="section level2" number="5.5">
 <h2>
-<span class="header-section-number">5.5</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-4"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.5</span> Application interactive associée au chapitre<a class="anchor" aria-label="anchor" href="#application-interactive-associ%C3%A9e-au-chapitre-4"><i class="fas fa-link"></i></a>
+</h2>
+<p>Ce chapitre est accompagné d’une application interactive (<code>shinyApp</code>) dédiée à la régression linéaire. Elle permet de simuler des données, d’ajuster un modèle avec <code>brms</code>, et d’explorer l’effet des paramètres, des priors et de la taille d’échantillon sur les résultats. L’application est fournie dans le script <code>05-lms.R</code> et peut être lancée depuis <code>R</code> avec :</p>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/">shiny</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html">runApp</a></span><span class="op">(</span><span class="st">"05-lms.R"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="en-résumé-4" class="section level2" number="5.6">
+<h2>
+<span class="header-section-number">5.6</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9-4"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p>La régression linéaire permet de modéliser la relation entre une variable réponse continue et une ou plusieurs variables explicatives, en tenant compte d’une variabilité résiduelle.</p></li>
@@ -447,7 +456,8 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 </li>
 <li><a class="nav-link" href="#l%C3%A9valuation-des-mod%C3%A8les"><span class="header-section-number">5.3</span> L’évaluation des modèles</a></li>
 <li><a class="nav-link" href="#la-comparaison-de-mod%C3%A8les"><span class="header-section-number">5.4</span> La comparaison de modèles</a></li>
-<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-4"><span class="header-section-number">5.5</span> En résumé</a></li>
+<li><a class="nav-link" href="#application-interactive-associ%C3%A9e-au-chapitre-4"><span class="header-section-number">5.5</span> Application interactive associée au chapitre</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9-4"><span class="header-section-number">5.6</span> En résumé</a></li>
 </ul>
 
       <div class="book-extra">
@@ -465,7 +475,7 @@ Figure 5.8: Posterior predictive checks réalisés avec brms. La courbe noire co
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-30.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-02-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

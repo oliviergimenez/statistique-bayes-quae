@@ -245,9 +245,18 @@ Figure 1.5: Distribution a priori uniforme (rouge) et distribution a posteriori 
 <p>Plus généralement, lorsque l’on dispose de suffisamment de données, les estimateurs bayésien et fréquentiste ont tendance à être très proches. Intuitivement, les données finissent par « dominer » l’information a priori. Grossièrement, le mode de la distribution a posteriori (la valeur pour laquelle la densité est maximale) correspond exactement à l’estimateur du maximum de vraisemblance.</p>
 <p>C’est une illustration du lien entre les deux approches, et du rôle central que joue la vraisemblance en statistique : elle constitue le point commun fondamental entre les approches bayésienne et fréquentiste.</p>
 </div>
-<div id="en-résumé" class="section level2" number="1.7">
+<div id="application-interactive-associée-au-chapitre" class="section level2" number="1.7">
 <h2>
-<span class="header-section-number">1.7</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7</span> Application interactive associée au chapitre<a class="anchor" aria-label="anchor" href="#application-interactive-associ%C3%A9e-au-chapitre"><i class="fas fa-link"></i></a>
+</h2>
+<p>Ce chapitre est accompagné d’une application interactive (<code>shinyApp</code>) permettant d’explorer le modèle bêta–binomial et la mise à jour bayésienne de manière visuelle et intuitive. Elle permet notamment de voir comment le prior, les données observées et la distribution a posteriori interagissent. L’application est fournie dans le script <code>01-betabinom.R</code> et peut être lancée depuis <code>R</code> avec :</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/">shiny</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html">runApp</a></span><span class="op">(</span><span class="st">"01-betabinom.R"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="en-résumé" class="section level2" number="1.8">
+<h2>
+<span class="header-section-number">1.8</span> En résumé<a class="anchor" aria-label="anchor" href="#en-r%C3%A9sum%C3%A9"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li>Le théorème de Bayes est un outil de mise à jour des connaissances.</li>
@@ -273,7 +282,8 @@ Figure 1.5: Distribution a priori uniforme (rouge) et distribution a posteriori 
 <li><a class="nav-link" href="#un-exemple-fil-rouge"><span class="header-section-number">1.4</span> Un exemple fil rouge</a></li>
 <li><a class="nav-link" href="#maxvrais"><span class="header-section-number">1.5</span> Le maximum de vraisemblance</a></li>
 <li><a class="nav-link" href="#et-en-bay%C3%A9sien"><span class="header-section-number">1.6</span> Et en bayésien?</a></li>
-<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9"><span class="header-section-number">1.7</span> En résumé</a></li>
+<li><a class="nav-link" href="#application-interactive-associ%C3%A9e-au-chapitre"><span class="header-section-number">1.7</span> Application interactive associée au chapitre</a></li>
+<li><a class="nav-link" href="#en-r%C3%A9sum%C3%A9"><span class="header-section-number">1.8</span> En résumé</a></li>
 </ul>
 
       <div class="book-extra">
@@ -291,7 +301,7 @@ Figure 1.5: Distribution a priori uniforme (rouge) et distribution a posteriori 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-01-30.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-02-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

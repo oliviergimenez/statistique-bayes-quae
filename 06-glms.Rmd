@@ -758,6 +758,15 @@ On peut noter que les estimations des paramètres obtenus sont très proches des
 <!-- visreg::visreg(fit_lme4, xvar = 'Temp') -->
 <!-- ``` -->
 
+## Application interactive associée au chapitre
+
+Une application interactive (`shinyApp`) accompagne ce chapitre pour illustrer les modèles linéaires généralisés et généralisés mixtes. Elle met en évidence les différences entre complete pooling, no pooling et partial pooling, et permet de visualiser l’effet des structures hiérarchiques sur l’inférence. L'application est fournie dans le script `06-glmms.R` et peut être lancée depuis `R` avec :
+
+```{r, eval = FALSE}
+library(shiny)
+runApp("06-glmms.R")
+```
+
 ## En résumé
 
 + Les modèles linéaires généralisés (GLM) permettent d’étendre les modèles linéaires aux situations où l’on ne peut pas supposer une erreur normale.

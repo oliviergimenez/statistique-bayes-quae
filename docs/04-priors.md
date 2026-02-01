@@ -164,10 +164,10 @@ On peut vérifier que cette distribution bêta a bien pour moyenne et écart-typ
 ech_prior <- rbeta(n = 10000, shape1 = 24.3, shape2 = 18.3)
 # on calcule la moyenne empirique des tirages (doit approcher 0.57)
 mean(ech_prior)
-#> [1] 0.5704716
+#> [1] 0.5716546
 # on calcule l'écart-type empirique des tirages (doit approcher 0.075)
 sd(ech_prior)
-#> [1] 0.07441795
+#> [1] 0.075211
 ```
 
 On peut donc adopter un prior \(\text{Beta}(a=24.3,\,b=18.3)\) pour tenir compte de l'information moyenne et sa variabilité obtenue par la relation allométrique survie-masse. 
@@ -253,6 +253,16 @@ Ici la distribution induite sur $\theta$ est uniforme, couvrant surtout la plage
 </div>
 
 Il existe aussi des priors invariants, c’est-à-dire dont la forme tient compte de l’échelle du paramètre. Le prior de Jeffreys en est un exemple : il maximise l’information apportée par les données, tout en restant invariant par reparamétrisation. Par exemple, pour une probabilité \(\theta\), le prior de Jeffreys est $\text{Beta}(0.5, 0.5)$. Ce prior est moins plat qu'une uniforme $\text{Beta}(1, 1)$. Il est souvent utilisé lorsqu’on souhaite une approche objective, sans introduire d’information subjective. En pratique toutefois, le prior de Jeffreys est difficile à calculer, et on privilégiera l'approche par simulations pour s'assurer que les paramètres transformés ont des priors raisonnables. 
+
+## Application interactive associée au chapitre
+
+Une application interactive (`shinyApp`) est proposée pour explorer le rôle des distributions a priori. Elle permet de comparer différents choix de priors, d’effectuer des prior predictive checks et de visualiser leur influence sur l’inférence. L'application est fournie dans le script `04-priors.R` et peut être lancée depuis `R` avec :
+
+
+``` r
+library(shiny)
+runApp("04-priors.R")
+```
 
 ## En résumé
 

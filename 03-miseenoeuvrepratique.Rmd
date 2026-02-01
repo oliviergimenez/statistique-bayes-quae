@@ -174,6 +174,15 @@ Vous pouvez vérifier que les résultats sont proches de ceux obtenus avec le pr
 summary(bayes.brms)
 ```
 
+## Application interactive associée au chapitre
+
+Ce chapitre est complété par une application interactive (`shinyApp`) basée sur `brms`, permettant d’explorer l’ajustement d’un modèle bayésien simple, les sorties numériques et les diagnostics de convergence, sans écrire de code supplémentaire. L'application est fournie dans le script `03-brms.R` et peut être lancée depuis `R` avec :
+
+```{r, eval = FALSE}
+library(shiny)
+runApp("03-brms.R")
+```
+
 ## En résumé
 
 - `brms` permet de tirer parti des méthodes MCMC sans avoir à écrire le modèle soi-même (la vraisemblance en particulier).
