@@ -10,4 +10,4 @@ Vous trouverez ici tout le matériel concernant le livre [**Introduction à la s
 
 Ce livre est sous licence [Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-<img src="https://github.com/user-attachments/assets/57bff5c8-8afd-4ca6-bb01-f0f49cf3ea46" width="639" height="906"/>
+<img width="662" height="929" alt="cover" src="https://github.com/user-attachments/assets/5a97430b-7a66-40c7-acf2-37f20bd682d3" />
