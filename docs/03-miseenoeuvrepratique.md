@@ -62,7 +62,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.69      0.28    -1.24    -0.15 1.00     1588     2307
+#> Intercept    -0.69      0.29    -1.26    -0.14 1.00     1795     2205
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -96,10 +96,10 @@ On obtient ainsi une estimation directe de la moyenne a posteriori de la probabi
 
 ``` r
 mean(theta)
-#> [1] 0.3365172
+#> [1] 0.3358599
 quantile(theta, probas = c(2.5,97.5)/100)
 #>        0%       25%       50%       75%      100% 
-#> 0.1282870 0.2936775 0.3338043 0.3776052 0.5752788
+#> 0.1178596 0.2932921 0.3330314 0.3763835 0.5736354
 ```
 
 Ou plus directement avec la fonction `posterior::summarise_draws()` :
@@ -109,7 +109,7 @@ summarise_draws(theta)
 #> # A tibble: 1 × 10
 #>   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.337  0.334 0.0616 0.0621 0.240 0.442  1.00    1588.    2307.
+#> 1 Intercept 0.336  0.333 0.0624 0.0615 0.238 0.443  1.00    1795.    2205.
 ```
 
 ## Visualisation
@@ -153,7 +153,7 @@ summarize_draws(lambda) # résumé des tirages : moyenne, médiane, intervalles
 #> # A tibble: 1 × 10
 #>   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail
 #>   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
-#> 1 Intercept 0.931  0.911 0.162 0.154 0.700  1.22  1.00    1588.    2307.
+#> 1 Intercept 0.929  0.909 0.164 0.153 0.696  1.23  1.00    1795.    2205.
 ```
 
 L'espérance de vie est d'un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure \@ref(fig:hist-life)) :
@@ -216,7 +216,7 @@ summary(bayes.brms)
 #> 
 #> Regression Coefficients:
 #>           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> Intercept    -0.69      0.28    -1.28    -0.15 1.00     2053     2049
+#> Intercept    -0.68      0.28    -1.23    -0.14 1.00     1739     2370
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential

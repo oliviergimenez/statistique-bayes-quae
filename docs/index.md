@@ -1,7 +1,7 @@
 --- 
 title: "Introduction à la statistique bayésienne avec R"
 author: "Olivier Gimenez"
-date: "2026-02-01"
+date: "2026-03-06"
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output:
@@ -40,8 +40,7 @@ description: "Introduction à la statistique bayésienne avec R"
 
 On retrouve la statistique bayésienne un peu partout en sciences. Par exemple, en épidémiologie, pour prédire la circulation des virus, en écologie, pour expliquer l’extinction des espèces végétales et animales, ou encore en informatique, pour filtrer les courriels nuisibles. Si l’utilisation de la statistique bayésienne a explosé au cours des dernières années, c’est grâce au progrès de nos ordinateurs. C’est aussi grâce à la nature même de l’approche qui permet de coller à notre façon d’apprendre, de raisonner et d’accumuler des connaissances.
 
-Dans ce livre, je vous propose une introduction à la statistique bayésienne. Vous êtes en train de lire la version électronique du livre à paraître chez les éditions Quae en mars 2026.
-
+Dans ce livre, je vous propose une introduction à la statistique bayésienne. Vous êtes en train de lire la version électronique du livre paru chez les éditions Quae en mars 2026. Le livre est disponible en version papier ou eBook sur le site des éditions Quae <https://www.quae.com/produit/1988/9782759242580/introduction-a-la-statistique-bayesienne>. 
 <img src="images/cover.png" width="100%" style="display: block; margin: auto;" />
 
 Ce livre est en français parce que c’est la langue dans laquelle je me sens le plus à l’aise pour écrire, et parce que j’aurais aimé avoir plus d’ouvrages dans ma langue maternelle lorsque j’étais étudiant.

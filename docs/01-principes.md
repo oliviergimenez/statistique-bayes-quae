@@ -78,7 +78,7 @@ Sous ces deux hypothèses, le nombre $y$ d’animaux encore vivants à la fin de
 <p class="caption">(\#fig:bernoulli-binomiale) Distributions de probabilité discrètes, Bernoulli et binomiale, illustrées avec 100 simulations (des tirages aléatoires générés par ordinateur). On représente sur la ligne du haut la fréquence observée d'un tirage Bernoulli pour différentes valeurs de probabilité de survie \(\theta\). Sur la ligne du bas, on a les histogrammes pour un tirage binomial avec 50 tentatives et différentes valeurs de probabilité de survie \(\theta\).</p>
 </div>
 
-u passage, il est facile de s’embrouiller entre tous les termes utilisés pour décrire une Bernoulli et une binomiale (et la normale) : vous pouvez retenir qu’une probabilité est un nombre, une distribution est une loi, une densité est la fonction qui la représente.
+Au passage, il est facile de s’embrouiller entre tous les termes utilisés pour décrire une Bernoulli et une binomiale (et la normale) : vous pouvez retenir qu’une probabilité est un nombre, une distribution est une loi, une densité est la fonction qui la représente.
 
 ## Le maximum de vraisemblance {#maxvrais}
 

@@ -143,7 +143,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept    -0.69      0.28    -1.24    -0.15 1.00     1588     2307</span></span>
+<span><span class="co">#&gt; Intercept    -0.69      0.29    -1.26    -0.14 1.00     1795     2205</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
@@ -170,17 +170,17 @@
 <p>On obtient ainsi une estimation directe de la moyenne a posteriori de la probabilité de survie, accompagnée de son intervalle de crédibilité à 95% :</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.3365172</span></span>
+<span><span class="co">#&gt; [1] 0.3358599</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">theta</span>, probas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>,<span class="fl">97.5</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        0%       25%       50%       75%      100% </span></span>
-<span><span class="co">#&gt; 0.1282870 0.2936775 0.3338043 0.3776052 0.5752788</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.1178596 0.2932921 0.3330314 0.3763835 0.5736354</span></span></code></pre></div>
 <p>Ou plus directement avec la fonction <code><a href="https://mc-stan.org/posterior/reference/draws_summary.html">posterior::summarise_draws()</a></code> :</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">summarise_draws</span><span class="op">(</span><span class="va">theta</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
 <span><span class="co">#&gt;   variable   mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Intercept 0.337  0.334 0.0616 0.0621 0.240 0.442  1.00    1588.    2307.</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Intercept 0.336  0.333 0.0624 0.0615 0.238 0.443  1.00    1795.    2205.</span></span></code></pre></div>
 </div>
 <div id="visualisation" class="section level2" number="3.3">
 <h2>
@@ -218,7 +218,7 @@ Figure 3.2: Histogramme de la distribution a posteriori et trace plot de la prob
 <span><span class="co">#&gt; # A tibble: 1 × 10</span></span>
 <span><span class="co">#&gt;   variable   mean median    sd   mad    q5   q95  rhat ess_bulk ess_tail</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Intercept 0.931  0.911 0.162 0.154 0.700  1.22  1.00    1588.    2307.</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Intercept 0.929  0.909 0.164 0.153 0.696  1.23  1.00    1795.    2205.</span></span></code></pre></div>
 <p>L’espérance de vie est d’un an approximativement. On peut également visualiser la distribution a posteriori de l’espérance de vie (Figure <a href="logiciels.html#fig:hist-life">3.3</a>) :</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">%&gt;%</span></span>
@@ -267,7 +267,7 @@ Figure 3.3: Histogramme de la distribution a posteriori de l’espérance de vie
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; Intercept    -0.69      0.28    -1.28    -0.15 1.00     2053     2049</span></span>
+<span><span class="co">#&gt; Intercept    -0.68      0.28    -1.23    -0.14 1.00     1739     2370</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
@@ -324,7 +324,7 @@ Figure 3.3: Histogramme de la distribution a posteriori de l’espérance de vie
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-02-01.</p>
+    <p>"<strong>Introduction à la statistique bayésienne avec R</strong>" a été écrit par Olivier Gimenez. Dernière mise à jour le 2026-03-06.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

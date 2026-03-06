@@ -139,7 +139,7 @@ bin3 <- rbinom(100,50,0.8) %>%
 (b1 + b2 + b3) / (bin1 + bin2 + bin3)
 ```
 
-u passage, il est facile de s’embrouiller entre tous les termes utilisés pour décrire une Bernoulli et une binomiale (et la normale) : vous pouvez retenir qu’une probabilité est un nombre, une distribution est une loi, une densité est la fonction qui la représente.
+Au passage, il est facile de s’embrouiller entre tous les termes utilisés pour décrire une Bernoulli et une binomiale (et la normale) : vous pouvez retenir qu’une probabilité est un nombre, une distribution est une loi, une densité est la fonction qui la représente.
 
 ## Le maximum de vraisemblance {#maxvrais}
 
